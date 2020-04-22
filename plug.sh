@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ISH_LOG=${ISH_LOG:="/dev/null"}
+ISH_ERR=${ISH_ERR:="/dev/stderr"}
 ISH_PATH=${ISH_PATH:="$PWD/.ish/pluged"}
 ISH_ROOT=${ISH_ROOT:="$HOME/.ish/pluged"}
 ISH_HUB=${ISH_HUB:="github.com"}
@@ -10,8 +11,9 @@ ISH_EXIT=${ISH_EXIT:="exit.sh"}
 ISH_TYPE=${ISH_TYPE:=".sh"}
 ISH_ORDER=${ISH_ORDER:=0}
 
-# ISH_LOG=/dev/stderr
+ISH_LOG=/dev/stderr
 ish_log() { echo $* >$ISH_LOG; }
+ish_err() { echo $* >$ISH_ERR; }
 
 require() {
     # 解析参数
@@ -76,10 +78,14 @@ _name() {
     name=${name//./_} && name=${name//\//_} && name=${name//\ /_}
     echo $name
 }
+_eval() {
+    ish_log "eval" "$*" && eval "$*"
+}
 _conf() {
+    ish_log "conf $*"
     case "$1" in
-        get) eval "[ -z \"\$${2}_$3\" ] && ${2}_$3=\"$4\"; echo \$${2}_$3";;
-        set) eval "${2}_$3=\"$4\"";;
+        get) _eval "[ -z \"\$${2}_$3\" ] && ${2}_$3=\"$4\"; echo \$${2}_$3";;
+        set) _eval "${2}_$3=\"$4\"";;
         run) local func=$2 && shift 2
             ish_log "run" $func
             $func "$@"

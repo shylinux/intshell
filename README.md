@@ -27,10 +27,13 @@ git clone https://github.com/shylinux/shell.git ~/.ish
 ### 2. Configure Plugins:
 Put this at the bottom of your .bashrc to use plug.sh.
 ```sh
-source ~/.ish/plug.sh
+if [ -f ~/.ish/plug.sh ]; then
+   source ~/.ish/plug.sh
 
-require github.com/shylinux/shell help.sh
-# ... add other plugins
+   require github.com/shylinux/shell help.sh
+   # ... add other plugins
+fi
+
 ```
 
 ### 3. Use Plugins:
