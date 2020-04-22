@@ -7,9 +7,10 @@ ISH_HUB=${ISH_HUB:="github.com"}
 ISH_FTP=${ISH_FTP:="https|http"}
 ISH_INIT=${ISH_INIT:="init.sh"}
 ISH_EXIT=${ISH_EXIT:="exit.sh"}
+ISH_TYPE=${ISH_TYPE:=".sh"}
 ISH_ORDER=${ISH_ORDER:=0}
 
-ISH_LOG=/dev/stderr
+# ISH_LOG=/dev/stderr
 ish_log() { echo $* >$ISH_LOG; }
 
 require() {
@@ -50,7 +51,7 @@ script() { # 脚本接口
         *)
             local mod=$1 file=$2 fun=$3 && shift 3
             local name=ish_$(_name ${mod}__${file%%.*}_${fun})
-            declare -f $name >/dev/null || require ${mod} ${file}.sh
+            declare -f $name >/dev/null || require ${mod} ${file}${ISH_TYPE}
             ISH_MODULE=ish_$(_name ${mod}_) ISH_SCRIPT=ish_$(_name ${mod}__${file%%.*}) _conf run $name "$@"
     esac
 }
@@ -63,6 +64,11 @@ object() { # 对象接口
     esac
 }
 
+_meta() {
+    local meta="$*"
+    ISH_MODULE=${meta/__*/}
+    ISH_SCRIPT=${meta%_*}
+}
 _name() {
     local name="$*"
     name=${name//\/\//\/}
