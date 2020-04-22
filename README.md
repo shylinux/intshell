@@ -31,6 +31,8 @@ if [ -f ~/.ish/plug.sh ]; then
    source ~/.ish/plug.sh
 
    require github.com/shylinux/shell help.sh
+   require github.com/shylinux/shell base/bash.sh
+   require github.com/shylinux/shell misc/misc.sh
    # ... add other plugins
 fi
 
