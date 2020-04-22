@@ -29,7 +29,7 @@ Put this at the bottom of your .bashrc to use plug.sh.
 ```sh
 source ~/.ish/plug.sh
 
-ish github.com/shylinux/shell
+require github.com/shylinux/shell help.sh
 # ... add other plugins
 ```
 
