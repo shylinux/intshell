@@ -18,13 +18,13 @@ plug.sh automatically...
 - regenerates help tags after installing and updating
 
 ## Quick Start
-1. Set up plug.sh
+### 1. Set up plug.sh
 
 ```sh
 git clone https://github.com/shylinux/shell.git ~/.ish
 ```
 
-2. Configure Plugins:
+### 2. Configure Plugins:
 Put this at the bottom of your .bashrc to use plug.sh.
 ```sh
 source ~/.ish/plug.sh
@@ -33,8 +33,8 @@ ish github.com/shylinux/shell
 # ... add other plugins
 ```
 
-3. Use Plugins:
-1) one cmd
+### 3. Use Plugins:
+**use by auto load**
 ```sh
 10016[12:04:55]contexts$ ish github.com/shylinux/shell/help.info
 repos: github.com/shylinux/shell
@@ -44,7 +44,7 @@ version: v0.0.1
 
 ```
 
-2) preload
+**use by manual load**
 ```sh
 require github.com/shylinux/shell help.sh
 ```
@@ -59,9 +59,9 @@ version: v0.0.1
 
 ```
 
-4. make new Plugins:
+## Create Plugins:
 if the plugin named *demo*
-
+**add plugin**
 add the code to the file $ISH_PATH/demo/demo.sh
 ```sh
 script set repos "github.com/xxx/xxx"
@@ -80,11 +80,20 @@ ${ISH_SCRIPT}_help() { _meta $0
 }
 ```
 
-run the cmd
+**use plugin**
+use the new plugin
 ```sh
-$ ish demo/demo.info
-call
 10016[12:04:55]contexts$ ish demo/demo.info
+repos: github.com/xxx/demo
+owner: xxx@gmail.com
+product: plugin demo
+version: v0.0.1
+```
+
+**share plugin**
+if you create git repos, and push it to the github, use by long name
+```sh
+10016[12:04:55]contexts$ ish github.com/xxx/demo/demo.info
 repos: github.com/xxx/xxx
 owner: xxx@gmail.com
 product: plugin demo
