@@ -36,7 +36,7 @@ ish github.com/shylinux/shell
 ### 3. Use Plugins:
 **use by auto load**
 ```sh
-10016[12:04:55]contexts$ ish github.com/shylinux/shell/help.info
+$ ish github.com/shylinux/shell/help.info
 repos: github.com/shylinux/shell
 owner: shylinuxc@gmail.com
 product: plugin manager
@@ -46,22 +46,25 @@ version: v0.0.1
 
 **use by manual load**
 ```sh
-require github.com/shylinux/shell help.sh
+$ require github.com/shylinux/shell help.sh
 ```
 
 after load help.sh, you call all the function directly
 ```sh
-10017[12:05:03]contexts$ ish_github_com_shylinux_shell__help_info
+$ ish_github_com_shylinux_shell__help_info
 repos: github.com/shylinux/shell
 owner: shylinuxc@gmail.com
 product: plugin manager
 version: v0.0.1
 
+$ ish_github_com_shylinux_shell__help_help
+usage: ish mod/file.fun arg...
+
 ```
 
 ## Create Plugins:
+### add plugin
 if the plugin named *demo*
-**add plugin**
 add the code to the file $ISH_PATH/demo/demo.sh
 ```sh
 script set repos "github.com/xxx/xxx"
@@ -80,20 +83,20 @@ ${ISH_SCRIPT}_help() { _meta $0
 }
 ```
 
-**use plugin**
+### use plugin
 use the new plugin
 ```sh
-10016[12:04:55]contexts$ ish demo/demo.info
+$ ish demo/demo.info
 repos: github.com/xxx/demo
 owner: xxx@gmail.com
 product: plugin demo
 version: v0.0.1
 ```
 
-**share plugin**
+### share plugin
 if you create git repos, and push it to the github, use by long name
 ```sh
-10016[12:04:55]contexts$ ish github.com/xxx/demo/demo.info
+$ ish github.com/xxx/demo/demo.info
 repos: github.com/xxx/xxx
 owner: xxx@gmail.com
 product: plugin demo
