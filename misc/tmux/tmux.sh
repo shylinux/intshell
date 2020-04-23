@@ -1,6 +1,6 @@
 #!/bin/sh
 
-alias t tmux attach
+alias t="tmux attach"
 
 ${ISH_SCRIPT}_tmux_sessions() {
     if [ "$1" = "" ]; then

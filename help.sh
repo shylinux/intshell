@@ -15,7 +15,6 @@ ${ISH_SCRIPT}_help() { _meta $0
     echo "usage: ish mod/file.fun arg..."
 }
 ${ISH_SCRIPT}_test() { _meta $0
-    pwd
-    echo $*
+    pwd && echo $*
 }
 

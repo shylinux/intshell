@@ -1,10 +1,10 @@
 #!/bin/sh
 
-source web/web.sh
-
+require web/web.sh
 ISH_SCRIPT=ish
-source date.sh
-source os.sh
+
+require cli/date.sh
+require cli/os.sh
 
 ${ISH_SCRIPT}_host_info() { _meta $0
     echo "hostname: $(hostname)"
