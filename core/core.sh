@@ -1,6 +1,4 @@
 #!/bin/sh
 
-require code/code.sh
-require wiki/wiki.sh
-require chat/chat.sh
-ISH_SCRIPT=ish
+require as code code/code.sh
+require as wiki wiki/wiki.sh

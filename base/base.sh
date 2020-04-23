@@ -1,14 +1,9 @@
 #!/bin/sh
 
-require web/web.sh
-ISH_SCRIPT=ish
+require as cli cli/os.sh
+require as cli cli/date.sh
+require as cli cli/info.sh
+require as cli cli/cli.sh
 
-require cli/date.sh
-require cli/os.sh
-
-${ISH_SCRIPT}_host_info() { _meta $0
-    echo "hostname: $(hostname)"
-    echo "username: $(whoami)"
-    echo "pathname: $(pwd)"
-}
+require as web web/web.sh
 

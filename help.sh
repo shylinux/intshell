@@ -1,20 +1,33 @@
 #!/bin/sh
 
-script set repos "github.com/shylinux/shell"
-script set owner "shylinuxc@gmail.com"
-script set product "plugin manager"
-script set version "v0.0.1"
-
-${ISH_SCRIPT}_info() { _meta $0
-    echo "repos: $(script get repos)"
-    echo "owner: $(script get owner)"
-    echo "product: $(script get product)"
-    echo "version: $(script get version)"
-}
-${ISH_SCRIPT}_help() { _meta $0
-    echo "usage: ish mod/file.fun arg..."
-}
-${ISH_SCRIPT}_test() { _meta $0
-    pwd && echo $*
+ish_help_repos="github.com/shylinux/shell"
+ish_help_owner="shylinuxc@gmail.com"
+ish_help_product="plugin manager"
+ish_help_version="v0.0.1"
+ish_help_info() {
+    echo "repos: ${ish_help_repos}"
+    echo "owner: ${ish_help_owner}"
+    echo "product: ${ish_help_product}"
+    echo "version: ${ish_help_version}"
 }
 
+ISH_CONF_COLOR_red="\e[31m"
+ISH_CONF_COLOR_green="\e[32m"
+ISH_CONF_COLOR_blue="\e[34m"
+ISH_CONF_COLOR_yellow="\e[33m"
+ISH_CONF_COLOR_purple="\e[35m"
+ISH_CONF_COLOR_cyan="\e[36m"
+ISH_CONF_COLOR_black="\e[37m"
+ISH_CONF_COLOR_white="\e[30m"
+ISH_CONF_COLOR_bg_red="\e[41m"
+ISH_CONF_COLOR_bg_green="\e[42m"
+ISH_CONF_COLOR_bg_blue="\e[44m"
+ISH_CONF_COLOR_bg_yellow="\e[43m"
+ISH_CONF_COLOR_bg_purple="\e[45m"
+ISH_CONF_COLOR_bg_cyan="\e[46m"
+ISH_CONF_COLOR_bg_black="\e[47m"
+ISH_CONF_COLOR_bg_white="\e[40m"
+ISH_CONF_COLOR_bold="\e[1m"
+ISH_CONF_COLOR_underline="\e[4m"
+ISH_CONF_COLOR_reverse="\e[7m"
+ISH_CONF_COLOR_blink="\e[5m"

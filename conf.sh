@@ -1,7 +1,9 @@
 #!/bin/sh
 
-require github.com/shylinux/shell help.sh
-require github.com/shylinux/shell base/base.sh
-require github.com/shylinux/shell core/core.sh
-require github.com/shylinux/shell misc/misc.sh
+require help.sh
+require test.sh
+
+require base/base.sh
+require core/core.sh
+require misc/misc.sh
 

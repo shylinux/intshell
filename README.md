@@ -7,7 +7,7 @@ plug.sh allows you to...
 - keep track of and configure your plugins right in the .ish/pluged/
 - install configured plugins (a.k.a. scripts/bundle)
 - update configured plugins
-- search by name all available Vim scripts
+- search by name all available scripts
 - clean unused plugins up
 
 plug.sh automatically...
@@ -27,12 +27,9 @@ git clone https://github.com/shylinux/shell.git ~/.ish
 ### 2. Configure Plugins:
 Put this at the bottom of your .bashrc to use plug.sh.
 ```sh
-if [ -f ~/.ish/plug.sh ]; then
-   source ~/.ish/plug.sh
-
-   require github.com/shylinux/shell help.sh
-   require github.com/shylinux/shell base/bash.sh
-   require github.com/shylinux/shell misc/misc.sh
+if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
+    require conf.sh
+    require as miss github.com/shylinux/shell misc/miss/miss.sh
    # ... add other plugins
 fi
 
@@ -41,29 +38,23 @@ fi
 ### 3. Use Plugins:
 **use by auto load**
 ```sh
-$ ish github.com/shylinux/shell/help.info
-repos: github.com/shylinux/shell
-owner: shylinuxc@gmail.com
-product: plugin manager
-version: v0.0.1
+$ ish github.com/shylinux/shell/base.cli.os_os_system
+GNU/Linux
 
 ```
 
 **use by manual load**
 ```sh
-$ require github.com/shylinux/shell help.sh
+$ require as demo github.com/shylinux/shell base/cli/os.sh
 ```
 
-after load help.sh, you call all the function directly
+after load os.sh, you call all the function directly
 ```sh
-$ ish_github_com_shylinux_shell__help_info
-repos: github.com/shylinux/shell
-owner: shylinuxc@gmail.com
-product: plugin manager
-version: v0.0.1
+$ ish_demo_os_system
+GNU/Linux
 
-$ ish_github_com_shylinux_shell__help_help
-usage: ish mod/file.fun arg...
+$ ish_demo_os_kernel
+Linux
 
 ```
 
@@ -72,26 +63,29 @@ usage: ish mod/file.fun arg...
 if the plugin named *demo*
 add the code to the file $ISH_PATH/demo/demo.sh
 ```sh
-script set repos "github.com/xxx/xxx"
-script set owner "xxx@gmail.com"
-script set product "plugin demo"
-script set version "v0.0.1"
+ish set repos "github.com/xxx/xxx"
+ish set owner "xxx@gmail.com"
+ish set product "plugin demo"
+ish set version "v0.0.1"
 
-${ISH_SCRIPT}_info() { _meta $0
-    echo "repos: $(script get repos)"
-    echo "owner: $(script get owner)"
-    echo "product: $(script get product)"
-    echo "version: $(script get version)"
+${ISH_CTX_SCRIPT}_info() { ish mod $0
+    echo "repos: $(ish get repos)"
+    echo "owner: $(ish get owner)"
+    echo "product: $(ish get product)"
+    echo "version: $(ish get version)"
 }
-${ISH_SCRIPT}_help() { _meta $0
+${ISH_CTX_SCRIPT}_help() { ish mod $0
     echo "usage: ish mod/file.fun arg..."
+}
+${ISH_CTX_SCRIPT}_init() { ish mod $0
+    pwd
 }
 ```
 
 ### use plugin
 use the new plugin
 ```sh
-$ ish demo/demo.info
+$ ish demo/demo_info
 repos: github.com/xxx/demo
 owner: xxx@gmail.com
 product: plugin demo

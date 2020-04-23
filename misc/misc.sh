@@ -1,5 +1,4 @@
 #!/bin/sh
 
-require tmux/tmux.sh
-ISH_SCRIPT=ish
+require as tmux tmux/tmux.sh
 
