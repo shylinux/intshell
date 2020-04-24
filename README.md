@@ -1,4 +1,5 @@
-# shell plugin manager
+# intshell
+INTSHELL alias for in the shell, a plugin manager
 
 ## Abort
 
