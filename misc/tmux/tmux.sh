@@ -18,4 +18,9 @@ ${ISH_CTX_SCRIPT}_sessions() {
 ${ISH_CTX_SCRIPT}_windows() { tmux list-windows }
 ${ISH_CTX_SCRIPT}_panes() { tmux list-panes }
 
+${ISH_CTX_SCRIPT}_split() {
+    local target=$(tmux split-window -dP)
+    tmux send-key -t $target "$@"
+}
+
 ${ISH_CTX_SCRIPT}_init

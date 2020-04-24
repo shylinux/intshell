@@ -6,6 +6,10 @@ ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
 ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source debug test"}
 ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
 
+ISH_CONF_TASK=${PWD}
+ISH_CONF_MISS=${ISH_CONF_PATH:="etc/miss.sh"}
+ISH_CONF_WORK=${ISH_CONF_WORK:="~/work"}
+
 ISH_CONF_PATH=${ISH_CONF_PATH:="$PWD/.ish/pluged"}
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
 ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
