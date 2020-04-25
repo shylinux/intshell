@@ -21,4 +21,4 @@ ish_ctx_cli_tmux_split() {
     tmux send-key -t $target "$@"
 }
 
-ish_ctx_cli_tmux_init
+# ish_ctx_cli_tmux_init
