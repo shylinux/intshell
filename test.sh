@@ -11,22 +11,22 @@ ish_test_help() {
 }
 require_test() {
     ISH_CTX_MODULE=ish_ctx ISH_CTX_SCRIPT=ish_ctx ish_test "require base/cli/os.sh"\
-        "ish_ctx_os_system" "uname -o"
+        "ish_ctx_os_kernel" "uname -s"
 
     ish_test "require github.com/shylinux/intshell base/cli/date.sh" \
         "ish_ctx_date_hour" "date +%H"
 
     ish_test "require github.com/shylinux/intshell" \
-        "ish_ctx_os_system" "uname -o"
+        "ish_ctx_os_kernel" "uname -s"
 }
 ish_test() {
     if [ "$#" -eq 0 ]; then
         ish_test_clear
         require_test
 
-        ish_test "" "ish github.com/shylinux/intshell/base.cli.os_os_system" "uname -o"
-        ish_test "" "ish base.cli.os_os_system" "uname -o"
-        ish_test "" "ish os_system" "uname -o"
+        ish_test "" "ish github.com/shylinux/intshell/base.cli.os_os_kernel" "uname -s"
+        ish_test "" "ish base.cli.os_os_kernel" "uname -s"
+        ish_test "" "ish os_kernel" "uname -s"
         return
     fi
 
