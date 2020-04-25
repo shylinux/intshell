@@ -1,5 +1,10 @@
 #!/bin/sh
 
+
+name=$(hostname -s)
+name=${name##*-}
+PS1="\!@$name[\t]\W\$ "
+
 ish_ctx_cli_shell() {
     cat /proc/$$/cmdline|sed 's/-//'
 }
@@ -12,8 +17,7 @@ ish_ctx_cli_jobs() {
 ish_ctx_cli_alias() {
     [ "$#" = "0" ] && alias && return
     [ "$#" = "1" ] && alias $1 && return
-
-    ish_log_info $1 $2
-    alias $1=$2
+    ish_log_info "alias" "set" "$1" "$2"
+    alias $1="$2"
 }
 

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+ish_ctx_cli_tmux_send() {
+    local target=$1 && shift
+    tmux send-key -t $target "$@"
+}
 ish_ctx_cli_tmux_init() {
     ish_ctx_cli_alias t "tmux attach"
     ish_ctx_cli_alias ta "tmux attach -t"
@@ -21,4 +25,4 @@ ish_ctx_cli_tmux_split() {
     tmux send-key -t $target "$@"
 }
 
-# ish_ctx_cli_tmux_init
+ish_ctx_cli_tmux_init
