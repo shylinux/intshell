@@ -1,33 +1,49 @@
 #!/bin/sh
 
-ish_help_repos="github.com/shylinux/shell"
+ish_help_show() {
+    local key="" tab="" index=0 value=""
+    while [ "$#" -gt "0" ] ; do
+        key="$1" && shift && value=$1
+        case $key in
+            usage)
+                local color=$(_eval "echo \${ISH_SHOW_COLOR_${value:1}}") && [ "$color" != "" ] && shift && value=$1
+                [ "$ISH_USER_COLOR" = "true" ] && echo "$key: $color$value$ISH_SHOW_COLOR_end" || echo "$key: $value" 
+                ;;
+            index) echo "$((index++)): $value" ;;
+            "") echo "$tab  $value";;
+            *) echo "$key: $value";;
+        esac
+        [ "$#" -gt "0" ] && shift && [ "$key" != "" ] && tab=${key//[^\ ]/\ }
+    done
+}
+
+ish_help_repos="github.com/shylinux/intshell"
 ish_help_owner="shylinuxc@gmail.com"
 ish_help_product="plugin manager"
 ish_help_version="v0.0.1"
-ish_help_info() {
-    echo "repos: ${ish_help_repos}"
-    echo "owner: ${ish_help_owner}"
-    echo "product: ${ish_help_product}"
-    echo "version: ${ish_help_version}"
+ish_help_repos() {
+    ish_help_show \
+        repos "$ish_help_repos" \
+        owner "$ish_help_owner" \
+        product "$ish_help_product" \
+        version "$ish_help_version"
+}
+ish_help_script() { 
+    ish_help_show \
+        XXX_help "文档化" XXX_test "标准化" \
+        XXX_init "初始化" XXX_exit "序列化" \
+        XXX_make "模块化" XXX_auto "自动化" \
+        XXX_show "可视化" XXX_list "结构化" \
+        XXX_conf "场景化" XXX_user "个性化" \
+        XXX_ctx "变量" XXX_log "日志"
+}
+ish_help_require() { require_help $@; }
+ish_help_ish() { ish_help; }
+ish_help_list() { 
+    ish_help_show \
+        index repos \
+        index script \
+        index require \
+        index ish
 }
 
-ISH_CONF_COLOR_red="\e[31m"
-ISH_CONF_COLOR_green="\e[32m"
-ISH_CONF_COLOR_blue="\e[34m"
-ISH_CONF_COLOR_yellow="\e[33m"
-ISH_CONF_COLOR_purple="\e[35m"
-ISH_CONF_COLOR_cyan="\e[36m"
-ISH_CONF_COLOR_black="\e[37m"
-ISH_CONF_COLOR_white="\e[30m"
-ISH_CONF_COLOR_bg_red="\e[41m"
-ISH_CONF_COLOR_bg_green="\e[42m"
-ISH_CONF_COLOR_bg_blue="\e[44m"
-ISH_CONF_COLOR_bg_yellow="\e[43m"
-ISH_CONF_COLOR_bg_purple="\e[45m"
-ISH_CONF_COLOR_bg_cyan="\e[46m"
-ISH_CONF_COLOR_bg_black="\e[47m"
-ISH_CONF_COLOR_bg_white="\e[40m"
-ISH_CONF_COLOR_bold="\e[1m"
-ISH_CONF_COLOR_underline="\e[4m"
-ISH_CONF_COLOR_reverse="\e[7m"
-ISH_CONF_COLOR_blink="\e[5m"

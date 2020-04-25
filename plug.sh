@@ -1,16 +1,34 @@
-#!/bin/sh
+# intshell: 终端 神农架 整个脚本
+# PMS: a plugin manger system
+#
+# 1.DOWNLOAD
+# $ git clone https://github.com/shylinux/intshell ~/.ish
+# $ source ~/.ish/plug.sh
+# $ require_help
+#
+# 2.TEST
+# $ require test.sh
+# $ ish_test
+#
+# 3.HELP
+# $ require show.sh
+# $ ish_help_list
+# $ ish_help_repos
+# $ ish_help_script
+# $ ish_help_require
+# $ ish_help_ish
 
+## 1.场景化
 ISH_CONF_ERR=${ISH_CONF_ERR:="/dev/stderr"}
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
-# ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="debug test"}
-ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source debug test"}
-ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
+# ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source bench debug test"}
+ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="bench debug test"}
 
-ISH_CONF_TASK=${PWD}
-ISH_CONF_MISS=${ISH_CONF_PATH:="etc/miss.sh"}
+ISH_CONF_TASK=$PWD
 ISH_CONF_WORK=${ISH_CONF_WORK:="~/work"}
+ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 
-ISH_CONF_PATH=${ISH_CONF_PATH:="$PWD/.ish/pluged"}
+ISH_CONF_PATH=$PWD/.ish/pluged
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
 ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
@@ -19,57 +37,89 @@ ISH_CONF_TEST=${ISH_CONF_TEST:="test"}
 ISH_CONF_INIT=${ISH_CONF_INIT:="init"}
 ISH_CONF_EXIT=${ISH_CONF_EXIT:="exit"}
 ISH_CONF_TYPE=${ISH_CONF_TYPE:=".sh"}
-ISH_CONF_PRE=${ISH_CONF_PRE:="ish"}
+[ "$ISH_CONF_PRE" = "" ] && declare -r ISH_CONF_PRE=ish
+ish_conf() {
+    [ "$#" -gt "1" ] && eval "ISH_CONF_$1=$2"
+    echo $(eval "echo \$ISH_CONF_$1")
+}
 
+## 2.个性化
+ISH_USER_EMAIL=${ISH_USER_EMAIL:="shylinuxc@gmail.com"}
+ISH_USER_COLOR=${ISH_USER_COLOR:="true"}
+ISH_USER_ERR_COUNT=0
+ish_user() {
+    whoami
+}
+ish_user_err_clear() {
+    ISH_USER_ERR_COUNT=0
+}
+
+## 3.可视化
+ish_show() {
+    while [ "$#" -gt "0" ]; do case $1 in
+        -username) echo -n "$(whoami)";;
+        -hostname) echo -n "$(hostname)";;
+        -date) echo -n "$(date +"%Y-%m-%d")";;
+        -time) echo -n "$(date +"%Y-%m-%d %H:%M:%S")";;
+        *)
+            local k=$1 && [ "${k:0:1}" = "-" ] && shift
+            local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null) && [ "$color" != "" ]
+            [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color$1$ISH_SHOW_COLOR_end" || echo -n "$1" 
+            ;;
+    esac; [ "$#" -gt "0" ] && shift && echo -n " "; done; echo
+}
+## 4.结构化
+ish_list() {
+    echo
+}
+## 5.变量
 ISH_CTX_ORDER=${ISH_CTX_ORDER:=0}
 ISH_CTX_MODULE=${ISH_CONF_PRE}_ctx
 ISH_CTX_SCRIPT=${ISH_CTX_MODULE}
 ISH_CTX_OBJECT=${ISH_CTX_MODULE}_obj_0
+ish_ctx() {
+    echo
 
-ISH_CTX_ERR_COUNT=0
+}
+## 6.日志
 ISH_LOG_ERR=${ISH_CONF_ERR}
 ISH_LOG_INFO=${ISH_CONF_LOG}
 ish_log() {
-    [ "${ISH_CONF_LEVEL}" = "" ] && echo $* >$ISH_LOG_INFO
+    [ "$ISH_CONF_LEVEL" = "" ] && ish_show -time "$@" >$ISH_LOG_INFO && return
     for l in $(echo $ISH_CONF_LEVEL); do
-        [ "$l" = $1 ] && echo $* >$ISH_LOG_INFO
+        [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_LOG_INFO 
     done
     return 0
 }
 ish_log_err() {
-    let ISH_CTX_ERR_COUNT=$ISH_CTX_ERR_COUNT + 1
-    echo $* >$ISH_LOG_ERR
+    let ISH_USER_ERR_COUNT=$ISH_USER_ERR_COUNT+1
+    ish_show -time "$@" >$ISH_LOG_ERR
 }
-ish_log_eval() { ish_log "eval" $* }
-ish_log_conf() { ish_log "conf" $* }
-ish_log_test() { ish_log "test" $* }
-ish_log_debug() { ish_log "debug" $* }
-ish_log_source() { ish_log "source" $* }
-ish_log_require() { ish_log "require" $* }
+ish_log_conf() { ish_log "conf" $@; }
+ish_log_eval() { ish_log "eval" $@; }
+ish_log_test() { ish_log "test" $@; }
+ish_log_info() {
+    local name=$1 info="" && shift
+    while [ "$#" -gt "0" ]; do
+        info=$info"$1: $2" && shift 2
+    done
+    ish_log $name $info
+}
+ish_log_debug() { ish_log "debug" $@; }
+ish_log_source() { ish_log "source" $@; }
+ish_log_require() { ish_log "require" $@; }
 
+## 7.模块加载
 require_help() {
-    echo "usage: $(_color green require \[as name\] file...)"
-    echo "       source script $(_color underline file) as $(_color underline name)"
+    echo -e "usage: $(_color green require \[as name\] file...)"
+    echo -e "       source script $(_color underline file) as $(_color underline name)"
     echo
-    echo "usage: $(_color yellow require \[as name\] mod file...)"
-    echo "       auto download $(_color underline mod) as $(_color underline name) and source script $(_color underline file)"
+    echo -e "usage: $(_color yellow require \[as name\] mod file...)"
+    echo -e "       auto download $(_color underline mod) (format like: github.com/shylinux/intshell) as $(_color underline name) and source script $(_color underline file)"
     echo
-    echo "usage: $(_color red require \[as name\] mod)"
-    echo "       auto download $(_color underline mod) as $(_color underline name) and source $(_color bold \${ISH_CONF_INIT}\${ISH_CONF_TYPE}) file"
+    echo -e "usage: $(_color red require \[as name\] mod)"
+    echo -e "       auto download $(_color underline mod) as $(_color underline name) and source $(_color bold \${ISH_CONF_INIT}\${ISH_CONF_TYPE}) file"
     echo
-}
-require_test() {
-    ISH_CTX_MODULE=ish_ctx ISH_CTX_SCRIPT=ish_ctx ish_test "require base/cli/os.sh"\
-        "ish_ctx_os_system" "uname -o"
-
-    ish_test "require github.com/shylinux/shell base/cli/date.sh" \
-        "ish_ctx_date_hour" "date +%H"
-
-    ish_test "require as some github.com/shylinux/shell base/cli/info.sh" \
-        "ish_some_os_system" "uname -o"
-
-    ish_test "require github.com/shylinux/shell" \
-        "ish_ctx_os_system" "uname -o"
 }
 require() {
     # 解析参数
@@ -139,11 +189,11 @@ _name() {
     echo ${name//[^a-zA-Z0-9_]/_}
 }
 _color() {
-    [ "$ISH_CONF_COLOR" != "true" ] && echo "$*" && return
+    [ "$ISH_USER_COLOR" != "true" ] && shift && echo "$*" && return
     local prefix="" && for c in $(echo $1); do
-        prefix=$prefix$(_eval "echo \"\$ISH_CONF_COLOR_${c}\"")
+        prefix=$prefix$(_eval "echo \"\$ISH_SHOW_COLOR_${c}\"")
     done && shift
-    echo "$prefix$*\e[0m"
+    echo "$prefix$*$ISH_SHOW_COLOR_end"
 }
 _eval() {
     ish_log_eval "$*" && eval "$*"
@@ -153,9 +203,7 @@ _conf() {
         get) _eval "[ -z \"\$${2}_$3\" ] && ${2}_$3=\"$4\"; echo \$${2}_$3";;
         set) [ "$4" = "" ] && _eval "${2}_${3}=\"$5\"" || _eval "${2}_${3}=\"$4\"" ;;
         def) _eval "[ \"\$${2}_${3}\" = \"\" ] && ${2}_${3}=$4";;
-        run) local func=$2 && shift 2 
-            $func "$@"
-            ;;
+        run) local func=$2 && shift 2 && declare -f $func >/dev/null && $func "$@";;
     esac
 }
 _load() {
@@ -186,37 +234,40 @@ _plug() {
     done
     for fun in `declare -f|grep -o -e "^ish_[a-z_]\+_$1"`; do $fun; done
 }
-_help() { _plug $ISH_CONF_HELP }
-_test() { _plug $ISH_CONF_TEST }
-_init() { _plug $ISH_CONF_INIT }
-_exit() { _plug $ISH_CONF_EXIT }
+_help() { _plug $ISH_CONF_HELP; }
+_test() { _plug $ISH_CONF_TEST; }
+_init() { _plug $ISH_CONF_INIT; }
+_exit() { _plug $ISH_CONF_EXIT; }
 # _init; trap _exit EXIT
 
+## 8.模块接口
 ish_help() {
-    echo "usage: $(_color green ish mod/file_fun arg...)"
-    echo "       auto download $(_color underline mod) and auto load $(_color underline file) and then call the $(_color underline fun)"
-    echo "       demo: ish github.com/shylinux/shell/base.cli.os_os_system"
-    echo
-    echo "usage: $(_color cyan ish mod key arg...)"
-    echo "       get module of $(_color underline key)"
-    echo
-    echo "usage: $(_color cyan ish run fun arg...)"
-    echo "       call function $(_color underline fun) in the script $(_color bold \${ISH_CTX_SCRIPT})"
-    echo
-    echo "usage: $(_color blue ish get key \[value\])"
-    echo "       get value of variable $(_color underline key) in the script $(_color bold \${ISH_CTX_SCRIPT}) or default $(_color underline value)"
-    echo
-    echo "usage: $(_color purple ish set key value)"
-    echo "       set $(_color underline value) of variable $(_color underline key) in the script $(_color bold \${ISH_CTX_SCRIPT})"
-    echo
-    echo "usage: $(_color red ish def key value)"
-    echo "       set default $(_color underline value) of variable $(_color underline key) in the script $(_color bold \${ISH_CTX_SCRIPT})"
+    if [ "$1" = "" ]; then
+        echo -e "usage: $(_color green ish mod/file_fun arg...)"
+        echo -e "       auto download $(_color underline mod) and auto load $(_color underline file) and then call the $(_color underline fun)"
+        echo -e "       demo: ish github.com/shylinux/shell/base.cli.os_os_system"
+        echo
+        echo -e "usage: $(_color cyan ish mod key arg...)"
+        echo -e "       get module of $(_color underline key)"
+        echo
+        echo -e "usage: $(_color cyan ish run fun arg...)"
+        echo -e "       call function $(_color underline fun) in the script $(_color bold \${ISH_CTX_SCRIPT})"
+        echo
+        echo -e "usage: $(_color blue ish get key \[value\])"
+        echo -e "       get value of variable $(_color underline key) in the script $(_color bold \${ISH_CTX_SCRIPT}) or default $(_color underline value)"
+        echo
+        echo -e "usage: $(_color purple ish set key value)"
+        echo -e "       set $(_color underline value) of variable $(_color underline key) in the script $(_color bold \${ISH_CTX_SCRIPT})"
+        echo
+        echo -e "usage: $(_color red ish def key value)"
+        echo -e "       set default $(_color underline value) of variable $(_color underline key) in the script $(_color bold \${ISH_CTX_SCRIPT})"
+    fi
 }
 ish() {
     [ "$1" = "" ] && ish_help && return
-    case "$1" in; get|set|def) ish_ctx_script "$@"; return;; esac
-    case "$1" in; run) shift && ish_ctx_script "$@"; return;; esac
-    case "$1" in; mod) shift && _meta "$@"; return;; esac
+    case "$1" in get|set|def) ish_ctx_script "$@"; return;; esac
+    case "$1" in run) shift && ish_ctx_script "$@"; return;; esac
+    case "$1" in mod) shift && _meta "$@"; return;; esac
 
     local fun=${ISH_CTX_SCRIPT}_$(_name $1)
     declare -f $fun >/dev/null && shift && $fun $@ && return

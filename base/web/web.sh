@@ -17,6 +17,9 @@ ${ISH_CTX_SCRIPT}_request() { _meta $0
 ${ISH_CTX_SCRIPT}_help() { _meta $0
     ish run request /code/zsh/help
 }
+${ISH_CTX_SCRIPT}_ice() { _meta $0
+    ish run request /code/zsh/ice -F "sub=$(ish run word "$*")"
+}
 ${ISH_CTX_SCRIPT}_info() { _meta $0
     echo "dev: $(ish get dev)"
     echo "sid: $(ish get sid)"

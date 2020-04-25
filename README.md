@@ -1,9 +1,9 @@
 # intshell
-INTSHELL alias for in the shell, a plugin manager
+INTSHELL alias for in the shell, a plugin manager system
 
 ## Abort
 
-plug.sh allows you to...
+INTSHELL allows you to...
 
 - keep track of and configure your plugins right in the .ish/pluged/
 - install configured plugins (a.k.a. scripts/bundle)
@@ -11,7 +11,7 @@ plug.sh allows you to...
 - search by name all available scripts
 - clean unused plugins up
 
-plug.sh automatically...
+INTSHELL automatically...
 
 - clone the repos if the plugins don't exists
 - load the script if the plugins don't source
@@ -19,18 +19,17 @@ plug.sh automatically...
 - regenerates help tags after installing and updating
 
 ## Quick Start
-### 1. Set up plug.sh
+### 1. Set up INTSHELL
 
 ```sh
-git clone https://github.com/shylinux/shell.git ~/.ish
+git clone https://github.com/shylinux/intshell.git ~/.ish
 ```
 
 ### 2. Configure Plugins:
-Put this at the bottom of your .bashrc to use plug.sh.
+Put this at the bottom of your .bashrc to use INTSHELL
 ```sh
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
     require conf.sh
-    require as miss github.com/shylinux/shell misc/miss/miss.sh
    # ... add other plugins
 fi
 
@@ -39,22 +38,22 @@ fi
 ### 3. Use Plugins:
 **use by auto load**
 ```sh
-$ ish github.com/shylinux/shell/base.cli.os_os_system
+$ ish github.com/shylinux/intshell/base.cli.os_os_system
 GNU/Linux
 
 ```
 
 **use by manual load**
 ```sh
-$ require as demo github.com/shylinux/shell base/cli/os.sh
+$ require github.com/shylinux/intshell base/cli/os.sh
 ```
 
 after load os.sh, you call all the function directly
 ```sh
-$ ish_demo_os_system
+$ ish_ctx_os_system
 GNU/Linux
 
-$ ish_demo_os_kernel
+$ ish_ctx_os_kernel
 Linux
 
 ```
