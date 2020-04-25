@@ -1,11 +1,15 @@
 #!/bin/sh
 
-require as tmux tmux/tmux.sh
+require tmux/tmux.sh
+require miss/miss.sh
+ish_log_debug $(pwd)
+require ${ISH_CONF_TASK}/$ISH_CONF_MISS
+# require $ISH_CONF_MISS
+# require $ISH_CONF_MISS
 
-require as miss misc/miss/miss.sh
-require as miss ${ISH_CONF_TASK}/$ISH_CONF_MISS
-
-require as note misc/note/note.sh
-require as note ${ISH_CONF_TASK}/$ISH_CONF_NOTE
-
+# require misc/miss/miss.sh
+#
+# require misc/note/note.sh
+# require ${ISH_CONF_TASK}/$ISH_CONF_NOTE
+#
 

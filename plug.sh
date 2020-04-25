@@ -21,8 +21,8 @@
 ## 1.场景化
 ISH_CONF_ERR=${ISH_CONF_ERR:="/dev/stderr"}
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
-# ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source bench debug test"}
-ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="bench debug test"}
+ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source debug test"}
+# ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="info debug test"}
 
 ISH_CONF_TASK=$PWD
 ISH_CONF_WORK=${ISH_CONF_WORK:="~/work"}
@@ -30,8 +30,9 @@ ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 
 ISH_CONF_PATH=$PWD/.ish/pluged
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
-ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
+ISH_CONF_DEV=${ISH_CONF_DEV:="localhost:9020"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
+ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
 ISH_CONF_HELP=${ISH_CONF_HELP:="help"}
 ISH_CONF_TEST=${ISH_CONF_TEST:="test"}
 ISH_CONF_INIT=${ISH_CONF_INIT:="init"}
@@ -63,12 +64,19 @@ ish_show() {
         -time) echo -n "$(date +"%Y-%m-%d %H:%M:%S")";;
         *)
             local k=$1 && [ "${k:0:1}" = "-" ] && shift
-            local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null) && [ "$color" != "" ]
+            local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
             [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color$1$ISH_SHOW_COLOR_end" || echo -n "$1" 
             ;;
     esac; [ "$#" -gt "0" ] && shift && echo -n " "; done; echo
 }
 ## 4.结构化
+ish_list_parse=$(cat <<END
+    for p in \$(eval "echo \\$\$0_list"); do
+        local name=\${p%%=*} && local value=\${p#\$name} && value=\${value#=}
+        eval "local \$name=\$value && [ \"\$1\" != \"\" ] && \$name=\$1 && shift"
+    done
+END
+)
 ish_list() {
     echo
 }
@@ -99,11 +107,10 @@ ish_log_conf() { ish_log "conf" $@; }
 ish_log_eval() { ish_log "eval" $@; }
 ish_log_test() { ish_log "test" $@; }
 ish_log_info() {
-    local name=$1 info="" && shift
-    while [ "$#" -gt "0" ]; do
-        info=$info"$1: $2" && shift 2
+    local info="" && while [ "$#" -gt "0" ]; do
+        info=$info"$1: $2 " && shift 2
     done
-    ish_log $name $info
+    ish_log info $info
 }
 ish_log_debug() { ish_log "debug" $@; }
 ish_log_source() { ish_log "source" $@; }
@@ -238,7 +245,8 @@ _help() { _plug $ISH_CONF_HELP; }
 _test() { _plug $ISH_CONF_TEST; }
 _init() { _plug $ISH_CONF_INIT; }
 _exit() { _plug $ISH_CONF_EXIT; }
-# _init; trap _exit EXIT
+trap _exit EXIT
+# _init;
 
 ## 8.模块接口
 ish_help() {

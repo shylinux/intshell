@@ -1,6 +1,6 @@
 #!/bin/sh
 
-${ISH_CTX_SCRIPT}_count() { _meta $0
+ish_ctx_cli_miss_count() { _meta $0
     local prefix="" num=1 && while [ "$#" -gt 0 ]; do
         case "$1" in
             prepare) prefix="$2";;
@@ -12,7 +12,7 @@ ${ISH_CTX_SCRIPT}_count() { _meta $0
     done
 }
 
-${ISH_CTX_SCRIPT}_create() { _meta $0
+ish_ctx_cli_miss_create() {
     tmux has-session -t miss &>/dev/null && return
 
     tmux new-session -d -s miss -n shy
@@ -23,7 +23,7 @@ ${ISH_CTX_SCRIPT}_create() { _meta $0
     tmux send-keys -t miss:shy.2 "bin/ice.sh start serve shy" Enter
     tmux send-keys -t miss:shy.1 "vim" Enter
 }
-${ISH_CTX_SCRIPT}_attach() { _meta $0
+ish_ctx_cli_miss_attach() {
     script create
     tmux attach-session -t miss
 }

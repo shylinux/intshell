@@ -6,8 +6,8 @@ ish_help_show() {
         key="$1" && shift && value=$1
         case $key in
             usage)
-                local color=$(_eval "echo \${ISH_SHOW_COLOR_${value:1}}") && [ "$color" != "" ] && shift && value=$1
-                [ "$ISH_USER_COLOR" = "true" ] && echo "$key: $color$value$ISH_SHOW_COLOR_end" || echo "$key: $value" 
+                local k=$1 && [ "${k:0:1}" = "-" ] && shift && local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+                [ "$ISH_USER_COLOR" = "true" ] && echo -e "$key: $color$1$ISH_SHOW_COLOR_end" || echo "$key: $1" 
                 ;;
             index) echo "$((index++)): $value" ;;
             "") echo "$tab  $value";;
