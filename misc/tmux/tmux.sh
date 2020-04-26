@@ -4,6 +4,18 @@ ish_ctx_cli_tmux_send() {
     local target=$1 && shift
     tmux send-key -t $target "$@"
 }
+ish_ctx_cli_tmux_split() {
+    local target=$(tmux split-window -dP)
+    ish_ctx_cli_tmux_send $target "$@"
+}
+ish_ctx_cli_tmux_wait() {
+    while true; do
+        line=$(tmux capture-pane -pt $1 |sed '/^$/d' |tail -n1)
+        [ "$(echo $line | sed -n "/$2/p")" != "" ] && break
+        sleep 1
+    done
+}
+
 ish_ctx_cli_tmux_init() {
     ish_ctx_cli_alias t "tmux attach"
     ish_ctx_cli_alias ta "tmux attach -t"
@@ -19,10 +31,5 @@ ish_ctx_cli_tmux_sessions() {
 }
 ish_ctx_cli_tmux_windows() { tmux list-windows; }
 ish_ctx_cli_tmux_panes() { tmux list-panes; }
-
-ish_ctx_cli_tmux_split() {
-    local target=$(tmux split-window -dP)
-    tmux send-key -t $target "$@"
-}
 
 ish_ctx_cli_tmux_init

@@ -1,10 +1,6 @@
 #!/bin/sh
 
 
-name=$(hostname -s)
-name=${name##*-}
-PS1="\!@$name[\t]\W\$ "
-
 ish_ctx_cli_shell() {
     cat /proc/$$/cmdline|sed 's/-//'
 }
@@ -21,3 +17,7 @@ ish_ctx_cli_alias() {
     alias $1="$2"
 }
 
+name=$(hostname -s)
+name=${name##*-}
+
+PS1="\\!@$name[\\t]\\W\\$ "
