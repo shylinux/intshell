@@ -70,13 +70,15 @@ ish_show() {
     esac; [ "$#" -gt "0" ] && shift && echo -n " "; done; echo
 }
 ## 4.结构化
-ish_list_parse=$(cat <<END
-    for p in \$(eval "echo \\$\$0_list"); do
-        local name=\${p%%=*} && local value=\${p#\$name} && value=\${value#=}
-        eval "local \$name=\$value && [ \"\$1\" != \"\" ] && \$name=\$1 && shift"
-    done
-END
-)
+ish_list_parse='for _p in $(ish_get $prefix list); do
+    local _name=${_p%%=*} && local _value=${_p#$_name} && _value=${_value#=}
+    eval "local $_name=$(ish_get $prefix $_name)"
+    [ "$1" != "" ] && eval "$_name=$1"
+    [ \"$(eval "echo \$$_name")\" = "" ] || eval "$_name=$_value"
+    eval "${prefix}_$_name=$_value"
+    shift
+done'
+
 ish_list() {
     echo
 }
@@ -285,4 +287,32 @@ ish() {
     local fun=${file#*_} && [ "$fun" = "$file" ] && fun="" || file=${file%_$fun}
     file=${file//./\/}
     [ "$mod" != "" ] && ISH_CTX_MODULE=$(_name ish_$mod) ISH_CTX_SCRIPT=$(_name ish_$mod) ish_ctx_script run "${mod}" "${file}" "${fun}" $@ || ish_ctx_script run "${mod}" "${file}" "${fun}" $@
+}
+ish_get() {
+    local name=$1 value="" && shift && while [ "$name" != "" ]; do
+        value=$(eval "echo \$${name}_$1") && [ "$value" != "" ] && break
+        name=${name%_*}
+        [ "$name" = "$ISH_CONF_PRE" ] && break
+    done
+    echo $value
+}
+ish_def() {
+    local prefix=$1 && shift
+    while [ "$#" -gt "0" ]; do
+        local name=${prefix}_$1 && shift && local value=$(eval "echo \$${name}")
+        [ "$value" = "" ] && eval "${name}=$1"
+        eval "echo \$${name}"
+        shift
+    done
+}
+ish_arg() {
+    local prefix=$1 list=$2 && shift
+    for _l in $list; do
+        local value=$(ish_get $prefix $name)
+
+
+    done
+
+    name=$2 && shift 2
+    [ "$1" != "" ] && value=$1
 }

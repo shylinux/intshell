@@ -15,3 +15,5 @@ ish_ctx_date_second() { date +"%S"; }
 ish_ctx_date_weekday() { date +"%w"; }
 ish_ctx_date_timezone() { date +"%z"; }
 
+ish_ctx_date_filename() { date +"%Y%m%d_%H%M%S"; }
+

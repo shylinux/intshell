@@ -1,6 +1,12 @@
 #!/bin/sh
 
 
+ish_ctx_cli_mkfile() {
+    local name=$1
+    mkdir -p ${name%/*}
+    touch $1
+    echo $name
+}
 ish_ctx_cli_shell() {
     cat /proc/$$/cmdline|sed 's/-//'
 }
@@ -17,7 +23,5 @@ ish_ctx_cli_alias() {
     alias $1="$2"
 }
 
-name=$(hostname -s)
-name=${name##*-}
-
+name=$(hostname -s) && name=${name##*-}
 PS1="\\!@$name[\\t]\\W\\$ "
