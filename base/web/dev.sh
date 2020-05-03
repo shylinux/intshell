@@ -33,7 +33,6 @@ ish_ctx_dev_ice() {
     ish_ctx_dev_request /code/zsh/ish sub "$*"
 }
 
-
 ish_ctx_dev_upload_help() {
     ish_help_show usage "ish_ctx_dev_upload file"
 }
