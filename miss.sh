@@ -5,6 +5,8 @@ ish_miss_ice_bin="bin/ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
 ish_miss_main_go="src/main.go"
 ish_miss_init_shy="etc/init.shy"
+ish_miss_order_js="usr/publish/order.js"
+
 ish_miss_prepare() {
     [ -d ${ish_miss_main_go%/*} ] || mkdir -p ${ish_miss_main_go%/*}
     [ -f $ish_miss_main_go ] || cat >> $ish_miss_main_go <<END
@@ -81,12 +83,21 @@ ish_miss_volcanos_prepare
 # ish_miss_intshell_prepare
 
 END
+
     [ -f go.mod ] || go mod init ${PWD##*/}
     make
 }
 ish_miss_volcanos_prepare() {
     require github.com/shylinux/volcanos
     [ -d usr/volcanos ] || ln -s ../.ish/pluged/github.com/shylinux/volcanos usr/volcanos
+
+    [ -d ${ish_miss_order_js%/*} ] || mkdir -p ${ish_miss_order_js%/*}
+    [ -f $ish_miss_order_js ] || cat >> $ish_miss_order_js <<END
+function Engine(event, can, msg, pane, cmds, cb) {
+    return false
+}
+END
+
 }
 ish_miss_icebergs_prepare() {
     require github.com/shylinux/icebergs
@@ -96,7 +107,6 @@ ish_miss_intshell_prepare() {
     [ -d usr ] || mkdir usr
     [ -d usr/intshell ] || ln -s ../.ish/pluged/github.com/shylinux/intshell usr/intshell
 }
-
 
 ish_miss_create() {
     [ -d $1 ] || mkdir -p $1
