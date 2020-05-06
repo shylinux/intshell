@@ -7,9 +7,35 @@ ish_miss_main_go="src/main.go"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_order_js="usr/publish/order.js"
 
+ish_miss_create_path() {
+    local target=$1 && [ -d ${target%/*} ] && return
+    [ -d ${target%/*} != ${target} ] && mkdir -p ${target%/*}
+}
+ish_miss_create_link() {
+    [ -e $1 ] && return || ish_log_debug "create link $1 => $2"
+    ish_miss_create_path && ln -s $2 $1
+}
+ish_miss_create_file() {
+    [ -e $1 ] && return || ish_log_debug "create file $1"
+    ish_miss_create_path && cat > $1
+}
+
 ish_miss_prepare() {
-    [ -d ${ish_miss_main_go%/*} ] || mkdir -p ${ish_miss_main_go%/*}
-    [ -f $ish_miss_main_go ] || cat >> $ish_miss_main_go <<END
+    ish_miss_create_file $ish_miss_miss_sh <<END
+[ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
+[ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
+# declare -f ish_help_repos &>/dev/null || require conf.sh
+
+require help.sh
+require miss.sh
+
+ish_miss_volcanos_prepare
+# ish_miss_icebergs_prepare
+# ish_miss_intshell_prepare
+END
+}
+ish_miss_compile_prepare() {
+    ish_miss_create_file $ish_miss_main_go <<END
 package main
 
 import (
@@ -22,14 +48,14 @@ import (
 func main() { println(ice.Run()) }
 END
 
-    [ -f Makefile ] || cat >> Makefile  << END
+    ish_miss_create_file Makefile << END
 all:
 	@echo && date
 	go build -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
 END
-
-    [ -d ${ish_miss_ice_sh%/*} ] || mkdir -p ${ish_miss_ice_sh%/*}
-    [ -f $ish_miss_ice_sh ] || cat >> $ish_miss_ice_sh <<END
+}
+ish_miss_install_prepare() {
+    ish_miss_create_file $ish_miss_ice_sh <<END
 #! /bin/sh
 
 export PATH=\${PWD}/bin:\${PWD}:\$PATH
@@ -56,8 +82,7 @@ cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd=serve
 \$cmd \$*
 END
 
-    [ -d ${ish_miss_init_shy%/*} ] || mkdir -p ${ish_miss_init_shy%/*}
-    [ -f $ish_miss_init_shy ] || cat >> $ish_miss_init_shy <<END
+    ish_miss_create_file $ish_miss_init_shy <<END
 ~cli
 
 ~aaa
@@ -69,43 +94,27 @@ END
 
 END
 
-    [ -d ${ish_miss_miss_sh%/*} ] || mkdir -p ${ish_miss_miss_sh%/*}
-    [ -f $ish_miss_miss_sh ] || cat >> $ish_miss_miss_sh <<END
-[ -f ~/.ish/plug.sh ] || [ -f usr/intshell/plug.sh ] || git clone https://github.com/shylinux/intshell usr/intshell
-[ "\$ISH_CONF_PRE" != "" ] || source usr/intshell/plug.sh || source ~/.ish/plug.sh
-# declare -f ish_help_repos &>/dev/null || require conf.sh
-
-require help.sh
-require miss.sh
-
-ish_miss_volcanos_prepare
-# ish_miss_icebergs_prepare
-# ish_miss_intshell_prepare
-
-END
-
     [ -f go.mod ] || go mod init ${PWD##*/}
-    make
 }
+
 ish_miss_volcanos_prepare() {
     require github.com/shylinux/volcanos
-    [ -d usr/volcanos ] || ln -s ../.ish/pluged/github.com/shylinux/volcanos usr/volcanos
+    ish_miss_create_link usr/volcanos ../.ish/pluged/github.com/shylinux/volcanos
 
-    [ -d ${ish_miss_order_js%/*} ] || mkdir -p ${ish_miss_order_js%/*}
-    [ -f $ish_miss_order_js ] || cat >> $ish_miss_order_js <<END
-function Engine(event, can, msg, pane, cmds, cb) {
-    return false
-}
+    ish_miss_create_file $ish_miss_order_js <<END
+Volcanos("onengine", {
+    remote: function(event, can, msg, pane, cmds, cb) {
+        return false
+    }
+}, [], function(can) {})
 END
-
 }
 ish_miss_icebergs_prepare() {
     require github.com/shylinux/icebergs
-    [ -d usr/icebergs ] || ln -s ../.ish/pluged/github.com/shylinux/icebergs usr/icebergs
+    ish_miss_create_link usr/icebergs ../.ish/pluged/github.com/shylinux/icebergs
 }
 ish_miss_intshell_prepare() {
-    [ -d usr ] || mkdir usr
-    [ -d usr/intshell ] || ln -s ../.ish/pluged/github.com/shylinux/intshell usr/intshell
+    ish_miss_create_link usr/intshell ../.ish/
 }
 
 ish_miss_create() {
