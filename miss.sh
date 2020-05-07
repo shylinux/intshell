@@ -5,12 +5,37 @@ export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
 
+require show.sh
+require help.sh
+
 ish_miss_ice_sh="bin/ice.sh"
 ish_miss_ice_bin="bin/ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
 ish_miss_main_go="src/main.go"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_order_js="usr/publish/order.js"
+
+ish_miss_help() {
+    ish_help_show \
+        usage -g "ish_miss_prepare $(ish_show -y repos)" \
+                "" "下载代码" \
+                "" "" \
+        usage -y "ish_miss_restart" \
+                "" "重启服务" \
+                "" "" \
+        usage -y "ish_miss_serve $(ish_show -y arg...)" \
+                "" "重启服务" \
+                "" "" \
+        usage -g "ish_miss_start $(ish_show -y arg...)" \
+                "" "启动服务" \
+                "" "" \
+        usage -r "ish_miss_stop" \
+                "" "停止服务" \
+                "" "" \
+        usage -g "ish_miss_log" \
+                "" "查看日志" \
+    end
+}
 
 ish_miss_create_path() {
     local target=$1 && [ -d ${target%/*} ] && return
@@ -47,15 +72,24 @@ ish_miss_prepare_install
 # ish_miss_prepare_intshell
 END
 }
-ish_miss_prepare_list() {
+ish_miss_prepare_help() {
     ish_help_show \
-        index compile \
-        index install \
-        index volcanos \
-        index icebergs \
-        index intshell \
-        index toolkits \
-        index learning \
+        usage -g "ish_miss_prepare_compile" \
+                "" "生成源码" \
+        usage -r "ish_miss_prepare_install" \
+                "" "生成脚本" \
+                "" "" \
+        usage -g "ish_miss_prepare_volcanos" \
+                "" "前端框架" \
+        usage -y "ish_miss_prepare_icebergs" \
+                "" "后端框架" \
+        usage -r "ish_miss_prepare_intshell" \
+                "" "终端框架" \
+                "" "" \
+        usage -g "ish_miss_prepare_toolkits" \
+                "" "工具代码" \
+        usage -g "ish_miss_prepare_learning" \
+                "" "知识体系" \
     end
 }
 ish_miss_prepare_compile() {

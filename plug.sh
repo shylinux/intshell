@@ -18,7 +18,7 @@
 # $ ish_help_require
 # $ ish_help_ish
 
-## 1.场景化
+## 1.场景化 # {
 ISH_CONF_ERR=${ISH_CONF_ERR:="/dev/stderr"}
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
 ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source debug test"}
@@ -43,8 +43,8 @@ ish_conf() {
     [ "$#" -gt "1" ] && eval "ISH_CONF_$1=$2"
     echo $(eval "echo \$ISH_CONF_$1")
 }
-
-## 2.个性化
+# }
+## 2.个性化 # {
 ISH_USER_EMAIL=${ISH_USER_EMAIL:="shylinuxc@gmail.com"}
 ISH_USER_COLOR=${ISH_USER_COLOR:="true"}
 ISH_USER_ERR_COUNT=0
@@ -54,9 +54,10 @@ ish_user() {
 ish_user_err_clear() {
     ISH_USER_ERR_COUNT=0
 }
-
-## 3.可视化
+# }
+## 3.可视化 # {
 ISH_SHOW_COLOR_g="\e[32m"
+ISH_SHOW_COLOR_end="\e[0m"
 ish_show() {
     while [ "$#" -gt "0" ]; do case $1 in
         -username) echo -n "$(whoami)";;
@@ -64,26 +65,33 @@ ish_show() {
         -date) echo -n "$(date +"%Y-%m-%d")";;
         -time) echo -n "$(date +"%Y-%m-%d %H:%M:%S")";;
         *)
-            local k=$1 && [ "${k:0:1}" = "-" ] && shift
-            local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
-            [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color$1$ISH_SHOW_COLOR_end" || echo -n "$1" 
+            if local k=$1 && [ "${k:0:1}" = "-" ] ; then
+                local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+                # [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color$1$ISH_SHOW_COLOR_end" || echo -n "$1" 
+                [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color\b"
+            else
+                echo -ne "$1$ISH_SHOW_COLOR_end"
+            fi
             ;;
     esac; [ "$#" -gt "0" ] && shift && echo -n " "; done; echo
 }
-## 4.结构化
-ish_list_parse='for _p in $(ish_get $prefix list); do
+# }
+## 4.结构化 # {
+ish_list_parse='for _p in $(ish_get $prefix list); do #{
     local _name=${_p%%=*} && local _value=${_p#$_name} && _value=${_value#=}
     eval "local $_name=$(ish_get $prefix $_name)"
     [ "$1" != "" ] && eval "$_name=$1"
     [ \"$(eval "echo \$$_name")\" = "" ] || eval "$_name=$_value"
     eval "${prefix}_$_name=$_value"
     shift
-done'
+done #}'
 
 ish_list() {
     echo
 }
-## 5.变量
+# }
+
+## 1.模块变量 # {
 ISH_CTX_ORDER=${ISH_CTX_ORDER:=0}
 ISH_CTX_MODULE=${ISH_CONF_PRE}_ctx
 ISH_CTX_SCRIPT=${ISH_CTX_MODULE}
@@ -92,7 +100,8 @@ ish_ctx() {
     echo
 
 }
-## 6.日志
+# }
+## 2.模块日志 # {
 ISH_LOG_ERR=${ISH_CONF_ERR}
 ISH_LOG_INFO=${ISH_CONF_LOG}
 ish_log() {
@@ -118,8 +127,8 @@ ish_log_info() {
 ish_log_debug() { ish_log "debug" $@; }
 ish_log_source() { ish_log "source" $@; }
 ish_log_require() { ish_log "require" $@; }
-
-## 7.模块加载
+# }
+## 3.模块加载 # {
 require_help() {
     echo -e "usage: $(_color green require \[as name\] file...)"
     echo -e "       source script $(_color underline file) as $(_color underline name)"
@@ -272,8 +281,8 @@ _init() { _plug $ISH_CONF_INIT; }
 _exit() { _plug $ISH_CONF_EXIT; }
 trap _exit EXIT
 # _init;
-
-## 8.模块接口
+# }
+## 4.模块接口 # {
 ish_help() {
     if [ "$1" = "" ]; then
         echo -e "usage: $(_color green ish mod/file_fun arg...)"
@@ -339,3 +348,5 @@ ish_arg() {
     name=$2 && shift 2
     [ "$1" != "" ] && value=$1
 }
+# }
+

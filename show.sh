@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ISH_SHOW_COLOR_arg="\e[33;4m"
+
 ISH_SHOW_COLOR_r="\e[31m"
 ISH_SHOW_COLOR_g="\e[32m"
 ISH_SHOW_COLOR_y="\e[33m"
