@@ -140,14 +140,6 @@ ish_miss_prepare_icebergs() {
 ish_miss_prepare_intshell() {
     ish_miss_create_link usr/intshell $(require_path ../../)
 }
-ish_miss_prepare_toolkits() {
-    require github.com/shylinux/toolkits
-    ish_miss_create_link usr/toolkits  $(require_path shylinux/toolkits)
-}
-ish_miss_prepare_learning() {
-    require github.com/shylinux/learning
-    ish_miss_create_link usr/learning  $(require_path shylinux/learning)
-}
 
 ish_miss_restart() {
     [ -e $ctx_pid ] && kill -2 `cat $ctx_pid` || echo
