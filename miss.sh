@@ -1,5 +1,10 @@
 #!/bin/sh
 
+export PATH=${PWD}/bin:${PWD}:$PATH
+export ctx_pid=${ctx_pid:=var/run/ice.pid}
+export ctx_log=${ctx_log:=bin/boot.log}
+export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
+
 ish_miss_ice_sh="bin/ice.sh"
 ish_miss_ice_bin="bin/ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
@@ -9,18 +14,23 @@ ish_miss_order_js="usr/publish/order.js"
 
 ish_miss_create_path() {
     local target=$1 && [ -d ${target%/*} ] && return
-    [ -d ${target%/*} != ${target} ] && mkdir -p ${target%/*}
+    [ ${target%/*} != ${target} ] && mkdir -p ${target%/*} || return 0
 }
 ish_miss_create_link() {
-    [ -e $1 ] && return || ish_log_debug "create link $1 => $2"
-    ish_miss_create_path && ln -s $2 $1
+    [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
+    ish_miss_create_path $1 && ln -s $2 $1
 }
 ish_miss_create_file() {
-    [ -e $1 ] && return || ish_log_debug "create file $1"
-    ish_miss_create_path && cat > $1
+    [ -e $1 ] && return || ish_log_debug -g "create file ${PWD} $1"
+    ish_miss_create_path $1 && cat > $1
 }
 
 ish_miss_prepare() {
+    for name in "$@"; do
+        require github.com/shylinux/$name
+        ish_miss_create_link usr/$name $(require_path shylinux/$name)
+    done
+
     ish_miss_create_file $ish_miss_miss_sh <<END
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
@@ -29,12 +39,26 @@ ish_miss_prepare() {
 require help.sh
 require miss.sh
 
-ish_miss_volcanos_prepare
-# ish_miss_icebergs_prepare
-# ish_miss_intshell_prepare
+ish_miss_prepare_compile
+ish_miss_prepare_install
+
+# ish_miss_prepare_volcanos
+# ish_miss_prepare_icebergs
+# ish_miss_prepare_intshell
 END
 }
-ish_miss_compile_prepare() {
+ish_miss_prepare_list() {
+    ish_help_show \
+        index compile \
+        index install \
+        index volcanos \
+        index icebergs \
+        index intshell \
+        index toolkits \
+        index learning \
+    end
+}
+ish_miss_prepare_compile() {
     ish_miss_create_file $ish_miss_main_go <<END
 package main
 
@@ -54,7 +78,7 @@ all:
 	go build -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
 END
 }
-ish_miss_install_prepare() {
+ish_miss_prepare_install() {
     ish_miss_create_file $ish_miss_ice_sh <<END
 #! /bin/sh
 
@@ -97,9 +121,9 @@ END
     [ -f go.mod ] || go mod init ${PWD##*/}
 }
 
-ish_miss_volcanos_prepare() {
+ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
-    ish_miss_create_link usr/volcanos ../.ish/pluged/github.com/shylinux/volcanos
+    ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
 
     ish_miss_create_file $ish_miss_order_js <<END
 Volcanos("onengine", {
@@ -109,18 +133,45 @@ Volcanos("onengine", {
 }, [], function(can) {})
 END
 }
-ish_miss_icebergs_prepare() {
+ish_miss_prepare_icebergs() {
     require github.com/shylinux/icebergs
-    ish_miss_create_link usr/icebergs ../.ish/pluged/github.com/shylinux/icebergs
+    ish_miss_create_link usr/icebergs  $(require_path shylinux/icebergs)
 }
-ish_miss_intshell_prepare() {
-    ish_miss_create_link usr/intshell ../.ish/
+ish_miss_prepare_intshell() {
+    ish_miss_create_link usr/intshell $(require_path ../../)
+}
+ish_miss_prepare_toolkits() {
+    require github.com/shylinux/toolkits
+    ish_miss_create_link usr/toolkits  $(require_path shylinux/toolkits)
+}
+ish_miss_prepare_learning() {
+    require github.com/shylinux/learning
+    ish_miss_create_link usr/learning  $(require_path shylinux/learning)
+}
+
+ish_miss_restart() {
+    [ -e $ctx_pid ] && kill -2 `cat $ctx_pid` || echo
+}
+ish_miss_serve() {
+    ish_miss_stop
+    ish_miss_start serve $@
+}
+ish_miss_start() {
+    while true; do
+        date && ice.bin $@ 2>$ctx_log && echo -e "\n\nrestarting..." || break
+    done
+}
+ish_miss_stop() {
+    [ -e $ctx_pid ] && kill -3 `cat $ctx_pid` || echo
+}
+ish_miss_log() {
+    tail -f $ctx_log
 }
 
 ish_miss_create() {
-    [ -d $1 ] || mkdir -p $1
-    cd $1
-    # ish_miss_prepare
+    local name=$ISH_CONF_WORK/$1 && [ -d $name ] && cd $name && return
+    name=$ISH_CONF_WORK/$(date +%Y%m%d)_$1 && mkdir -p $name && cd $name
+    ish_miss_prepare && source etc/miss.sh
 }
 ish_miss_docker() {
     local name=${PWD##*/}

@@ -5,17 +5,18 @@ ish_help_show() {
     while [ "$#" -gt "0" ] ; do
         key="$1" && shift && value=$1
         case $key in
-            title)
-                local k=$1 && [ "${k:0:1}" = "-" ] && shift && local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
-                [ "$ISH_USER_COLOR" = "true" ] && echo -e "$color$1$ISH_SHOW_COLOR_end" || echo "$1" 
-                ;;
-            usage)
-                local k=$1 && [ "${k:0:1}" = "-" ] && shift && local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
-                [ "$ISH_USER_COLOR" = "true" ] && echo -e "$key: $color$1$ISH_SHOW_COLOR_end" || echo "$key: $1" 
-                ;;
-            index) echo "$((index++)): $value" ;;
-            "") echo "$tab  $value";;
-            *) echo "$key: $value";;
+        end) return;;
+        title)
+            local k=$1 && [ "${k:0:1}" = "-" ] && shift && local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+            [ "$ISH_USER_COLOR" = "true" ] && echo -e "$color$1$ISH_SHOW_COLOR_end" || echo "$1" 
+            ;;
+        usage)
+            local k=$1 && [ "${k:0:1}" = "-" ] && shift && local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+            [ "$ISH_USER_COLOR" = "true" ] && echo -e "$key: $color$1$ISH_SHOW_COLOR_end" || echo "$key: $1" 
+            ;;
+        index) echo "$((index++)): $value" ;;
+        "") echo "$tab  $value";;
+        *) echo "$key: $value";;
         esac
         [ "$#" -gt "0" ] && shift && [ "$key" != "" ] && tab=${key//[^\ ]/\ }
     done

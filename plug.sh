@@ -25,7 +25,7 @@ ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source debug test"}
 # ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="info debug test"}
 
 ISH_CONF_TASK=$PWD
-ISH_CONF_WORK=${ISH_CONF_WORK:="~/work"}
+ISH_CONF_WORK=${ISH_CONF_WORK:=~/work}
 ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 
 ISH_CONF_PATH=$PWD/.ish/pluged
@@ -56,6 +56,7 @@ ish_user_err_clear() {
 }
 
 ## 3.可视化
+ISH_SHOW_COLOR_g="\e[32m"
 ish_show() {
     while [ "$#" -gt "0" ]; do case $1 in
         -username) echo -n "$(whoami)";;
@@ -130,6 +131,25 @@ require_help() {
     echo -e "       auto download $(_color underline mod) as $(_color underline name) and source $(_color bold \${ISH_CONF_INIT}\${ISH_CONF_TYPE}) file"
     echo
 }
+require_path() {
+    local name=$ISH_CONF_PATH/github.com/$1
+    [ -d $name ] && echo $name && return
+    local name=$ISH_CONF_ROOT/github.com/$1
+    [ -d $name ] && echo $name && return
+}
+require_list() {
+    # 加载脚本
+    for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
+        [ -d $p ] && for pp in $p/*; do
+            [ -d $pp ] && for owner in $pp/*; do
+                [ -d $owner ] && for repos in $owner/*; do
+                    echo $repos
+                done
+            done
+        done
+        [ "$ISH_CONF_PATH" = "$ISH_CONF_ROOT" ] && break
+    done
+}
 require() {
     # 解析参数
     [ -z "$1" ] && require_help && return
@@ -143,14 +163,16 @@ require() {
                     mkdir -p $ISH_CONF_PATH/$pp && wget $mod/$file -O "$ISH_CONF_PATH/$pp/$file"
                 fi; mod=$pp;;
         $ISH_CONF_HUB) [ -d "$ISH_CONF_ROOT/$mod/.git" ] || [ -d "$ISH_CONF_PATH/$mod/.git" ] || if true; then
+                    ish_log_debug -g "clone https://$mod => $ISH_CONF_PATH/$mod"
                     git clone https://$mod $ISH_CONF_PATH/$mod
                 fi;;
     esac
 
     # 加载脚本
-    [ -f "$mod" ] && __load "$name" $mod || for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
+    for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
         [ -f "${p%/*}/$mod" ] && __load "$name" ${p%/*}/$mod && break
         [ -f "$p/$mod" ] && __load "$name" $p/$mod && break
+        [ -f "$mod" ] && __load "$name" $mod && break
 
         [ -d "$p/$mod" ] && for i in $file; do
             __load "${name}" "$p/$mod/$i"
@@ -223,7 +245,8 @@ _load() {
 __load() {
     local name=$1 && shift 1 && local back=$PWD pre=$1 && [ -f "$pre" ] || return
     [ -d "${pre%/*}" ] && cd ${pre%/*}
-    ISH_CTX_MODULE=$(_name ish_${name}) ISH_CTX_SCRIPT=$(_name ish_${name}) _load "$@"
+    [ "$ISH_CTX_FILE" = "$1" ] && return
+    ISH_CTX_FILE=$1 ISH_CTX_MODULE=$(_name ish_${name}) ISH_CTX_SCRIPT=$(_name ish_${name}) _load "$@"
     cd $back
 }
 
