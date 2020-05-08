@@ -19,21 +19,24 @@ ish_miss_help() {
     ish_help_show \
         usage -g "ish_miss_prepare $(ish_show -y repos)" \
                 "" "下载代码" \
-                "" "" \
-        usage -y "ish_miss_restart" \
+        usage -r "ish_miss_restart" \
                 "" "重启服务" \
                 "" "" \
         usage -y "ish_miss_serve $(ish_show -y arg...)" \
                 "" "重启服务" \
-                "" "" \
         usage -g "ish_miss_start $(ish_show -y arg...)" \
                 "" "启动服务" \
-                "" "" \
         usage -r "ish_miss_stop" \
                 "" "停止服务" \
-                "" "" \
         usage -g "ish_miss_log" \
                 "" "查看日志" \
+                "" "" \
+        usage -g "ish_miss_create $(ish_show -y name)" \
+                "" "创建项目" \
+        usage -g "ish_miss_module $(ish_show -y name)" \
+                "" "创建模块" \
+        usage -g "ish_miss_docker $(ish_show -y name)" \
+                "" "创建容器" \
     end
 }
 
@@ -154,6 +157,19 @@ END
 
     [ -f go.mod ] || go mod init ${PWD##*/}
 }
+ish_miss_prepare_session() {
+    local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
+    ish_log_debug "session: $name"
+    if tmux new-session -d -s $name -n shy; then
+        tmux split-window -d -p 30 -t $name
+        tmux split-window -d -h -t ${name}:shy.2
+        tmux send-key -t ${name}:shy.2 ish_miss_log Enter
+        tmux send-key -t ${name}:shy.3 ish_miss_serve Enter
+    fi
+
+    [ "$TMUX" = "" ] && tmux attach -t $name
+
+}
 
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
@@ -198,6 +214,61 @@ ish_miss_create() {
     local name=$ISH_CONF_WORK/$1 && [ -d $name ] && cd $name && return
     name=$ISH_CONF_WORK/$(date +%Y%m%d)_$1 && mkdir -p $name && cd $name
     ish_miss_prepare && source etc/miss.sh
+}
+ish_miss_module() {
+    local name=$1 help=$2 && help=${help:=$name}
+
+    ish_miss_create_file src/$name/${name}.sh <<END
+ish_miss_$name() {
+    echo "hello $name world"
+}
+
+END
+
+    ish_miss_create_file src/$name/${name}.go <<END
+package $name
+
+import (
+	"github.com/shylinux/icebergs"
+	"github.com/shylinux/icebergs/core/code"
+	"github.com/shylinux/toolkits"
+)
+
+var Index = &ice.Context{Name: "$name", Help: "$help",
+	Caches: map[string]*ice.Cache{},
+	Configs: map[string]*ice.Config{
+		"$name": {Name: "$name", Help: "$help", Value: kit.Data()},
+	},
+	Commands: map[string]*ice.Command{
+		ice.ICE_INIT: {Hand: func(m *ice.Message, c *ice.Context, cmd string, arg ...string) {}},
+		ice.ICE_EXIT: {Hand: func(m *ice.Message, c *ice.Context, cmd string, arg ...string) {}},
+
+		"$name": {Name: "$name", Help: "$help", Hand: func(m *ice.Message, c *ice.Context, cmd string, arg ...string) {
+            m.Echo("hello $name world")
+		}},
+	},
+}
+
+func init() { code.Index.Register(Index, nil) }
+END
+
+    ish_miss_create_file src/$name/${name}.js <<END
+Volcanos("onimport", {help: "导入数据", list: [],
+    _init: function(can, msg, list, cb, target) {},
+})
+Volcanos("onaction", {help: "交互操作", list: [],
+    _init: function(can, msg, list, cb, target) {},
+})
+Volcanos("onexport", {help: "导出数据", list: [],
+    _init: function(can, msg, list, cb, target) {},
+})
+END
+
+    ish_miss_create_file src/$name/${name}.shy <<END
+chapter "$name"
+
+END
+
 }
 ish_miss_docker() {
     local name=${PWD##*/}

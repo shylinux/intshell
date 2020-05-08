@@ -248,7 +248,7 @@ _conf() {
 }
 _load() {
     local pre=$1 && shift
-    ish_log_source "$(_color green $pre "$@") -> $ISH_CTX_SCRIPT"
+    ish_log_source "$(_color g $pre "$@") -> $ISH_CTX_SCRIPT"
     source ${pre##*/} "$@" >/dev/null
 }
 __load() {
