@@ -54,8 +54,7 @@ ish_miss_create_file() {
 }
 
 ish_miss_prepare() {
-    for repos in "$@"; do
-        local name=${repos##*/}
+    for repos in "$@"; do local name=${repos##*/}
         [ "$name" = "$repos" ] && repos=shylinux/$name
         require github.com/$repos
         ish_miss_create_link usr/$name $(require_path $repos)
