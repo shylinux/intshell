@@ -54,9 +54,11 @@ ish_miss_create_file() {
 }
 
 ish_miss_prepare() {
-    for name in "$@"; do
-        require github.com/shylinux/$name
-        ish_miss_create_link usr/$name $(require_path shylinux/$name)
+    for repos in "$@"; do
+        local name=${repos##*/}
+        [ "$name" = "$repos" ] && repos=shylinux/$name
+        require github.com/$repos
+        ish_miss_create_link usr/$name $(require_path $repos)
     done
 
     ish_miss_create_file $ish_miss_miss_sh <<END
@@ -113,7 +115,7 @@ END
     ish_miss_create_file Makefile << END
 all:
 	@echo && date
-	go build -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
+	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
 END
 }
 ish_miss_prepare_install() {
@@ -179,28 +181,30 @@ ish_miss_prepare_volcanos() {
 
     ish_miss_create_file $ish_miss_order_js <<END
 Volcanos("onengine", { river: {
-    "one": {name: "第一组", storm: {
-        "hello": {name: "应用1", action: [
-            {name: "some", help: "some", inputs: [
-                {type: "text", name: "one"},
-                {type: "button", name: "one"},
+    "main": {name: "main", storm: {
+        "main": {name: "main", action: [
+            {name: "main", help: "main", inputs: [
+                {type: "text", name: "path", value: "src/main.shy"},
+                {type: "button", name: "查看", action: "auto"},
+                {type: "button", name: "返回"},
+            ], group: "web.wiki", index: "word", feature: {
+                display: "local/wiki/word",
+            }},
+        ]},
+        "hello": {name: "hello", action: [
+            {name: "hello", help: "hello", inputs: [
+                {type: "text", name: "one", value: "pwd"},
+                {type: "button", name: "执行", action: "auto"},
             ], engine: function(event, can, msg, pane, cmds, cb) {
                 msg.Echo("hello world")
                 typeof cb == "function" && cb(msg)
             }},
         ]},
-        "world": {name: "应用2", action: [
-            {name: "hello", help: "world", inputs: [
+        "world": {name: "world", action: [
+            {name: "world", help: "world", inputs: [
                 {type: "text", name: "one", value: "pwd"},
-                {type: "button", name: "one"},
+                {type: "button", name: "执行", action: "auto"},
             ], group: "cli", index: "system"},
-        ]},
-        "word": {name: "word", action: [
-            {name: "trans", help: "词汇", inputs: [
-                {type: "text", name: "word", value: "miss"},
-                {type: "text", name: "method", value: ""},
-                {type: "button", name: "翻译"},
-            ], group: "web.wiki.alpha", index: "trans"},
         ]},
     }},
 }, })
@@ -276,9 +280,14 @@ var Index = &ice.Context{Name: "$name", Help: "$help",
 func init() { code.Index.Register(Index, nil) }
 END
 
+    ish_miss_create_link usr/publish/${name}.js ../../src/$name/${name}.js
     ish_miss_create_file src/$name/${name}.js <<END
 Volcanos("onimport", {help: "导入数据", list: [],
-    _init: function(can, msg, list, cb, target) {},
+    _init: function(can, msg, list, cb, target) {
+        can.onappend.table(can, target, "table", msg)
+        can.onappend.board(can, target, "board", msg)
+        return typeof cb == "function" && cb(msg)
+    },
 })
 Volcanos("onaction", {help: "交互操作", list: [],
     _init: function(can, msg, list, cb, target) {},
