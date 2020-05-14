@@ -226,7 +226,6 @@ ish_miss_serve() {
 }
 ish_miss_start() {
     while true; do
-        echo $PATH
         date && ice.bin $@ 2>$ctx_log && echo -e "\n\nrestarting..." || break
     done
 }
