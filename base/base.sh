@@ -1,6 +1,5 @@
 #!/bin/sh
 
-require cli/os.sh
 require cli/cli.sh
 require cli/date.sh
 

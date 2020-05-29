@@ -9,3 +9,6 @@ require base/base.sh
 require core/core.sh
 require misc/misc.sh
 
+require device/info.sh
+require system/info.sh
+

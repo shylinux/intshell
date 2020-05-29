@@ -113,7 +113,7 @@ ish_log() {
 }
 ish_log_err() {
     let ISH_USER_ERR_COUNT=$ISH_USER_ERR_COUNT+1
-    ish_show -time "$@" >$ISH_LOG_ERR
+    ish_show -time error -r "$@" >$ISH_LOG_ERR
 }
 ish_log_conf() { ish_log "conf" $@; }
 ish_log_eval() { ish_log "eval" $@; }
@@ -179,15 +179,17 @@ require() {
 
     # 加载脚本
     for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
-        [ -f "${p%/*}/$mod" ] && __load "$name" ${p%/*}/$mod && break
-        [ -f "$p/$mod" ] && __load "$name" $p/$mod && break
-        [ -f "$mod" ] && __load "$name" $mod && break
+        [ -f "${p%/*}/$mod" ] && __load "$name" ${p%/*}/$mod && return
+        [ -f "$p/$mod" ] && __load "$name" $p/$mod && return
+        [ -f "$mod" ] && __load "$name" $mod && return
 
         [ -d "$p/$mod" ] && for i in $file; do
             __load "${name}" "$p/$mod/$i"
-        done && break
-        [ "$ISH_CONF_PATH" = "$ISH_CONF_ROOT" ] && break
+        done && return
+        [ "$ISH_CONF_PATH" = "$ISH_CONF_ROOT" ] && return
     done
+
+    ish_log_err "not found $p/$mod"
 }
 
 ish_ctx_module() { # 模块接口
