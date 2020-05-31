@@ -38,10 +38,10 @@ ish_help_script() {
     ish_help_show \
         XXX_help "文档化" XXX_test "标准化" \
         XXX_init "初始化" XXX_exit "序列化" \
-        XXX_conf "配置化" XXX_auto "自动化" \
-        XXX_make "场景化" XXX_user "个性化" \
-        XXX_info "信息化" XXX_list "结构化" \
-        XXX_show "可视化" XXX_view "结构化" \
+        XXX_list "结构化" XXX_show "可视化" \
+        XXX_auto "自动化" XXX_make "模块化" \
+        XXX_conf "场景化" XXX_user "个性化" \
+        XXX_save "持久化" XXX_view "可视化" \
         XXX_ctx "变量" XXX_log "日志"
 }
 ish_help_require() { require_help $@; }
