@@ -112,6 +112,8 @@ func main() { println(ice.Run()) }
 END
 
     ish_miss_create_file Makefile << END
+export GOPROXY=https://goproxy.cn
+export GORPIVATE=github.com
 all:
 	@echo && date
 	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
@@ -171,7 +173,6 @@ ish_miss_prepare_session() {
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name
-
 }
 
 ish_miss_prepare_volcanos() {
