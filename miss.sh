@@ -182,29 +182,25 @@ ish_miss_prepare_volcanos() {
     ish_miss_create_file $ish_miss_order_js <<END
 Volcanos("onengine", { river: {
     "main": {name: "main", storm: {
-        "main": {name: "main", action: [
-            {name: "main", help: "main", inputs: [
-                {type: "text", name: "path", value: "src/main.shy"},
-                {type: "button", name: "查看", action: "auto"},
-                {type: "button", name: "返回"},
-            ], group: "web.wiki", index: "word", feature: {
-                display: "local/wiki/word",
-            }},
+        "dream": {name: "dream", index: [
+            "web.space",
+            "web.dream",
+            "web.code.docker.container",
+            "web.code.tmux.session",
         ]},
-        "hello": {name: "hello", action: [
-            {name: "hello", help: "hello", inputs: [
-                {type: "text", name: "one", value: "pwd"},
-                {type: "button", name: "执行", action: "auto"},
-            ], engine: function(event, can, msg, pane, cmds, cb) {
-                msg.Echo("hello world")
-                typeof cb == "function" && cb(msg)
-            }},
+        "main": {name: "main", index: [
+            "web.code.inner",
+            "web.code.git.status",
+            "web.code.git.total",
         ]},
-        "world": {name: "world", action: [
-            {name: "world", help: "world", inputs: [
-                {type: "text", name: "one", value: "pwd"},
-                {type: "button", name: "执行", action: "auto"},
-            ], group: "cli", index: "system"},
+        "task": {name: "task", index: [
+            "web.team.plan",
+            "web.wiki.draw.draw",
+            "web.wiki.word",
+        ]},
+        "relay": {name: "relay", index: [
+            "aaa.totp.get",
+            "web.route",
         ]},
     }},
 }, })
