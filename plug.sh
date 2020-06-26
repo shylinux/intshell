@@ -33,6 +33,7 @@ ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
 ISH_CONF_DEV=${ISH_CONF_DEV:="localhost:9020"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
 ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
+
 ISH_CONF_HELP=${ISH_CONF_HELP:="help"}
 ISH_CONF_TEST=${ISH_CONF_TEST:="test"}
 ISH_CONF_INIT=${ISH_CONF_INIT:="init"}
@@ -56,7 +57,9 @@ ish_user_err_clear() {
 }
 # }
 ## 3.可视化 # {
+ISH_SHOW_COLOR_r="\e[31m"
 ISH_SHOW_COLOR_g="\e[32m"
+ISH_SHOW_COLOR_b="\e[34m"
 ISH_SHOW_COLOR_end="\e[0m"
 ish_show() {
     while [ "$#" -gt "0" ]; do case $1 in
@@ -67,16 +70,16 @@ ish_show() {
         *)
             if local k=$1 && [ "${k:0:1}" = "-" ] ; then
                 local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
-                # [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color$1$ISH_SHOW_COLOR_end" || echo -n "$1" 
                 [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color\b"
             else
-                echo -ne "$1$ISH_SHOW_COLOR_end"
+                [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$1$ISH_SHOW_COLOR_end"
             fi
             ;;
     esac; [ "$#" -gt "0" ] && shift && echo -n " "; done; echo
 }
 # }
 ## 4.结构化 # {
+# $prefix
 ish_list_parse='for _p in $(ish_get $prefix list); do #{
     local _name=${_p%%=*} && local _value=${_p#$_name} && _value=${_value#=}
     eval "local $_name=$(ish_get $prefix $_name)"
@@ -98,7 +101,6 @@ ISH_CTX_SCRIPT=${ISH_CTX_MODULE}
 ISH_CTX_OBJECT=${ISH_CTX_MODULE}_obj_0
 ish_ctx() {
     echo
-
 }
 # }
 ## 2.模块日志 # {
