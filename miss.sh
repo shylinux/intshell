@@ -63,7 +63,7 @@ ish_miss_prepare() {
 
     ish_miss_create_file $ish_miss_miss_sh <<END
 #!/bin/bash
-# yum install -y make git go
+git &>/dev/null || apk add git || yum install -y git
 
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
@@ -75,11 +75,14 @@ require miss.sh
 
 ish_miss_prepare_compile
 ish_miss_prepare_install
+
 # ish_miss_prepare_session ${PWD##*/}
+# ish_miss_prepare_develop
 
 # ish_miss_prepare_volcanos
 # ish_miss_prepare_icebergs
 # ish_miss_prepare_intshell
+
 END
 }
 ish_miss_prepare_help() {
@@ -102,8 +105,15 @@ ish_miss_prepare_help() {
                 "" "知识体系" \
     end
 }
+ish_miss_prepare_develop() {
+    apk add vim || yum install -y vim
+}
 ish_miss_prepare_compile() {
     ISH_CONF_TASK=${PWD##*/}
+
+    go &>/dev/null || apk add go || yum install -y golang
+    apk add make || yum install -y make
+
     ish_miss_create_file $ish_miss_main_go <<END
 package main
 
@@ -122,6 +132,7 @@ END
     ish_miss_create_file Makefile << END
 export GOPROXY=https://goproxy.cn
 export GORPIVATE=github.com
+export CGO_ENABLED=0
 all:
 	@echo && date
 	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
@@ -329,14 +340,18 @@ ish_miss_local() {
     docker exec -it ${PWD##*/} sh
 }
 ish_miss_centos() {
-    docker run --mount type=bind,source=${PWD},target=/root -w /root -it centos sh
+    docker run $(ish_miss_docker_args) -it centos sh
 }
 ish_miss_alpine() {
-    docker run --mount type=bind,source=${PWD},target=/root -w /root -it alpine sh
+    docker run $(ish_miss_docker_args) -it alpine sh
 }
-ish_miss_tmp() {
-    docker run --mount type=bind,source=${PWD},target=/root -w /root -e ctx_dev=$ctx_dev -it alpine bin/ice.sh start serve dev
+ish_miss_docker() {
+    docker run $(ish_miss_docker_args) -it shylinux/contexts "$@"
 }
+ish_miss_docker_args() {
+    echo "--mount type=bind,source=${PWD},target=/root -w /root -e ctx_dev=$ctx_dev -e ctx_user=$USER"
+}
+
 ish_miss_docker_image() {
     local name=contexts && [ "$1" != "" ] && name=$1
 
