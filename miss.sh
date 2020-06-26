@@ -73,11 +73,10 @@ require show.sh
 require help.sh
 require miss.sh
 
-ish_miss_prepare_compile
 ish_miss_prepare_install
-
-# ish_miss_prepare_session ${PWD##*/}
+ish_miss_prepare_compile
 # ish_miss_prepare_develop
+# ish_miss_prepare_session ${PWD##*/}
 
 # ish_miss_prepare_volcanos
 # ish_miss_prepare_icebergs
@@ -104,39 +103,6 @@ ish_miss_prepare_help() {
         usage -g "ish_miss_prepare_learning" \
                 "" "知识体系" \
     end
-}
-ish_miss_prepare_develop() {
-    apk add vim || yum install -y vim
-}
-ish_miss_prepare_compile() {
-    ISH_CONF_TASK=${PWD##*/}
-
-    go &>/dev/null || apk add go || yum install -y golang
-    apk add make || yum install -y make
-
-    ish_miss_create_file $ish_miss_main_go <<END
-package main
-
-import (
-	"github.com/shylinux/icebergs"
-	_ "github.com/shylinux/icebergs/base"
-	_ "github.com/shylinux/icebergs/core"
-	_ "github.com/shylinux/icebergs/misc"
-    // add local module
-    // _ "$ISH_CONF_TASK/src/demo"
-)
-
-func main() { println(ice.Run()) }
-END
-
-    ish_miss_create_file Makefile << END
-export GOPROXY=https://goproxy.cn
-export GORPIVATE=github.com
-export CGO_ENABLED=0
-all:
-	@echo && date
-	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
-END
 }
 ish_miss_prepare_install() {
     ish_miss_create_file $ish_miss_ice_sh <<END
@@ -208,6 +174,39 @@ Volcanos("onengine", { river: {
 }, })
 END
 }
+ish_miss_prepare_compile() {
+    ISH_CONF_TASK=${PWD##*/}
+
+    export GORPIVATE=github.com
+    export GOPROXY=https://goproxy.cn
+
+    go &>/dev/null || apk add go || yum install -y golang
+    apk add make || yum install -y make
+
+    ish_miss_create_file $ish_miss_main_go <<END
+package main
+
+import (
+	"github.com/shylinux/icebergs"
+	_ "github.com/shylinux/icebergs/base"
+	_ "github.com/shylinux/icebergs/core"
+	_ "github.com/shylinux/icebergs/misc"
+    // add local module
+    // _ "$ISH_CONF_TASK/src/demo"
+)
+
+func main() { println(ice.Run()) }
+END
+
+    ish_miss_create_file Makefile << END
+export GOPROXY=https://goproxy.cn
+export GORPIVATE=github.com
+export CGO_ENABLED=0
+all:
+	@echo && date
+	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
+END
+}
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
     ish_log_debug "session: $name"
@@ -219,6 +218,11 @@ ish_miss_prepare_session() {
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name
+}
+ish_miss_prepare_develop() {
+    apk add vim || yum install -y vim
+    vim -c "PlugInstall | q"
+    vim -c "GoInstallBinaries | q"
 }
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
@@ -263,7 +267,9 @@ ish_miss() {
 ish_miss_create() {
     local name=$ISH_CONF_WORK/$1 && [ -d $name ] && cd $name && return
     name=$ISH_CONF_WORK/$(date +%Y%m%d)-$1 && mkdir -p $name && cd $name
-    ish_miss_prepare && source etc/miss.sh
+    mkdir -p .vim/autoload/; [ -f .vim/autoload/plug.vim ] || wget $ctx_dev/publish/plug.vim -qO .vim/autoload/plug.vim
+    [ -f .vimrc ] || wget $ctx_dev/publish/vimrc -qO .vimrc
+    ish_miss_prepare
     ISH_CONF_TASK=${PWD##*/}
 }
 ish_miss_module() {
@@ -351,7 +357,6 @@ ish_miss_docker() {
 ish_miss_docker_args() {
     echo "--mount type=bind,source=${PWD},target=/root -w /root -e ctx_dev=$ctx_dev -e ctx_user=$USER"
 }
-
 ish_miss_docker_image() {
     local name=contexts && [ "$1" != "" ] && name=$1
 
