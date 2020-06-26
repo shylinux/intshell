@@ -253,9 +253,10 @@ _conf() {
 _load() {
     local pre=$1 && shift
     ish_log_source "$(_color g $pre "$@") -> $ISH_CTX_SCRIPT"
-    source ${pre##*/} "$@" >/dev/null
+    source ./${pre##*/} "$@" >/dev/null
 }
 __load() {
+
     local name=$1 && shift 1 && local back=$PWD pre=$1 && [ -f "$pre" ] || return
     [ -d "${pre%/*}" ] && cd ${pre%/*}
     [ "$ISH_CTX_FILE" = "$1" ] && return

@@ -180,8 +180,15 @@ ish_miss_prepare_compile() {
     export GORPIVATE=github.com
     export GOPROXY=https://goproxy.cn
 
-    go &>/dev/null || apk add go || yum install -y golang
-    apk add make || yum install -y make
+    if ! go version; then
+        yum install -y wget
+        curl -o go.tar.gz https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
+        tar xvf go.tar.gz -C /usr/local
+    fi
+    export GOROOT=/usr/local/go
+    export PATH=/usr/local/go/bin:$PATH
+
+    yum install -y make
 
     ish_miss_create_file $ish_miss_main_go <<END
 package main
@@ -221,8 +228,8 @@ ish_miss_prepare_session() {
 }
 ish_miss_prepare_develop() {
     apk add vim || yum install -y vim
-    vim -c "PlugInstall | q"
-    vim -c "GoInstallBinaries | q"
+    vim -c "PlugInstall | qa"
+    vim -c "GoInstallBinaries"
 }
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
