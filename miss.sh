@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ish_log_debug "$ctx_dev"
+
 export PATH=${ISH_CONF_TASK}/bin:${PWD}:$PATH
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
@@ -374,8 +376,9 @@ ish_miss_docker_image() {
 
     local target=/usr/local/bin
     ish_miss_create_file usr/docker/$name <<END
-FROM alpine
+# FROM busybox
 
+FROM alpine
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN mkdir /root/src /root/etc /root/bin /root/var /root/usr

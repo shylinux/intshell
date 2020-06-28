@@ -30,7 +30,7 @@ ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 
 ISH_CONF_PATH=$PWD/.ish/pluged
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
-ISH_CONF_DEV=${ISH_CONF_DEV:="localhost:9020"}
+ISH_CONF_DEV=${ISH_CONF_DEV:="http://localhost:9020"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
 ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
 
