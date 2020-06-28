@@ -246,7 +246,7 @@ ish_miss_prepare_intshell() {
 
 ish_miss_start() {
     while true; do
-        date && ice.bin $@ 2>$ctx_log && echo -e "\n\nrestarting..." && break
+        echo -e "\n\nrestarting..." && date && ice.bin $@ 2>$ctx_log && break
     done
 }
 ish_miss_stop() {
@@ -367,29 +367,34 @@ ish_miss_docker_args() {
 ish_miss_docker_image() {
     local name=contexts && [ "$1" != "" ] && name=$1
 
+    rm -rf usr/docker/meta
+    mkdir -p usr/docker/meta
+    cp -r usr/volcanos/ usr/docker/meta
+    cp -r usr/demo usr/docker/meta
+
     local target=/usr/local/bin
     ish_miss_create_file usr/docker/$name <<END
 FROM alpine
 
-RUN wget $ctx_dev/publish/ice.linux.amd64 -O $target/ice.bin
-RUN chmod +x $target/ice.bin
-RUN wget $ctx_dev/publish/ice.sh -O $target/ice.sh
-RUN chmod +x $target/ice.sh
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN mkdir /root/src /root/etc /root/bin /root/var /root/usr
+ADD http://$ctx_dev/publish/ice.sh /usr/local/bin/ice.sh
+ADD http://$ctx_dev/publish/ice.linux.amd64 /usr/local/bin/ice.bin
+ADD http://$ctx_dev/publish/init.shy /root/etc/init.shy
+RUN chmod u+x /usr/local/bin/*
 
-RUN wget $ctx_dev/publish/order.js -O $target/order.js
 RUN mkdir -p /root/usr/publish
-RUN ln $target/order.js /root/usr/publish/order.js
+RUN mkdir -p /root/usr/volcanos
+ADD http://$ctx_dev/publish/order.js /root/usr/publish/order.js
+COPY meta/volcanos /root/usr/volcanos
+COPY meta/demo /root/usr/demo
 
-
-ENV ctx_dev $ctx_dev
-ENV ctx_user $USER
-EXPOSE 9020
-
+ENV ctx_dev http://$ctx_dev
+ENV ctx_user root
 WORKDIR /root
-CMD cd /root/
-CMD $target/ice.sh start serve dev
+EXPOSE 9020
+CMD /usr/local/bin/ice.sh start serve dev
 END
 
     docker build usr/docker/ -f usr/docker/$name -t $name
