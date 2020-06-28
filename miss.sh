@@ -246,7 +246,7 @@ ish_miss_prepare_intshell() {
 
 ish_miss_start() {
     while true; do
-        date && ice.bin $@ 2>$ctx_log && echo -e "\n\nrestarting..." || break
+        date && ice.bin $@ 2>$ctx_log && echo -e "\n\nrestarting..." && break
     done
 }
 ish_miss_stop() {
