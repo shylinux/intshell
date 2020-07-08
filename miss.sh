@@ -69,14 +69,13 @@ git &>/dev/null || apk add git || yum install -y git
 
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
-# declare -f ish_help_repos &>/dev/null || require conf.sh
 
 require show.sh
 require help.sh
 require miss.sh
 
-ish_miss_prepare_install
 ish_miss_prepare_compile
+ish_miss_prepare_install
 # ish_miss_prepare_develop
 # ish_miss_prepare_session ${PWD##*/}
 
@@ -106,6 +105,43 @@ ish_miss_prepare_help() {
                 "" "知识体系" \
     end
 }
+ish_miss_prepare_compile() {
+    if ! go version; then
+        curl -o go.tar.gz https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
+        tar xvf go.tar.gz -C /usr/local
+    fi
+
+    export GOPROXY=https://goproxy.cn
+    export GORPIVATE=github.com
+    export GOROOT=/usr/local/go
+    export PATH=/usr/local/go/bin:$PATH
+
+    export ISH_CONF_TASK=${PWD##*/}
+    ish_miss_create_file $ish_miss_main_go <<END
+package main
+
+import (
+	"github.com/shylinux/icebergs"
+	_ "github.com/shylinux/icebergs/base"
+	_ "github.com/shylinux/icebergs/core"
+	_ "github.com/shylinux/icebergs/misc"
+    // add local module
+    // _ "$ISH_CONF_TASK/src/demo"
+)
+
+func main() { println(ice.Run()) }
+END
+
+    apk add make || yum install -y make
+    ish_miss_create_file Makefile << END
+export GOPROXY=https://goproxy.cn
+export GORPIVATE=github.com
+export CGO_ENABLED=0
+all:
+	@echo && date
+	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
+END
+}
 ish_miss_prepare_install() {
     ish_miss_create_file $ish_miss_ice_sh <<END
 #! /bin/sh
@@ -120,7 +156,7 @@ restart() {
 }
 start() {
     trap HUP hup && while true; do
-        date && ice.bin \$@ 2>\$ctx_log && echo -e \"\n\nrestarting...\" || break
+        date && ice.bin \$@ 2>\$ctx_log && echo -e \"\n\nrestarting...\" && break
     done
 }
 stop() {
@@ -176,45 +212,14 @@ Volcanos("onengine", { river: {
 }, })
 END
 }
-ish_miss_prepare_compile() {
-    ISH_CONF_TASK=${PWD##*/}
+ish_miss_prepare_develop() {
+    apk add wget || yum install -y wget
+    mkdir -p .vim/autoload/; [ -f .vim/autoload/plug.vim ] || wget $ctx_dev/publish/plug.vim -qO .vim/autoload/plug.vim
+    [ -f .vimrc ] || wget $ctx_dev/publish/vimrc -qO .vimrc
 
-    export GORPIVATE=github.com
-    export GOPROXY=https://goproxy.cn
-
-    if ! go version; then
-        yum install -y wget
-        curl -o go.tar.gz https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
-        tar xvf go.tar.gz -C /usr/local
-    fi
-    export GOROOT=/usr/local/go
-    export PATH=/usr/local/go/bin:$PATH
-
-    yum install -y make
-
-    ish_miss_create_file $ish_miss_main_go <<END
-package main
-
-import (
-	"github.com/shylinux/icebergs"
-	_ "github.com/shylinux/icebergs/base"
-	_ "github.com/shylinux/icebergs/core"
-	_ "github.com/shylinux/icebergs/misc"
-    // add local module
-    // _ "$ISH_CONF_TASK/src/demo"
-)
-
-func main() { println(ice.Run()) }
-END
-
-    ish_miss_create_file Makefile << END
-export GOPROXY=https://goproxy.cn
-export GORPIVATE=github.com
-export CGO_ENABLED=0
-all:
-	@echo && date
-	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
-END
+    apk add vim || yum install -y vim
+    vim -c "PlugInstall | qa"
+    vim -c "GoInstallBinaries"
 }
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
@@ -228,19 +233,13 @@ ish_miss_prepare_session() {
 
     [ "$TMUX" = "" ] && tmux attach -t $name
 }
-ish_miss_prepare_develop() {
-    apk add vim || yum install -y vim
-    vim -c "PlugInstall | qa"
-    vim -c "GoInstallBinaries"
-}
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
     ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
-
 }
 ish_miss_prepare_icebergs() {
     require github.com/shylinux/icebergs
-    ish_miss_create_link usr/icebergs  $(require_path shylinux/icebergs)
+    ish_miss_create_link usr/icebergs $(require_path shylinux/icebergs)
 }
 ish_miss_prepare_intshell() {
     ish_miss_create_link usr/intshell $(require_path ../../)
@@ -276,10 +275,7 @@ ish_miss() {
 ish_miss_create() {
     local name=$ISH_CONF_WORK/$1 && [ -d $name ] && cd $name && return
     name=$ISH_CONF_WORK/$(date +%Y%m%d)-$1 && mkdir -p $name && cd $name
-    mkdir -p .vim/autoload/; [ -f .vim/autoload/plug.vim ] || wget $ctx_dev/publish/plug.vim -qO .vim/autoload/plug.vim
-    [ -f .vimrc ] || wget $ctx_dev/publish/vimrc -qO .vimrc
     ish_miss_prepare
-    ISH_CONF_TASK=${PWD##*/}
 }
 ish_miss_module() {
     local name=$1 help=$2 && help=${help:=$name}
@@ -338,17 +334,6 @@ END
 chapter "$name"
 
 END
-}
-ish_miss_docker() {
-    local name=${PWD##*/}
-    # if docker run --name $name --mount type=bind,source=${PWD},target=/root -w /root -dt alpine sh; then
-    #     docker exec $name sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-    #     docker exec $name apk add bash curl git
-    # fi
-    if docker run -p 10000:9020 --name $name --mount type=bind,source=${PWD},target=/root -w /root -dt centos bash; then
-        docker exec $name yum install -y make git go
-    fi
-    docker exec -w /root -it $name bash
 }
 
 ish_miss_local() {
