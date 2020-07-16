@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 ish_ctx_cli_mkfile() {
     local name=$1
     mkdir -p ${name%/*}
