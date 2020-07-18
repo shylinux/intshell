@@ -181,9 +181,18 @@ require() {
 
     # 加载脚本
     for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
-        [ -f "${p%/*}/$mod" ] && __load "$name" ${p%/*}/$mod && return
-        [ -f "$p/$mod" ] && __load "$name" $p/$mod && return
-        [ -f "$mod" ] && __load "$name" $mod && return
+        if [ -e "${p%/*}/$mod" ]; then
+            __load "$name" ${p%/*}/$mod
+            return
+        fi
+        if [ -e "$p/$mod" ]; then 
+            __load "$name" $p/$mod
+            return
+        fi
+        if [ -e "$mod" ]; then
+            __load "$name" $mod
+            return
+        fi
 
         [ -d "$p/$mod" ] && for i in $file; do
             __load "${name}" "$p/$mod/$i"
