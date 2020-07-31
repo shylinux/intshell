@@ -177,6 +177,9 @@ END
 
 ~web
 
+~web.wiki
+    config word meta.path usr
+
 ~mdb
 
 ~ssh
