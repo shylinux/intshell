@@ -224,8 +224,8 @@ ish_miss_prepare_intshell() {
 
 ish_miss_start() {
     while true; do
-        [ -f $ctx_log.old ] && rm $ctx_log.old
-        [ -f "$ctx_log" ] & mv $ctx_log $ctx_log.old
+        [ -f $ctx_log.old ] && rm $ctx_log.old &>/dev/null
+        [ -f "$ctx_log" ] && mv $ctx_log $ctx_log.old &>/dev/null
         echo -e "\n\nrestarting..." && date && ice.bin $@ 2>$ctx_log && break
     done
 }
