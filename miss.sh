@@ -275,6 +275,7 @@ ish_miss() {
 ish_miss_create() {
     local name=$ISH_CONF_WORK/$1 && [ -d $name ] && cd $name && return
     name=$ISH_CONF_WORK/$(date +%Y%m%d)-$1 && mkdir -p $name && cd $name
+    export PATH=${PWD}/bin:${PWD}/bin:$PATH
     ish_miss_prepare
 }
 ish_miss_module() {
