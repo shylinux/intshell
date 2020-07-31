@@ -78,7 +78,7 @@ ish_miss_prepare_install
 # ish_miss_prepare_develop
 # ish_miss_prepare_session ${PWD##*/}
 
-# ish_miss_prepare_volcanos
+ish_miss_prepare_volcanos
 # ish_miss_prepare_icebergs
 # ish_miss_prepare_intshell
 
@@ -246,6 +246,7 @@ ish_miss_prepare_intshell() {
 
 ish_miss_start() {
     while true; do
+        rm $ctx_log.old
         mv $ctx_log $ctx_log.old
         echo -e "\n\nrestarting..." && date && ice.bin $@ 2>$ctx_log && break
     done
