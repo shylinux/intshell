@@ -1,6 +1,8 @@
 #!/bin/sh
 
-ish_log_debug "$ctx_dev"
+require show.sh
+require help.sh
+require plug.sh
 
 export PATH=${ISH_CONF_TASK}/bin:${PWD}:$PATH
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
@@ -8,9 +10,6 @@ export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
 export ctx_dev=${ctx_dev:="$ISH_CONF_DEV"}
 export ctx_pod=${ctx_pod:=""}
-
-require show.sh
-require help.sh
 
 ish_miss_ice_sh="bin/ice.sh"
 ish_miss_ice_bin="bin/ice.bin"
