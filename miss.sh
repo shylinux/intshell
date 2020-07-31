@@ -4,7 +4,7 @@
 require show.sh
 require help.sh
 
-export PATH=${ISH_CONF_TASK}/bin:${PWD}:$PATH
+export PATH=${ISH_CONF_TASK}/bin:${PWD}/bin:${PWD}:$PATH
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
