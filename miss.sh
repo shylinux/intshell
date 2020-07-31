@@ -78,6 +78,7 @@ ish_miss_prepare_install
 # ish_miss_prepare_develop
 # ish_miss_prepare_session ${PWD##*/}
 
+ish_miss_prepare learning
 ish_miss_prepare_volcanos
 # ish_miss_prepare_icebergs
 # ish_miss_prepare_intshell
@@ -185,30 +186,7 @@ END
     [ -f go.mod ] || go mod init ${PWD##*/}
 
     ish_miss_create_file $ish_miss_order_js <<END
-Volcanos("onengine", { river: {
-    "main": {name: "main", storm: {
-        "dream": {name: "dream", index: [
-            "web.space",
-            "web.dream",
-            "web.code.docker.container",
-            "web.code.tmux.session",
-        ]},
-        "main": {name: "main", index: [
-            "web.code.inner",
-            "web.code.git.status",
-            "web.code.git.total",
-        ]},
-        "task": {name: "task", index: [
-            "web.team.plan",
-            "web.wiki.draw.draw",
-            "web.wiki.word",
-        ]},
-        "relay": {name: "relay", index: [
-            "aaa.totp.get",
-            "web.route",
-        ]},
-    }},
-}, })
+Volcanos("onengine", {})
 END
 }
 ish_miss_prepare_develop() {
