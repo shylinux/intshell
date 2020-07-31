@@ -80,8 +80,8 @@ ish_miss_prepare_install
 
 ish_miss_prepare learning
 ish_miss_prepare_volcanos
-# ish_miss_prepare_icebergs
-# ish_miss_prepare_intshell
+ish_miss_prepare_icebergs
+ish_miss_prepare_intshell
 
 END
 }
@@ -224,8 +224,8 @@ ish_miss_prepare_intshell() {
 
 ish_miss_start() {
     while true; do
-        rm $ctx_log.old
-        mv $ctx_log $ctx_log.old
+        [ -f $ctx_log.old ] && rm $ctx_log.old
+        [ -f "$ctx_log" ] & mv $ctx_log $ctx_log.old
         echo -e "\n\nrestarting..." && date && ice.bin $@ 2>$ctx_log && break
     done
 }
