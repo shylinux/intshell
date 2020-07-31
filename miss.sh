@@ -1,8 +1,8 @@
 #!/bin/sh
 
+[ "$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
 require show.sh
 require help.sh
-require plug.sh
 
 export PATH=${ISH_CONF_TASK}/bin:${PWD}:$PATH
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
