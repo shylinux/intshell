@@ -65,7 +65,7 @@ ish_miss_prepare() {
 
     ish_miss_create_file $ish_miss_miss_sh <<END
 #!/bin/bash
-git &>/dev/null || yum install -y git || apk add git
+# git &>/dev/null || yum install -y git || apk add git
 
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
@@ -79,10 +79,11 @@ ish_miss_prepare_install
 # ish_miss_prepare_develop
 # ish_miss_prepare_session ${PWD##*/}
 
-ish_miss_prepare learning
 ish_miss_prepare_volcanos
+ish_miss_prepare learning
 ish_miss_prepare_icebergs
-ish_miss_prepare_intshell
+# ish_miss_prepare toolkits
+# ish_miss_prepare_intshell
 
 END
 }
@@ -133,7 +134,7 @@ import (
 func main() { println(ice.Run()) }
 END
 
-    yum install -y make
+    # sudo yum install -y make
     ish_miss_create_file Makefile << END
 export GOPROXY=https://goproxy.cn
 export GORPIVATE=github.com
@@ -177,9 +178,6 @@ END
 ~aaa
 
 ~web
-
-~web.wiki
-    config word meta.path usr
 
 ~mdb
 
@@ -263,6 +261,7 @@ ish_miss_create() {
     name=$ISH_CONF_WORK/$(date +%Y%m%d)-$1 && mkdir -p $name && cd $name
     export PATH=${PWD}/bin:${PWD}/bin:$PATH
     ish_miss_prepare
+    source etc/miss.sh
 }
 ish_miss_module() {
     local name=$1 help=$2 && help=${help:=$name}
@@ -342,8 +341,10 @@ ish_miss_docker_image() {
     local name=contexts && [ "$1" != "" ] && name=$1
 
     rm -rf usr/docker/meta
-    mkdir -p usr/docker/meta/volcanos
-    cp -r usr/volcanos/* usr/docker/meta/volcanos/
+    mkdir -p usr/docker/meta/volcanos && cp -r usr/volcanos/* usr/docker/meta/volcanos/
+    mkdir -p usr/docker/meta/learning && cp -r usr/learning/* usr/docker/meta/learning/
+    mkdir -p usr/docker/meta/icebergs && cp -r usr/icebergs/* usr/docker/meta/icebergs/
+    mkdir -p usr/docker/meta/linux-story && cp -r usr/linux-story/* usr/docker/meta/linux-story/
     cp -r usr/demo usr/docker/meta
 
     local target=/usr/local/bin
@@ -357,12 +358,18 @@ RUN mkdir /root/src /root/etc /root/bin /root/var /root/usr
 ADD $ctx_dev/publish/ice.sh /usr/local/bin/ice.sh
 ADD $ctx_dev/publish/ice.linux.amd64 /usr/local/bin/ice.bin
 ADD $ctx_dev/publish/init.shy /root/etc/init.shy
+ADD $ctx_dev/publish/main.svg /root/src/main.svg
+ADD $ctx_dev/publish/main.shy /root/src/main.shy
 RUN chmod u+x /usr/local/bin/*
 
 RUN mkdir -p /root/usr/publish
-RUN mkdir -p /root/usr/volcanos
 ADD $ctx_dev/publish/order.js /root/usr/publish/order.js
+
+RUN mkdir -p /root/usr/volcanos
 COPY meta/volcanos /root/usr/volcanos
+COPY meta/learning /root/usr/learning
+COPY meta/icebergs /root/usr/icebergs
+COPY meta/linux-story /root/usr/linux-story
 COPY meta/demo /root/usr/demo
 
 ENV ctx_dev $ctx_dev
