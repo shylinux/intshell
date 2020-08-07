@@ -60,11 +60,12 @@ ish_miss_prepare() {
         [ "$name" = "$repos" ] && repos=shylinux/$name
         require github.com/$repos
         ish_miss_create_link usr/$name $(require_path $repos)
+        cd usr/$name && git pull && cd - || return
     done
 
     ish_miss_create_file $ish_miss_miss_sh <<END
 #!/bin/bash
-git &>/dev/null || apk add git || yum install -y git
+git &>/dev/null || yum install -y git || apk add git
 
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
@@ -132,7 +133,7 @@ import (
 func main() { println(ice.Run()) }
 END
 
-    apk add make || yum install -y make
+    yum install -y make
     ish_miss_create_file Makefile << END
 export GOPROXY=https://goproxy.cn
 export GORPIVATE=github.com
@@ -193,11 +194,11 @@ Volcanos("onengine", {})
 END
 }
 ish_miss_prepare_develop() {
-    apk add wget || yum install -y wget
+    yum install -y wget || apk add wget
     mkdir -p .vim/autoload/; [ -f .vim/autoload/plug.vim ] || wget $ctx_dev/publish/plug.vim -qO .vim/autoload/plug.vim
     [ -f .vimrc ] || wget $ctx_dev/publish/vimrc -qO .vimrc
 
-    apk add vim || yum install -y vim
+    yum install -y vim || apk add vim
     vim -c "PlugInstall | qa"
     vim -c "GoInstallBinaries"
 }
@@ -216,13 +217,16 @@ ish_miss_prepare_session() {
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
     ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
+    cd usr/volcanos/ && git pull && cd - || return
 }
 ish_miss_prepare_icebergs() {
     require github.com/shylinux/icebergs
     ish_miss_create_link usr/icebergs $(require_path shylinux/icebergs)
+    cd usr/icebergs/ && git pull && cd - || return
 }
 ish_miss_prepare_intshell() {
     ish_miss_create_link usr/intshell $(require_path ../../)
+    cd usr/icebergs/ && git pull && cd - || return
 }
 
 ish_miss_start() {
