@@ -166,7 +166,7 @@ require() {
     [ -z "$1" ] && require_help && return
     local name=${ISH_CTX_MODULE#ish_} && [ "$1" = "as" ] && name=$2 && shift 2
     local mod=$1 file=$ISH_CONF_INIT$ISH_CONF_TYPE && shift && [ -z "$1" ] || file="$@"
-    ish_log_require as $name $mod $file
+    ish_log_require as $name $(_color g $mod) $file
 
     # 下载脚本
     local p="${mod%%/*}" && p=${p%:} && case "$p" in
@@ -261,7 +261,7 @@ _conf() {
 }
 _load() {
     local pre=$1 && shift
-    ish_log_source "$(_color g $pre "$@") -> $ISH_CTX_SCRIPT"
+    ish_log_source "$pre "$@" -> $ISH_CTX_SCRIPT"
     source ./${pre##*/} "$@" >/dev/null
 }
 __load() {
