@@ -18,6 +18,18 @@ ish_miss_main_go="src/main.go"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_order_js="usr/publish/order.js"
 
+ish_miss_create_path() {
+    local target=$1 && [ -d ${target%/*} ] && return
+    [ ${target%/*} != ${target} ] && mkdir -p ${target%/*} || return 0
+}
+ish_miss_create_file() {
+    [ -e $1 ] && return || ish_log_debug -g "create file ${PWD} $1"
+    ish_miss_create_path $1 && cat > $1
+}
+ish_miss_create_link() {
+    [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
+    ish_miss_create_path $1 && ln -s $2 $1
+}
 ish_miss_help() {
     ish_help_show \
         usage -g "ish_miss_prepare $(ish_show -y repos)" \
@@ -41,18 +53,6 @@ ish_miss_help() {
         usage -g "ish_miss_docker $(ish_show -y name)" \
                 "" "创建容器" \
     end
-}
-ish_miss_create_path() {
-    local target=$1 && [ -d ${target%/*} ] && return
-    [ ${target%/*} != ${target} ] && mkdir -p ${target%/*} || return 0
-}
-ish_miss_create_link() {
-    [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
-    ish_miss_create_path $1 && ln -s $2 $1
-}
-ish_miss_create_file() {
-    [ -e $1 ] && return || ish_log_debug -g "create file ${PWD} $1"
-    ish_miss_create_path $1 && cat > $1
 }
 
 ish_miss_prepare() {
@@ -86,26 +86,6 @@ ish_miss_prepare_icebergs
 # ish_miss_prepare_intshell
 
 END
-}
-ish_miss_prepare_help() {
-    ish_help_show \
-        usage -g "ish_miss_prepare_compile" \
-                "" "生成源码" \
-        usage -r "ish_miss_prepare_install" \
-                "" "生成脚本" \
-                "" "" \
-        usage -g "ish_miss_prepare_volcanos" \
-                "" "前端框架" \
-        usage -y "ish_miss_prepare_icebergs" \
-                "" "后端框架" \
-        usage -r "ish_miss_prepare_intshell" \
-                "" "终端框架" \
-                "" "" \
-        usage -g "ish_miss_prepare_toolkits" \
-                "" "工具代码" \
-        usage -g "ish_miss_prepare_learning" \
-                "" "知识体系" \
-    end
 }
 ish_miss_prepare_compile() {
     if ! go version; then
