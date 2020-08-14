@@ -149,6 +149,7 @@ serve() {
 cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd=serve
 \$cmd \$*
 END
+    chmod u+x $ish_miss_ice_sh
 
     ish_miss_create_file $ish_miss_init_shy <<END
 ~cli
