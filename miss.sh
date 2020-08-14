@@ -193,7 +193,8 @@ ish_miss_prepare_session() {
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
     ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
-    cd usr/volcanos/ && git pull && cd - || return
+    cd usr/volcanos/ && git pull
+    cd -
 }
 ish_miss_prepare_icebergs() {
     require github.com/shylinux/icebergs
