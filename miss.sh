@@ -15,6 +15,7 @@ ish_miss_ice_sh="bin/ice.sh"
 ish_miss_ice_bin="bin/ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
 ish_miss_main_go="src/main.go"
+ish_miss_main_shy="src/main.shy"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_order_js="usr/publish/order.js"
 
@@ -127,11 +128,12 @@ import (
 	_ "github.com/shylinux/icebergs/base"
 	_ "github.com/shylinux/icebergs/core"
 	_ "github.com/shylinux/icebergs/misc"
-    // add local module
-    // _ "$ISH_CONF_TASK/src/demo"
 )
 
 func main() { println(ice.Run()) }
+END
+    ish_miss_create_file $ish_miss_main_shy <<END
+title main
 END
 
     # sudo yum install -y make
