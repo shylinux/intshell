@@ -19,6 +19,18 @@ ish_miss_main_shy="src/main.shy"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_order_js="usr/publish/order.js"
 
+ish_miss_create_path() {
+    local target=$1 && [ -d ${target%/*} ] && return
+    [ ${target%/*} != ${target} ] && mkdir -p ${target%/*} || return 0
+}
+ish_miss_create_file() {
+    [ -e $1 ] && return || ish_log_debug -g "create file ${PWD} $1"
+    ish_miss_create_path $1 && cat > $1
+}
+ish_miss_create_link() {
+    [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
+    ish_miss_create_path $1 && ln -s $2 $1
+}
 ish_miss_help() {
     ish_help_show \
         usage -g "ish_miss_prepare $(ish_show -y repos)" \
@@ -42,18 +54,6 @@ ish_miss_help() {
         usage -g "ish_miss_docker $(ish_show -y name)" \
                 "" "创建容器" \
     end
-}
-ish_miss_create_path() {
-    local target=$1 && [ -d ${target%/*} ] && return
-    [ ${target%/*} != ${target} ] && mkdir -p ${target%/*} || return 0
-}
-ish_miss_create_link() {
-    [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
-    ish_miss_create_path $1 && ln -s $2 $1
-}
-ish_miss_create_file() {
-    [ -e $1 ] && return || ish_log_debug -g "create file ${PWD} $1"
-    ish_miss_create_path $1 && cat > $1
 }
 
 ish_miss_prepare() {
@@ -88,26 +88,6 @@ ish_miss_prepare_icebergs
 
 END
 }
-ish_miss_prepare_help() {
-    ish_help_show \
-        usage -g "ish_miss_prepare_compile" \
-                "" "生成源码" \
-        usage -r "ish_miss_prepare_install" \
-                "" "生成脚本" \
-                "" "" \
-        usage -g "ish_miss_prepare_volcanos" \
-                "" "前端框架" \
-        usage -y "ish_miss_prepare_icebergs" \
-                "" "后端框架" \
-        usage -r "ish_miss_prepare_intshell" \
-                "" "终端框架" \
-                "" "" \
-        usage -g "ish_miss_prepare_toolkits" \
-                "" "工具代码" \
-        usage -g "ish_miss_prepare_learning" \
-                "" "知识体系" \
-    end
-}
 ish_miss_prepare_compile() {
     if ! go version; then
         curl -o go.tar.gz https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
@@ -124,7 +104,7 @@ ish_miss_prepare_compile() {
 package main
 
 import (
-	"github.com/shylinux/icebergs"
+	ice "github.com/shylinux/icebergs"
 	_ "github.com/shylinux/icebergs/base"
 	_ "github.com/shylinux/icebergs/core"
 	_ "github.com/shylinux/icebergs/misc"
@@ -173,6 +153,7 @@ serve() {
 cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd=serve
 \$cmd \$*
 END
+    chmod u+x $ish_miss_ice_sh
 
     ish_miss_create_file $ish_miss_init_shy <<END
 ~cli
@@ -217,7 +198,8 @@ ish_miss_prepare_session() {
 ish_miss_prepare_volcanos() {
     require github.com/shylinux/volcanos
     ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
-    cd usr/volcanos/ && git pull && cd - || return
+    cd usr/volcanos/ && git pull
+    cd -
 }
 ish_miss_prepare_icebergs() {
     require github.com/shylinux/icebergs
@@ -322,65 +304,5 @@ END
 chapter "$name"
 
 END
-}
-
-ish_miss_local() {
-    docker exec -it ${PWD##*/} sh
-}
-ish_miss_centos() {
-    docker run $(ish_miss_docker_args) -it centos sh
-}
-ish_miss_alpine() {
-    docker run $(ish_miss_docker_args) -it alpine sh
-}
-ish_miss_docker() {
-    docker run $(ish_miss_docker_args) -it shylinux/contexts "$@"
-}
-ish_miss_docker_args() {
-    echo "--mount type=bind,source=${PWD},target=/root -w /root -e ctx_dev=$ctx_dev -e ctx_user=$USER"
-}
-ish_miss_docker_image() {
-    local name=contexts && [ "$1" != "" ] && name=$1
-
-    rm -rf usr/docker/meta
-    mkdir -p usr/docker/meta/volcanos && cp -r usr/volcanos/* usr/docker/meta/volcanos/
-    mkdir -p usr/docker/meta/learning && cp -r usr/learning/* usr/docker/meta/learning/
-    mkdir -p usr/docker/meta/icebergs && cp -r usr/icebergs/* usr/docker/meta/icebergs/
-    mkdir -p usr/docker/meta/linux-story && cp -r usr/linux-story/* usr/docker/meta/linux-story/
-    cp -r usr/demo usr/docker/meta
-
-    local target=/usr/local/bin
-    ish_miss_create_file usr/docker/$name <<END
-# FROM busybox
-
-FROM alpine
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
-RUN mkdir /root/src /root/etc /root/bin /root/var /root/usr
-ADD $ctx_dev/publish/ice.sh /usr/local/bin/ice.sh
-ADD $ctx_dev/publish/ice.linux.amd64 /usr/local/bin/ice.bin
-ADD $ctx_dev/publish/init.shy /root/etc/init.shy
-ADD $ctx_dev/publish/main.svg /root/src/main.svg
-ADD $ctx_dev/publish/main.shy /root/src/main.shy
-RUN chmod u+x /usr/local/bin/*
-
-RUN mkdir -p /root/usr/publish
-ADD $ctx_dev/publish/order.js /root/usr/publish/order.js
-
-RUN mkdir -p /root/usr/volcanos
-COPY meta/volcanos /root/usr/volcanos
-COPY meta/learning /root/usr/learning
-COPY meta/icebergs /root/usr/icebergs
-COPY meta/linux-story /root/usr/linux-story
-COPY meta/demo /root/usr/demo
-
-ENV ctx_dev $ctx_dev
-ENV ctx_user root
-WORKDIR /root
-EXPOSE 9020
-CMD /usr/local/bin/ice.sh start serve dev
-END
-
-    docker build usr/docker/ -f usr/docker/$name -t $name
 }
 
