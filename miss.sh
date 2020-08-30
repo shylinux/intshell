@@ -185,8 +185,13 @@ ish_miss_prepare_session() {
     if tmux new-session -d -s $name -n shy; then
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:shy.2
-        tmux send-key -t ${name}:shy.2 ish_miss_start Enter
-        tmux send-key -t ${name}:shy.3 ish_miss_log Enter
+        local left=3 right=2; if [ `uname` = "Darwin" ]; then left=2 right=3; fi
+
+        tmux send-key -t ${name}:shy.$right "ish_miss_log" Enter; if [ "$name" = "miss" ]; then
+            tmux send-key -t ${name}:shy.$left "ish_miss_serve shy" Enter
+        else
+            tmux send-key -t ${name}:shy.$left "ish_miss_space dev" Enter
+        fi
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name
@@ -246,20 +251,13 @@ ish_miss_create() {
 ish_miss_module() {
     local name=$1 help=$2 && help=${help:=$name}
 
-    ish_miss_create_file src/$name/${name}.sh <<END
-ish_miss_$name() {
-    echo "hello $name world"
-}
-
-END
-
     ish_miss_create_file src/$name/${name}.go <<END
 package $name
 
 import (
-	"github.com/shylinux/icebergs"
+	ice "github.com/shylinux/icebergs"
 	"github.com/shylinux/icebergs/core/code"
-	"github.com/shylinux/toolkits"
+	kit "github.com/shylinux/toolkits"
 )
 
 var Index = &ice.Context{Name: "$name", Help: "$help",
@@ -277,23 +275,6 @@ var Index = &ice.Context{Name: "$name", Help: "$help",
 }
 
 func init() { code.Index.Register(Index, nil) }
-END
-
-    ish_miss_create_link usr/publish/${name}.js ../../src/$name/${name}.js
-    ish_miss_create_file src/$name/${name}.js <<END
-Volcanos("onimport", {help: "导入数据", list: [],
-    _init: function(can, msg, list, cb, target) {
-        can.onappend.table(can, target, "table", msg)
-        can.onappend.board(can, target, "board", msg)
-        return typeof cb == "function" && cb(msg)
-    },
-})
-Volcanos("onaction", {help: "交互操作", list: [],
-    _init: function(can, msg, list, cb, target) {},
-})
-Volcanos("onexport", {help: "导出数据", list: [],
-    _init: function(can, msg, list, cb, target) {},
-})
 END
 
     ish_miss_create_file src/$name/${name}.shy <<END
