@@ -4,7 +4,6 @@
 require show.sh
 require help.sh
 
-export PATH=${ISH_CONF_TASK}/bin:${PWD}/bin:${PWD}:$PATH
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
@@ -119,7 +118,6 @@ ish_miss_prepare_install() {
     ish_miss_create_file $ish_miss_ice_sh <<END
 #! /bin/sh
 
-export PATH=\${PWD}/bin:\${PWD}:\$PATH
 export ctx_log=\${ctx_log:=bin/boot.log}
 export ctx_pid=\${ctx_pid:=var/run/ice.pid}
 export ctx_mod=\${ctx_mod:=gdb,log,ssh,ctx}
@@ -191,10 +189,12 @@ ish_miss_prepare_contexts() {
     pwd
 }
 ish_miss_prepare_develop() {
-    # sudo yum install -y tmux golang git vim
-    mkdir -p usr/local; cd usr/local
-    local pkg=go1.15.linux-amd64.tar.gz
-    [ -d go ] || wget https://golang.google.cn/dl/$pkg && tar xvf $pkg
+    mkdir -p usr/local; cd usr/local; local pkg=go1.15.linux-amd64.tar.gz
+    [ -d go ] || (wget https://golang.google.cn/dl/$pkg && tar xvf $pkg)
+    export GOPROXY=https://goproxy.cn,direct
+    export GORPIVATE=github.com
+    export GOROOT=$PWD/go
+    cd -
 }
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
