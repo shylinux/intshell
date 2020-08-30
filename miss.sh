@@ -57,11 +57,13 @@ ish_miss_help() {
 }
 
 ish_miss_prepare() {
+    echo
     for repos in "$@"; do local name=${repos##*/}
         [ "$name" = "$repos" ] && repos=shylinux/$name
         require github.com/$repos
         ish_miss_create_link usr/$name $(require_path $repos)
-        cd usr/$name && git pull && cd - || return
+        cd usr/$name && git pull
+        cd -
     done
 
     ish_miss_create_file $ish_miss_miss_sh <<END
@@ -70,35 +72,23 @@ ish_miss_prepare() {
 
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
-
-require show.sh
-require help.sh
 require miss.sh
 
 ish_miss_prepare_compile
 ish_miss_prepare_install
-# ish_miss_prepare_develop
-# ish_miss_prepare_session ${PWD##*/}
 
 ish_miss_prepare_volcanos
 ish_miss_prepare learning
 ish_miss_prepare_icebergs
 # ish_miss_prepare toolkits
 # ish_miss_prepare_intshell
+# ish_miss_prepare_contexts
 
+# ish_miss_prepare_develop
+# ish_miss_prepare_session ${PWD##*/}
 END
 }
 ish_miss_prepare_compile() {
-    if ! go version; then
-        curl -o go.tar.gz https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
-        tar xvf go.tar.gz -C /usr/local
-    fi
-
-    export GOPROXY=https://goproxy.cn
-    export GORPIVATE=github.com
-    export GOROOT=/usr/local/go
-    export PATH=/usr/local/go/bin:$PATH
-
     export ISH_CONF_TASK=${PWD##*/}
     ish_miss_create_file $ish_miss_main_go <<END
 package main
@@ -116,11 +106,10 @@ END
 title main
 END
 
-    # sudo yum install -y make
     ish_miss_create_file Makefile << END
 export GOPROXY=https://goproxy.cn
-export GORPIVATE=github.com
-export CGO_ENABLED=0
+export GOPRIVATE=github.com
+# export CGO_ENABLED=0
 all:
 	@echo && date
 	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
@@ -174,14 +163,36 @@ END
 Volcanos("onengine", {})
 END
 }
+ish_miss_prepare_volcanos() {
+    echo
+    require github.com/shylinux/volcanos
+    ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
+    cd usr/volcanos/ && git pull
+    cd -
+}
+ish_miss_prepare_icebergs() {
+    echo
+    require github.com/shylinux/icebergs
+    ish_miss_create_link usr/icebergs $(require_path shylinux/icebergs)
+    cd usr/icebergs/ && git pull
+    cd -
+}
+ish_miss_prepare_intshell() {
+    echo
+    ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
+    ish_miss_create_link usr/intshell $(require_path ../../)
+    cd usr/intshell/ && git pull
+    cd -
+}
+ish_miss_prepare_contexts() {
+    echo
+    ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
+    git pull
+    pwd
+}
 ish_miss_prepare_develop() {
-    yum install -y wget || apk add wget
-    mkdir -p .vim/autoload/; [ -f .vim/autoload/plug.vim ] || wget $ctx_dev/publish/plug.vim -qO .vim/autoload/plug.vim
-    [ -f .vimrc ] || wget $ctx_dev/publish/vimrc -qO .vimrc
-
-    yum install -y vim || apk add vim
-    vim -c "PlugInstall | qa"
-    vim -c "GoInstallBinaries"
+    # sudo yum install -y tmux golang git vim
+    echo
 }
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
@@ -189,8 +200,7 @@ ish_miss_prepare_session() {
     if tmux new-session -d -s $name -n shy; then
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:shy.2
-        local left=3 right=2; if [ `uname` = "Darwin" ]; then left=2 right=3; fi
-
+        local left=2 right=3
         tmux send-key -t ${name}:shy.$right "ish_miss_log" Enter; if [ "$name" = "miss" ]; then
             tmux send-key -t ${name}:shy.$left "ish_miss_serve shy" Enter
         else
@@ -199,21 +209,6 @@ ish_miss_prepare_session() {
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name
-}
-ish_miss_prepare_volcanos() {
-    require github.com/shylinux/volcanos
-    ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
-    cd usr/volcanos/ && git pull
-    cd -
-}
-ish_miss_prepare_icebergs() {
-    require github.com/shylinux/icebergs
-    ish_miss_create_link usr/icebergs $(require_path shylinux/icebergs)
-    cd usr/icebergs/ && git pull && cd - || return
-}
-ish_miss_prepare_intshell() {
-    ish_miss_create_link usr/intshell $(require_path ../../)
-    cd usr/icebergs/ && git pull && cd - || return
 }
 
 ish_miss_start() {
