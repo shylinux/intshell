@@ -67,8 +67,6 @@ ish_miss_prepare() {
 
     ish_miss_create_file $ish_miss_miss_sh <<END
 #!/bin/bash
-# git &>/dev/null || yum install -y git || apk add git
-
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
 require miss.sh
@@ -76,15 +74,15 @@ require miss.sh
 ish_miss_prepare_compile
 ish_miss_prepare_install
 
-ish_miss_prepare_volcanos
-ish_miss_prepare learning
-ish_miss_prepare_icebergs
+# ish_miss_prepare_volcanos
+# ish_miss_prepare learning
+# ish_miss_prepare_icebergs
 # ish_miss_prepare toolkits
 # ish_miss_prepare_intshell
 # ish_miss_prepare_contexts
 
 # ish_miss_prepare_develop
-# ish_miss_prepare_session ${PWD##*/}
+ish_miss_prepare_session ${PWD##*/}
 END
 }
 ish_miss_prepare_compile() {
@@ -199,19 +197,20 @@ ish_miss_prepare_develop() {
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
     ish_log_debug "session: $name"
-    if tmux new-session -d -s $name -n shy; then
+    local win=${name##*-} left=2 right=3
+    if tmux new-session -d -s $name -n $win; then
         tmux split-window -d -p 30 -t $name
-        tmux split-window -d -h -t ${name}:shy.2
-        local left=2 right=3
-        tmux send-key -t ${name}:shy.$right "ish_miss_log" Enter; if [ "$name" = "miss" ]; then
-            tmux send-key -t ${name}:shy.$left "ish_miss_serve dev shy" Enter
+        tmux split-window -d -h -t ${name}:$win.2
+        tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
+        if [ "$name" = "miss" ]; then
+            tmux send-key -t ${name}:$win.$left "ish_miss_serve dev shy" Enter
         else
-            tmux send-key -t ${name}:shy.$left "ish_miss_space dev" Enter
+            tmux send-key -t ${name}:$win.$left "ish_miss_space dev" Enter
         fi
-        tmux send-key -t ${name}:shy.1 "vim -O src/main.shy" Enter
+        tmux send-key -t ${name}:$win.1 "vim -O src/main.shy src/main.go" Enter
     fi
 
-    [ "$TMUX" = "" ] && tmux attach -t $name
+    [ "$TMUX" = "" ] && tmux attach -t $name || tmux link-window -s $name:$win
 }
 
 ish_miss_start() {
