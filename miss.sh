@@ -192,7 +192,9 @@ ish_miss_prepare_contexts() {
 }
 ish_miss_prepare_develop() {
     # sudo yum install -y tmux golang git vim
-    echo
+    mkdir -p usr/local; cd usr/local
+    local pkg=go1.15.linux-amd64.tar.gz
+    [ -d go ] || wget https://golang.google.cn/dl/$pkg && tar xvf $pkg
 }
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
