@@ -206,6 +206,7 @@ ish_miss_prepare_session() {
         else
             tmux send-key -t ${name}:shy.$left "ish_miss_space dev" Enter
         fi
+        tmux send-key -t ${name}:shy.1 "vim -O src/main.go src/main.shy" Enter
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name
