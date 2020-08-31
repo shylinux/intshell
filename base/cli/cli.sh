@@ -23,4 +23,11 @@ ish_ctx_cli_alias() {
 }
 
 name=$(hostname -s) && name=${name##*-}
-PS1="\\!@$name[\\t]\\W\\$ "
+case "${SHELL##*/}" in
+    zsh)
+        export PROMPT=$LOCAL_PROMPT'%![%*]%c$ '
+        ;;
+    bash)
+        export PS1="\\!@$name[\\t]\\W\\$ "
+        ;;
+esac
