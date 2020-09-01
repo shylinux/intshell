@@ -197,8 +197,8 @@ ish_miss_prepare_develop() {
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
     ish_log_debug "session: $name"
-    local win=${name##*-} left=2 right=3
-    if tmux new-session -d -s $name -n $win; then
+    local win=${name##*-} left=3 right=2
+    if TMUX="" tmux new-session -d -s $name -n $win; then
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:$win.2
         tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
@@ -217,7 +217,7 @@ ish_miss_start() {
     while true; do
         # [ -f $ctx_log.old ] && rm $ctx_log.old &>/dev/null
         # [ -f "$ctx_log" ] && mv $ctx_log $ctx_log.old &>/dev/null
-        echo -e "\n\nrestarting..." && date && ice.bin $@ 2>$ctx_log && break
+        echo -e "\n\nrestarting..." && date && bin/ice.bin $@ 2>$ctx_log && break
     done
 }
 ish_miss_stop() {
