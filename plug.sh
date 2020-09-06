@@ -33,6 +33,7 @@ ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
 ISH_CONF_DEV=${ISH_CONF_DEV:="http://localhost:9020"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
 ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
+ISH_CONF_HUB_PROXY=${ISH_CONF_HUB_PROXY:="https://"}
 
 ISH_CONF_HELP=${ISH_CONF_HELP:="help"}
 ISH_CONF_TEST=${ISH_CONF_TEST:="test"}
@@ -175,7 +176,7 @@ require() {
                 fi; mod=$pp;;
         $ISH_CONF_HUB) [ -d "$ISH_CONF_ROOT/$mod/.git" ] || [ -d "$ISH_CONF_PATH/$mod/.git" ] || if true; then
                     ish_log_debug -g "clone https://$mod => $ISH_CONF_PATH/$mod"
-                    git clone https://$mod $ISH_CONF_PATH/$mod
+                    git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$mod
                 fi;;
     esac
 
