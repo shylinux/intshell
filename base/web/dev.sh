@@ -4,6 +4,7 @@ ish_ctx_dev_sid=${ish_ctx_dev_sid:=""}
 ish_ctx_dev_request() {
     local url=$ISH_CONF_DEV/code/zsh/$1 && shift
     ish_web_request "$url" "$@" pwd "${PWD}" sid "$ish_ctx_dev_sid" SHELL $SHELL
+    echo "$@" >> hi.log
 }
 
 ish_ctx_dev_help() {
@@ -50,29 +51,26 @@ ish_ctx_dev_download() {
     ish_ctx_dev_request download cmds $@
 }
 
-ish_ctx_dev_sync_history() {
-    ctx_end=`history|tail -n1|awk '{print $1}'`
-    ctx_begin=${ctx_begin:=$ctx_end}
-    ctx_count=`expr $ctx_end - $ctx_begin`
-    ish_log_debug "sync $ctx_begin-$ctx_end count $ctx_count to $ctx_dev"
-    HISTTIMEFORMAT="%F %T " history|tail -n $ctx_count |while read line; do
-        ish_ctx_dev_request sync cmds history arg "$line" >/dev/null
-    done
-    ctx_begin=$ctx_end
+ish_ctx_dev_sync() {
+    local cmd=`HISTTIMEFORMAT="%F %T " history|tail -n1`
+    [ -n "$cmd" ] && ish_ctx_dev_request sync cmds history arg "$cmd" >/dev/null
 }
 
 ish_ctx_dev_init() {
     ish_ctx_dev_login
     if bind &>/dev/null; then
         # bash
-        bind -x '"\C-G\C-G":ish_ctx_dev_sync_history'
+        trap ish_ctx_dev_sync DEBUG
+
+        # bind 'TAB:complete' 
+        bind 'TAB:menu-complete' 
+
     elif bindkey &>/dev/null; then
         # zsh
         bindkey -s '\C-G\C-G' 'ish_ctx_dev_sync_history\n'
     fi
 }
 ish_ctx_dev_exit() {
-    ish_ctx_dev_sync_history
     ish_ctx_dev_logout
 }
 ish_ctx_dev_init
