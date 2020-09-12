@@ -1,3 +1,3 @@
 #!/bin/sh
 
-require tmux/tmux.sh
+require misc/tmux/tmux.sh

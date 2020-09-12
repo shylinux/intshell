@@ -30,7 +30,6 @@ ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 
 ISH_CONF_PATH=$PWD/.ish/pluged
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
-ISH_CONF_DEV=${ISH_CONF_DEV:="http://localhost:9020"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
 ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
 ISH_CONF_HUB_PROXY=${ISH_CONF_HUB_PROXY:="https://"}
@@ -70,7 +69,7 @@ ish_show() {
         -time) echo -n "$(date +"%Y-%m-%d %H:%M:%S")";;
         *)
             if local k=$1 && [ "${k:0:1}" = "-" ] ; then
-                local color=$(eval "echo \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+                local color=$(eval "echo -ne \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
                 [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color\b"
             else
                 [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$1$ISH_SHOW_COLOR_end"
@@ -194,13 +193,13 @@ require() {
             __load "$name" $mod
             return
         fi
-
         [ -d "$p/$mod" ] && for i in $file; do
             __load "${name}" "$p/$mod/$i"
         done && return
-        [ "$ISH_CONF_PATH" = "$ISH_CONF_ROOT" ] && return
     done
 
+    ish_log_require "$ctx_dev/intshell/$mod"
+    local ctx_temp=$(mktemp); curl -sL $ctx_dev/intshell/$mod >$ctx_temp && __load $name $ctx_temp && return
     ish_log_err "not found $p/$mod"
 }
 
@@ -266,7 +265,6 @@ _load() {
     source ./${pre##*/} "$@" >/dev/null
 }
 __load() {
-
     local name=$1 && shift 1 && local back=$PWD pre=$1 && [ -f "$pre" ] || return
     [ -d "${pre%/*}" ] && cd ${pre%/*}
     [ "$ISH_CTX_FILE" = "$1" ] && return

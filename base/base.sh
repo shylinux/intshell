@@ -1,5 +1,5 @@
 #!/bin/sh
 
-require cli/cli.sh
-require web/web.sh
-require web/dev.sh
+require base/cli/cli.sh
+require base/web/web.sh
+require base/web/dev.sh
