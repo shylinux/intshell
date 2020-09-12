@@ -32,6 +32,7 @@ ish_ctx_dev_init() {
 
     elif bindkey &>/dev/null; then
         # zsh
+        echo > /dev/null
     fi
 }
 ish_ctx_dev_exit() {
