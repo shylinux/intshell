@@ -18,11 +18,11 @@ ish_ctx_cli_jobs() {
 ish_ctx_cli_alias() {
     [ "$#" = "0" ] && alias && return
     [ "$#" = "1" ] && alias $1 && return
-    ish_log_info "alias" "set" "$1" "$2"
+    ish_log_alias "-g" "$1" "=>" "$2"
     alias $1="$2"
 }
 
-name=$(hostname -s) && name=${name##*-}
+name=$(hostname) && name=${name##*-} && name=${name%%\.*}
 case "${SHELL##*/}" in
     zsh)
         export PROMPT=$LOCAL_PROMPT'%![%*]%c$ '

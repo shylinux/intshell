@@ -21,7 +21,7 @@
 ## 1.场景化 # {
 ISH_CONF_ERR=${ISH_CONF_ERR:="/dev/stderr"}
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
-ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source debug test"}
+ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require source alias debug test"}
 # ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="info debug test"}
 
 ISH_CONF_TASK=$PWD
@@ -31,7 +31,7 @@ ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 ISH_CONF_PATH=$PWD/.ish/pluged
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
 ISH_CONF_FTP=${ISH_CONF_FTP:="https|http"}
-ISH_CONF_HUB=${ISH_CONF_HUB:="github.com"}
+ISH_CONF_HUB=${ISH_CONF_HUB:="github.com|git.zuoyebang.cc"}
 ISH_CONF_HUB_PROXY=${ISH_CONF_HUB_PROXY:="https://"}
 
 ISH_CONF_HELP=${ISH_CONF_HELP:="help"}
@@ -126,9 +126,10 @@ ish_log_info() {
     done
     ish_log info $info
 }
-ish_log_debug() { ish_log "debug" $@; }
-ish_log_source() { ish_log "source" $@; }
-ish_log_require() { ish_log "require" $@; }
+ish_log_debug() { ish_log "debug" "$@"; }
+ish_log_alias() { ish_log "alias" "$@"; }
+ish_log_source() { ish_log "source" "$@"; }
+ish_log_require() { ish_log "require" "$@"; }
 # }
 ## 3.模块加载 # {
 require_help() {

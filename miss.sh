@@ -59,7 +59,8 @@ ish_miss_prepare() {
     echo
     for repos in "$@"; do local name=${repos##*/}
         [ "$name" = "$repos" ] && repos=shylinux/$name
-        require github.com/$repos
+        [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
+        require $repos
         ish_miss_create_link usr/$name $(require_path $repos)
         cd usr/$name && git pull
         cd -
@@ -67,6 +68,7 @@ ish_miss_prepare() {
 
     ish_miss_create_file $ish_miss_miss_sh <<END
 #!/bin/bash
+
 [ -f ~/.ish/plug.sh ] || [ -f ./.ish/plug.sh ] || git clone https://github.com/shylinux/intshell ./.ish
 [ "\$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
 require miss.sh
