@@ -173,7 +173,6 @@ require() { # require [ as name ] mod file
     mod=${mod#https://}; case ${mod%%/*} in
         github.com|git.zuoyebang.cc)
             [ -d "$ISH_CONF_ROOT/$mod/.git" ] || [ -d "$ISH_CONF_PATH/$mod/.git" ] || if true; then
-                ish_log_debug $mod
                 ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$mod"
                 git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$mod
 

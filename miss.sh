@@ -61,7 +61,6 @@ ish_miss_prepare() {
         [ "$name" = "$repos" ] && repos=shylinux/$name
         [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
         repos=${repos#https://}; require $repos
-        ish_log_debug $repos
         ish_miss_create_link usr/$name $(require_path $repos)
         cd usr/$name && git pull
         cd -
