@@ -60,7 +60,8 @@ ish_miss_prepare() {
     for repos in "$@"; do local name=${repos##*/}
         [ "$name" = "$repos" ] && repos=shylinux/$name
         [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
-        require $repos
+        repos=${repos#https://}; require $repos
+        ish_log_debug $repos
         ish_miss_create_link usr/$name $(require_path $repos)
         cd usr/$name && git pull
         cd -
@@ -162,18 +163,16 @@ Volcanos("onengine", {})
 END
 }
 ish_miss_prepare_volcanos() {
-    echo
-    require github.com/shylinux/volcanos
-    ish_miss_create_link usr/volcanos $(require_path shylinux/volcanos)
-    cd usr/volcanos/ && git pull
-    cd -
+    ish_miss_prepare volcanos
+}
+ish_miss_prepare_learning() {
+    ish_miss_prepare learning
 }
 ish_miss_prepare_icebergs() {
-    echo
-    require github.com/shylinux/icebergs
-    ish_miss_create_link usr/icebergs $(require_path shylinux/icebergs)
-    cd usr/icebergs/ && git pull
-    cd -
+    ish_miss_prepare icebergs
+}
+ish_miss_prepare_toolkits() {
+    ish_miss_prepare toolkits
 }
 ish_miss_prepare_intshell() {
     echo

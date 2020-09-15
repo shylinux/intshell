@@ -144,9 +144,9 @@ require_help() {
     echo
 }
 require_path() {
-    local name=$ISH_CONF_PATH/github.com/$1
+    local name=$ISH_CONF_PATH/$1
     [ -d $name ] && echo $name && return
-    local name=$ISH_CONF_ROOT/github.com/$1
+    local name=$ISH_CONF_ROOT/$1
     [ -d $name ] && echo $name && return
 }
 require_list() {
@@ -162,7 +162,7 @@ require_list() {
         [ "$ISH_CONF_PATH" = "$ISH_CONF_ROOT" ] && break
     done
 }
-require() {
+require() { # require [ as name ] mod file
     # 解析参数
     [ -z "$1" ] && require_help && return
     local name=${ISH_CTX_MODULE#ish_} && [ "$1" = "as" ] && name=$2 && shift 2
@@ -170,37 +170,32 @@ require() {
     ish_log_require as $name $(_color g $mod) $file
 
     # 下载脚本
-    local p="${mod%%/*}" && p=${p%:} && case "$p" in
-        ${ISH_CONF_FTP}) local pp=$(_name $mod); [ -f "$ISH_CONF_ROOT/$pp/$file" ] || [ -f "$ISH_CONF_PATH/$pp/$file" ] || if true; then
-                    mkdir -p $ISH_CONF_PATH/$pp && wget $mod/$file -O "$ISH_CONF_PATH/$pp/$file"
-                fi; mod=$pp;;
-        $ISH_CONF_HUB) [ -d "$ISH_CONF_ROOT/$mod/.git" ] || [ -d "$ISH_CONF_PATH/$mod/.git" ] || if true; then
-                    ish_log_debug -g "clone https://$mod => $ISH_CONF_PATH/$mod"
-                    git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$mod
-                fi;;
+    mod=${mod#https://}; case ${mod%%/*} in
+        github.com|git.zuoyebang.cc)
+            [ -d "$ISH_CONF_ROOT/$mod/.git" ] || [ -d "$ISH_CONF_PATH/$mod/.git" ] || if true; then
+                ish_log_debug $mod
+                ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$mod"
+                git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$mod
+
+            fi
     esac
 
     # 加载脚本
     for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
-        if [ -e "${p%/*}/$mod" ]; then
-            __load "$name" ${p%/*}/$mod
-            return
-        fi
-        if [ -e "$p/$mod" ]; then 
-            __load "$name" $p/$mod
-            return
-        fi
-        if [ -e "$mod" ]; then
-            __load "$name" $mod
-            return
-        fi
+        [ -e "${p%/*}/$mod" ] && __load "$name" ${p%/*}/$mod && return
+        [ -e "$p/$mod" ] && __load "$name" $p/$mod && return 
+        [ -e "$mod" ] && __load "$name" $mod && return
+
         [ -d "$p/$mod" ] && for i in $file; do
             __load "${name}" "$p/$mod/$i"
         done && return
     done
 
+    # 下载脚本
     ish_log_require "$ctx_dev/intshell/$mod"
     local ctx_temp=$(mktemp); curl -sL $ctx_dev/intshell/$mod >$ctx_temp && __load $name $ctx_temp && return
+
+    # 查找失败
     ish_log_err "not found $p/$mod"
 }
 
@@ -266,11 +261,12 @@ _load() {
     source ./${pre##*/} "$@" >/dev/null
 }
 __load() {
-    local name=$1 && shift 1 && local back=$PWD pre=$1 && [ -f "$pre" ] || return
+    local name=$1 && shift 1 && local back=$PWD pre=$1 && [ -f "$pre" ] || return 0
     [ -d "${pre%/*}" ] && cd ${pre%/*}
-    [ "$ISH_CTX_FILE" = "$1" ] && return
+    [ "$ISH_CTX_FILE" = "$1" ] && return 0
     ISH_CTX_FILE=$1 ISH_CTX_MODULE=$(_name ish_${name}) ISH_CTX_SCRIPT=$(_name ish_${name}) _load "$@"
     cd $back
+    return 0
 }
 
 _plug() {
@@ -278,11 +274,12 @@ _plug() {
     for p in $ISH_CONF_ROOT $ISH_CONF_PATH; do
         local what=$p && [ -d "$what" ] && for hub in $what/*; do
             case "${hub##*/}" in
-                $ISH_CONF_HUB)
+                github.com|git.zuoyebang.cc)
                     for repos in $hub/*/*; do
                         require ${repos#$what/} $1${ISH_CONF_TYPE}
                     done;;
-                *) require ${hub#$what/} $1${ISH_CONF_TYPE}
+                *)
+                    require ${hub#$what/} $1${ISH_CONF_TYPE}
             esac
         done
         [ "$ISH_CONF_ROOT" = "$ISH_CONF_PATH" ] && break
