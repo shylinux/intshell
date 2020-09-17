@@ -115,7 +115,6 @@ autocmd! BufReadPost * call ShySync("read")
 autocmd! BufWritePre * call ShySync("write")
 autocmd! InsertLeave * call ShySync("insert")
 autocmd! CmdlineLeave * call ShySync("exec")
-autocmd! ExitPre * call ShyLogout()
 "}}}
 " 按键映射{{{
 nnoremap <C-G><C-G> :call ShyGrep(expand("<cword>"))<CR>
