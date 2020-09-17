@@ -81,6 +81,7 @@ nnoremap <C-L> <C-W>l
 "}}}
 " 编程配置{{{
 set keywordprg=man\ -a
+set path+=.,..,.ish/pluged/,~/.ish/pluged/,$GOROOT/src,/usr/include
 
 let javaScript_fold=1
 function! Config(type)
