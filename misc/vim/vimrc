@@ -129,6 +129,7 @@ autocmd BufReadPost * normal `"
 syntax on
 set t_Co=256
 colorscheme torte
+" colorscheme elflord
 
 highlight Comment ctermfg=cyan ctermbg=darkblue
 highlight PmenuSel ctermfg=darkblue ctermbg=cyan
