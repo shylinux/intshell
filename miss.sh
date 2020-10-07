@@ -215,8 +215,6 @@ ish_miss_prepare_session() {
 
 ish_miss_start() {
     while true; do
-        # [ -f $ctx_log.old ] && rm $ctx_log.old &>/dev/null
-        # [ -f "$ctx_log" ] && mv $ctx_log $ctx_log.old &>/dev/null
         echo -e "\n\nrestarting..." && date && bin/ice.bin $@ 2>$ctx_log && break
     done
 }
@@ -228,7 +226,7 @@ ish_miss_restart() {
 }
 ish_miss_serve() {
     ish_miss_stop
-    ish_miss_start serve $@
+    ish_miss_start serve start $@
 }
 ish_miss_space() {
     ish_miss_stop
