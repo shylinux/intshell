@@ -5,7 +5,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
         git clone https://github.com/shylinux/contexts && cd contexts && source etc/miss.sh
         ;;
     ice)
-        mkdir bin &>/dev/null; curl -sL $ctx_dev/publish/ice.sh > bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh
+        mkdir bin &>/dev/null; curl -sL $ctx_dev/publish/ice.sh > bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev
         ;;
     *)
         ctx_temp=$(mktemp); curl -sL $ctx_dev/intshell/plug.sh >$ctx_temp; source $ctx_temp
