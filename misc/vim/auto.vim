@@ -7,30 +7,28 @@ endfunc
 " 后端通信
 call ShyDefine("g:ctx_sid", "")
 call ShyDefine("g:ctx_url", (len($ctx_dev) > 1? $ctx_dev: "http://127.0.0.1:9020") . "/code/vim/")
-fun! ShySend(cmd, arg)
+func! ShySend(cmd, arg)
     if has_key(a:arg, "sub") && a:arg["sub"] != "" | let temp = tempname()
-        call writefile(split(a:arg["sub"], "\n"), temp, "b")
-        let a:arg["sub"] = "@" . temp
+        call writefile(split(a:arg["sub"], "\n"), temp, "b") | let a:arg["sub"] = "@" . temp
     endif
 
     let a:arg["sid"] = g:ctx_sid
     let a:arg["pwd"] = getcwd() | let a:arg["buf"] = bufname("%") | let a:arg["row"] = line(".") | let a:arg["col"] = col(".")
     let args = "" | for k in sort(keys(a:arg)) | let args = args . " -F '" . k . "=" . a:arg[k] . "' " | endfor
     return system("curl -s " . g:ctx_url . a:cmd . args . " 2>/dev/null")
-endfun
+endfunc
 
-fun! ShyLogin()
-    let g:ctx_sid = ShySend("sess", {"sid": g:ctx_sid, "username": $USER, "hostname": $HOSTNAME})
-endfun
-fun! ShyLogout()
-    call ShySend("sess", {"cmds", "logout", "sid": g:ctx_sid})
-    let g:ctx_sid = ""
-endfun
+func! ShyLogin()
+    let g:ctx_sid = ShySend("sess", {"username": $USER, "hostname": $HOSTNAME})
+endfunc
+func! ShyLogout()
+    call ShySend("sess", {"cmds", "logout"}) | let g:ctx_sid = ""
+endfunc
 call ShyLogin()
 " }}}
 " 功能函数{{{
 " 数据同步
-fun! ShySync(target)
+func! ShySync(target)
     if bufname("%") == "ControlP" | return | end
 
     if a:target == "read" || a:target == "write"
@@ -43,13 +41,13 @@ fun! ShySync(target)
         let cmd = {"bufs": "buffers", "regs": "registers", "marks": "marks", "tags": "tags", "fixs": "clist"}
         call ShySend("sync", {"cmds": a:target, "sub": execute(cmd[a:target])})
     endif
-endfun
+endfunc
 
 " 输入补全
-fun! ShyInput(code)
+func! ShyInput(code)
     return split(ShySend("input", {"cmds": a:code, "pre": getline("."), "row": line("."), "col": col(".")}), "\n")
-endfun
-fun! ShyComplete(firststart, base)
+endfunc
+func! ShyComplete(firststart, base)
     if a:firststart | let line = getline('.') | let start = col('.') - 1
         " 命令位置
         if match(line, '\s*ice ') >= 0 | return match(line, "ice ") | endif
@@ -67,18 +65,20 @@ fun! ShyComplete(firststart, base)
 
     " 单词转换
     return ShyInput(a:base)
-endfun
+endfunc
 set completefunc=ShyComplete
 
 " 收藏列表
 call ShyDefine("g:favor_note", "")
-fun! ShyFavor()
-    let tab_list = split(ShySend("favor", {"cmds": "select"}), "\n")
+func! ShyFavor()
+    let tab_list = ["add topic"] + split(ShySend("favor", {"cmds": "select"}), "\n")
     let tab = tab_list[inputlist(tab_list)-1]
+    if tab == "add topic" | let tab = input("tab: ", "数据结构") | end
+
     let g:favor_note = input("note: ", g:favor_note)
     call ShySend("favor", {"cmds": "insert", "tab": tab, "note": g:favor_note, "arg": getline("."), "row": getpos(".")[1], "col": getpos(".")[2]})
-endfun
-fun! ShyFavors()
+endfunc
+func! ShyFavors()
     let tab_list = split(ShySend("favor", {"cmds": "select"}), "\n")
     let tab = tab_list[inputlist(tab_list)-1]
 
@@ -98,16 +98,16 @@ fun! ShyFavors()
         if l:view == 4 | split | lnext | elseif l:view == 3 | vsplit | lnext | endif
     endif | endfor
     botright lopen | if l:view  == 1 | only | endif
-endfun
+endfunc
 
 " 文件搜索
 call ShyDefine("g:grep_dir", "./")
-fun! ShyGrep(word)
+func! ShyGrep(word)
     let g:grep_dir = input("dir: ", g:grep_dir, "file")
     " execute "grep -rn --exclude tags --exclude '*.tags' '\\<" . a:word . "\\>' " . g:grep_dir
     execute "grep -rn '\\<" . a:word . "\\>' " . g:grep_dir
     copen
-endfun
+endfunc
 " }}}
 " 事件回调{{{
 autocmd! BufReadPost * call ShySync("bufs")

@@ -12,6 +12,7 @@ ish_ctx_dev_login() {
 ish_ctx_dev_logout() {
     ish_ctx_dev_request sess cmds logout 2>/dev/null && ish_ctx_dev_sid=""
 }
+ish_ctx_dev_login
 
 ish_ctx_dev_qrcode() {
     ish_ctx_dev_request qrcode text "$@"
@@ -42,7 +43,6 @@ ish_ctx_dev_sync() {
     ish_ctx_dev_sync_last=$cmd
 }
 ish_ctx_dev_init() {
-    ish_ctx_dev_login
     if bind &>/dev/null; then
         # bash
         trap ish_ctx_dev_sync DEBUG
