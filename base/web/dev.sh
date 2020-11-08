@@ -3,7 +3,7 @@
 ish_ctx_dev_sid=${ish_ctx_dev_sid:=""}
 ish_ctx_dev_sid(){ echo $ish_ctx_dev_sid; }
 ish_ctx_dev_request() {
-    local url=$ctx_dev/code/zsh/$1 && shift
+    local url=$ctx_dev/code/bash/$1 && shift
     ish_web_request "$url" "$@" pwd "${PWD}" sid "$ish_ctx_dev_sid"
 }
 ish_ctx_dev_login() {
