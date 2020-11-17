@@ -28,7 +28,7 @@ ish_ctx_dev_trash=${ish_ctx_dev_trash:=~/trash}
 ish_ctx_dev_trash() {
     local size=`du -sb $from|cut -f1 2>/dev/null`
     local from=$PWD/$1 to=$ish_ctx_dev_trash/`date +"%Y%m%d-%H%M%S"`-`echo $PWD/$1| tr '/' '_'`
-    ish_ctx_dev_request trash action insert hostname "$(hostname)" size "$size" from "$from" to "$to" &>/dev/null
+    ish_ctx_dev_request trash cmds insert hostname "$(hostname)" size "$size" from "$from" to "$to" &>/dev/null
     mkdir -p $ish_ctx_dev_trash &>/dev/null; mv $from $to
 }
 
