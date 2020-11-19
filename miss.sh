@@ -176,7 +176,7 @@ ish_miss_prepare_toolkits() {
 ish_miss_prepare_intshell() {
     echo
     ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
-    ish_miss_create_link usr/intshell $(require_path ../../)
+    ish_miss_create_link usr/intshell $(require_path ../../.ish)
     cd usr/intshell/ && git pull
     cd -
 }
