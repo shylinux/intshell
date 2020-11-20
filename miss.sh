@@ -161,7 +161,7 @@ ish_miss_prepare_contexts() {
     pwd
 }
 ish_miss_prepare_develop() {
-    echo $PATH| grep "go/bin" || export PATH=$PWD/go/bin:$PATH
+    echo $PATH| grep "$PWD/go/bin" || export PATH=$PWD/go/bin:$PATH
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
