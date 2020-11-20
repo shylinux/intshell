@@ -161,6 +161,10 @@ ish_miss_prepare_contexts() {
     pwd
 }
 ish_miss_prepare_develop() {
+    echo $PATH| grep "go/bin" || export PATH=$PWD/go/bin:$PATH
+    export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
+    export GORPIVATE=${GOPRIVATE:=github.com}
+    export GOROOT=${GOROOT:=$PWD/usr/local/go}
     [ -d usr/local/go ] && return
 
     local pkg=go1.15.5.linux-amd64.tar.gz
@@ -176,10 +180,6 @@ ish_miss_prepare_develop() {
     ish_log_require "$pkg"
     mkdir -p usr/local; cd usr/local
     curl -O https://dl.google.com/go/$pkg && tar xvf $pkg || wget https://dl.google.com/go/$pkg && tar xvf $pkg
-    export GOPROXY=https://goproxy.cn,direct
-    export GORPIVATE=github.com
-    export PATH=$PWD/go/bin:$PATH
-    export GOROOT=$PWD/go
     cd -
 
     vim -c GoInstallBinaries -c exit -c exit
