@@ -36,8 +36,7 @@ ish_miss_prepare() {
         [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
         repos=${repos#https://}; require $repos
         ish_miss_create_link usr/$name $(require_path $repos)
-        cd usr/$name && git pull
-        cd -
+        cd usr/$name && git pull; cd -
     done
 
     ish_miss_create_file $ish_miss_miss_sh <<END
@@ -51,13 +50,14 @@ ish_miss_prepare_compile
 ish_miss_prepare_install
 
 # ish_miss_prepare_volcanos
-# ish_miss_prepare learning
+# ish_miss_prepare_learning
 # ish_miss_prepare_icebergs
-# ish_miss_prepare toolkits
+# ish_miss_prepare_toolkits
 # ish_miss_prepare_intshell
 # ish_miss_prepare_contexts
 
 # ish_miss_prepare_develop
+make
 ish_miss_prepare_session ${PWD##*/}
 END
 }
@@ -82,7 +82,8 @@ END
     ish_miss_create_file Makefile << END
 export GOPROXY=https://goproxy.cn
 export GOPRIVATE=github.com
-# export CGO_ENABLED=0
+export CGO_ENABLED=0
+
 all:
 	@echo && date
 	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
@@ -225,11 +226,11 @@ ish_miss_space() {
 ish_miss_log() {
     tail -f $ctx_log
 }
+
 ish_miss() {
     local cmd=$1 && [ "$1" != "" ] && shift
     ish_web_request $ctx_dev/code/miss/$cmd arg "$*" pwd "$PWD" pid "$$" SHELL "$SHELL" pane "$TMUX_PANE"
 }
-
 ish_miss_create() {
     local name=$ISH_CONF_WORK/$1 && [ -d $name ] && cd $name && return
     name=$ISH_CONF_WORK/$(date +%Y%m%d)-$1 && mkdir -p $name && cd $name
