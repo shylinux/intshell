@@ -1,8 +1,6 @@
 #!/bin/sh
 
 [ "$ISH_CONF_PRE" != "" ] || source ./.ish/plug.sh || source ~/.ish/plug.sh
-require show.sh
-require help.sh
 
 export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
@@ -29,30 +27,6 @@ ish_miss_create_file() {
 ish_miss_create_link() {
     [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
     ish_miss_create_path $1 && ln -s $2 $1
-}
-ish_miss_help() {
-    ish_help_show \
-        usage -g "ish_miss_prepare $(ish_show -y repos)" \
-                "" "下载代码" \
-        usage -r "ish_miss_restart" \
-                "" "重启服务" \
-                "" "" \
-        usage -y "ish_miss_serve $(ish_show -y arg...)" \
-                "" "重启服务" \
-        usage -g "ish_miss_start $(ish_show -y arg...)" \
-                "" "启动服务" \
-        usage -r "ish_miss_stop" \
-                "" "停止服务" \
-        usage -g "ish_miss_log" \
-                "" "查看日志" \
-                "" "" \
-        usage -g "ish_miss_create $(ish_show -y name)" \
-                "" "创建项目" \
-        usage -g "ish_miss_module $(ish_show -y name)" \
-                "" "创建模块" \
-        usage -g "ish_miss_docker $(ish_show -y name)" \
-                "" "创建容器" \
-    end
 }
 
 ish_miss_prepare() {
@@ -187,12 +161,28 @@ ish_miss_prepare_contexts() {
     pwd
 }
 ish_miss_prepare_develop() {
-    mkdir -p usr/local; cd usr/local; local pkg=go1.15.linux-amd64.tar.gz
-    [ -d go ] || (wget https://golang.google.cn/dl/$pkg && tar xvf $pkg)
+    [ -d usr/local/go ] && return
+
+    local pkg=go1.15.5.linux-amd64.tar.gz
+    case "$(uname)" in
+        Darwin)
+            pkg=go1.15.5.darwin-amd64.tar.gz
+            ;;
+        Linux)
+            pkg=go1.15.5.linux-amd64.tar.gz
+            ;;
+    esac
+
+    ish_log_require "$pkg"
+    mkdir -p usr/local; cd usr/local
+    curl -O https://dl.google.com/go/$pkg && tar xvf $pkg || wget https://dl.google.com/go/$pkg && tar xvf $pkg
     export GOPROXY=https://goproxy.cn,direct
     export GORPIVATE=github.com
+    export PATH=$PWD/go/bin:$PATH
     export GOROOT=$PWD/go
     cd -
+
+    vim -c GoInstallBinaries -c exit -c exit
 }
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}

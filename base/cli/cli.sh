@@ -6,9 +6,6 @@ ish_ctx_cli_mkfile() {
     touch $1
     echo $name
 }
-ish_ctx_cli_shell() {
-    cat /proc/$$/cmdline|sed 's/-//'
-}
 ish_ctx_cli_jobs() {
     local out=$1 && shift && local err=$1 && shift
     ish_log_debug "pid: $? out: $out err: $err cmd: $@"
@@ -21,9 +18,12 @@ ish_ctx_cli_alias() {
     ish_log_alias "-g" "$1" "=>" "$2"
     alias $1="$2"
 }
+ish_ctx_cli_shell() {
+    cat /proc/$$/cmdline|sed 's/-//'
+}
 
 name=$(hostname) && name=${name##*-} && name=${name%%\.*}
-case "${SHELL##*/}" in
+case "$(ish_ctx_cli_shell)" in
     zsh)
         export PROMPT=$LOCAL_PROMPT'%![%*]%c$ '
         ;;
@@ -31,3 +31,4 @@ case "${SHELL##*/}" in
         export PS1="\\!@$name[\\t]\\W\\$ "
         ;;
 esac
+

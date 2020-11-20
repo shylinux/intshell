@@ -13,6 +13,7 @@ ish_ctx_dev_vim_home() {
 
 ish_ctx_dev_vim_prepare() {
     local from=$PWD/usr/intshell/misc/vim
+
     mkdir -p ~/.vim/autoload
     ish_miss_create_link ~/.vim/autoload/plug.vim $from/plug.vim
     ish_miss_create_link ~/.vim/autoload/auto.vim $from/auto.vim
@@ -25,5 +26,4 @@ ish_ctx_dev_vim_prepare() {
     ish_miss_create_link ~/.vim/syntax/javascript.vim $from/javascript.vim
 
     vim -c PlugInstall -c exit -c exit
-    vim -c GoInstallBinaries -c exit -c exit
 }
