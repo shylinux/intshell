@@ -19,7 +19,7 @@ ish_ctx_cli_alias() {
     alias $1="$2"
 }
 ish_ctx_cli_shell() {
-    cat /proc/$$/cmdline|sed 's/-//'
+    ps |grep ^$$|grep -v grep|grep -o "[a-z]*$"
 }
 
 name=$(hostname) && name=${name##*-} && name=${name%%\.*}
