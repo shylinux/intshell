@@ -187,21 +187,23 @@ ish_miss_prepare_develop() {
 }
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
-    ish_log_debug "session: $name"
     local win=${name##*-} left=3 right=2
-    if TMUX="" tmux new-session -d -s $name -n $win; then
+    ish_log_debug "session: $name:$win"
+
+    if ! tmux has-session -t miss; then
+        TMUX="" tmux new-session -d -s $name -n $win
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:$win.2
         tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
         if [ "$name" = "miss" ]; then
             tmux send-key -t ${name}:$win.$left "ish_miss_serve dev shy" Enter
         else
-            tmux send-key -t ${name}:$win.$left "ish_miss_space dev" Enter
+            tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev" Enter
         fi
         tmux send-key -t ${name}:$win.1 "vim -O src/main.shy src/main.go" Enter
     fi
 
-    [ "$TMUX" = "" ] && tmux attach -t $name || tmux link-window -s $name:$win
+    [ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
 
 ish_miss_start() {
