@@ -22,7 +22,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 ;;
         esac
 
-        [ -d contexts ] || git clone https://github.com/shylinux/template contexts
+        [ -d contexts ] || git clone https://github.com/shylinux/template $PWD/contexts
         cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
