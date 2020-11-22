@@ -130,7 +130,7 @@ require_fork() {
         github.com|git.zuoyebang.cc)
             for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
                 if [ -d "$p/$name" ]; then
-                    for file in $@; do
+                    for file in "$@"; do
                         echo $p/$name/$file
                     done
                     return
@@ -144,7 +144,7 @@ require_fork() {
                 cd $ISH_CONF_PATH/$name; git checkout $tag; rm -rf .git; cd -
             fi >/dev/null
 
-            for file in $@; do
+            for file in "$@"; do
                 echo $ISH_CONF_PATH/$name/$file
             done
     esac

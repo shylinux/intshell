@@ -14,6 +14,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 xcode-select --install
                 ;;
             Linux)
+                ish_log_request "mirrors.aliyun.com"
                 curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-8.repo && yum -y update
                 yum install -y wget make tmux git vim
                 ;;
@@ -21,8 +22,8 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 ;;
         esac
 
-        [ -d contexts ] || git clone https://github.com/shylinux/contexts
-        cd contexts && ish_miss_prepare_develop && source etc/miss.sh
+        [ -d contexts ] || git clone https://github.com/shylinux/template contexts
+        cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
         mkdir bin &>/dev/null; curl -sL $ctx_dev/publish/ice.sh -o bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev

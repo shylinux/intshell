@@ -22,13 +22,27 @@ ish_ctx_cli_shell() {
     ps |grep ^$$|grep -v grep|grep -o "[a-z]*$"
 }
 
-name=$(hostname) && name=${name##*-} && name=${name%%\.*}
-case "$(ish_ctx_cli_shell)" in
-    zsh)
-        export PROMPT=$LOCAL_PROMPT'%![%*]%c$ '
-        ;;
-    bash)
-        export PS1="\\!@$name[\\t]\\W\\$ "
-        ;;
-esac
+ish_ctx_cli_prompt() {
+    local name=$(hostname) && name=${name##*-} && name=${name%%\.*}
+    case "$(ish_ctx_cli_shell)" in
+        bash)
+            export PS1="\\!@$name[\\t]\\W\\$ "
+            ;;
+        zsh)
+            export PROMPT=$LOCAL_PROMPT'%![%*]%c$ '
+            ;;
+    esac
+}
+ish_ctx_cli_prepare() {
+    local rc=".bashrc"; case "$(ish_ctx_cli_shell)" in
+        bash) rc=".bashrc";;
+        zsh) rc=".zshrc";;
+    esac
 
+    [ -d ~/.ish ] || ln -s $PWD/.ish ~/.ish
+    grep "source ~/.ish/plug.sh" $rc || cat >> $rc <<END
+if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
+    require conf.sh
+fi
+END
+}
