@@ -160,6 +160,7 @@ ish_miss_prepare_intshell() {
     echo
     ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
     ish_miss_create_link usr/intshell $PWD/.ish
+    export ISH_CONF_PATH=$PWD/.ish/pluged
     cd usr/intshell/ && git pull; cd -
 
     declare|grep "^ish_ctx_cli_prepare ()" || require base/cli/cli.sh

@@ -12,7 +12,7 @@ ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
 ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require request source alias debug test"}
 
 ISH_CONF_TASK=${ISH_CONF_TASK:=$PWD}
-ISH_CONF_WORK=${ISH_CONF_WORK:=~/work}
+ISH_CONF_WORK=${ISH_CONF_WORK:=$PWD/usr/local/work}
 ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 
 ISH_CONF_PATH=${ISH_CONF_PATH:=$PWD/.ish/pluged}
