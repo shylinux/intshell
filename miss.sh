@@ -35,7 +35,7 @@ ish_miss_prepare() {
         [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
         repos=${repos#https://}; require $repos
         ish_miss_create_link usr/$name $(require_path $repos)
-        cd usr/$name && git pull; cd -
+        # cd usr/$name && git pull; cd -
     done
 }
 ish_miss_prepare_develop() {
@@ -161,6 +161,9 @@ ish_miss_prepare_intshell() {
     ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
     ish_miss_create_link usr/intshell $PWD/.ish
     cd usr/intshell/ && git pull; cd -
+
+    declare|grep "^ish_ctx_cli_prepare ()" || require base/cli/cli.sh
+    ish_ctx_cli_prepare
 }
 ish_miss_prepare_contexts() {
     echo
