@@ -46,6 +46,7 @@ ish_miss_prepare_develop() {
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
     export GOBIN=${GOBIN:=$PWD/usr/local/bin}
+    export ISH_CONF_PATH=$PWD/.ish/pluged
     [ -d "$GOROOT" ] && return
 
     local goarch=amd64; case "$(uname -m)" in
@@ -143,6 +144,7 @@ END
 Volcanos("onengine", {})
 END
 }
+
 ish_miss_prepare_volcanos() {
     ish_miss_prepare volcanos
 }
@@ -155,12 +157,10 @@ ish_miss_prepare_icebergs() {
 ish_miss_prepare_toolkits() {
     ish_miss_prepare toolkits
 }
-
 ish_miss_prepare_intshell() {
     echo
     ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
     ish_miss_create_link usr/intshell $PWD/.ish
-    export ISH_CONF_PATH=$PWD/.ish/pluged
     cd usr/intshell/ && git pull; cd -
 
     declare|grep "^ish_ctx_cli_prepare ()" || require base/cli/cli.sh
