@@ -22,10 +22,11 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 ;;
         esac
 
-        [ -d contexts ] || git clone https://github.com/shylinux/contexts $PWD/contexts
+        [ -d contexts ] || git clone --depth 1 https://github.com/shylinux/contexts $PWD/contexts
         cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
+        export ctx_log=${ctx_log:=/dev/stdout}
         mkdir bin &>/dev/null; curl -sL $ctx_dev/publish/ice.sh -o bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev
         ;;
     *) # 终端环境

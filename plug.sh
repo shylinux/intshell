@@ -137,8 +137,9 @@ require_fork() {
                 fi
             done
 
+            "$tag" == "" && local opt="-depth 1"
             ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$name"
-            git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$name >/dev/null
+            git clone $opt ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$name >/dev/null
 
             if [ "$tag" != "" ]; then
                 cd $ISH_CONF_PATH/$name; git checkout $tag; rm -rf .git; cd -
@@ -170,6 +171,8 @@ require() { # require [ as name ] [mod] file arg...
     tag=${mod#*@} mod=${mod%@*}; [ "$tag" = "$mod" ] && tag=""
     local file=$(require_fork "$mod" "$tag" "$@")
     [ -e "$file" ] && __load "$name" $file && return
+
+    echo $mod| grep "^github.com" && return
 
     # 远程脚本
     local file=$(require_temp $mod)
