@@ -19,7 +19,7 @@ ish_ctx_cli_alias() {
     alias $1="$2"
 }
 ish_ctx_cli_shell() {
-    ps |grep ^$$|grep -v grep|grep -o "[a-z]*$"
+    ps |grep "^\ *$$"|grep -v grep|grep -o "[a-z]*$"
 }
 
 ish_ctx_cli_prompt() {
@@ -29,7 +29,7 @@ ish_ctx_cli_prompt() {
             export PS1="\\!@$name[\\t]\\W\\$ "
             ;;
         zsh)
-            export PROMPT=$LOCAL_PROMPT'%![%*]%c$ '
+            export PS1="\\!@$name[\t]\W\$ "
             ;;
     esac
 }

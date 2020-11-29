@@ -124,6 +124,10 @@ require_list() {
         [ "$ISH_CONF_PATH" = "$ISH_CONF_ROOT" ] && break
     done
 }
+require_pull() {
+    local back=$PWD
+    cd "$1" && git pull; cd $back
+}
 require_fork() {
     local name=$1 mod=$1 tag=$2 && shift 2; [ "$tag" = "" ] || name=$mod@$tag
     case ${mod%%/*} in

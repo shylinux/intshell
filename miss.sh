@@ -35,7 +35,7 @@ ish_miss_prepare() {
         [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
         repos=${repos#https://}; require $repos
         ish_miss_create_link usr/$name $(require_path $repos)
-        # cd usr/$name && git pull; cd -
+        require_pull usr/$name
     done
 }
 ish_miss_prepare_develop() {
@@ -161,7 +161,7 @@ ish_miss_prepare_intshell() {
     echo
     ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
     ish_miss_create_link usr/intshell $PWD/.ish
-    cd usr/intshell/ && git pull; cd -
+    require_pull usr/intshell
 
     declare|grep "^ish_ctx_cli_prepare ()" || require base/cli/cli.sh
     ish_ctx_cli_prepare
@@ -169,7 +169,7 @@ ish_miss_prepare_intshell() {
 ish_miss_prepare_contexts() {
     echo
     ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
-    git pull
+    require_pull ./
     pwd
 }
 ish_miss_prepare_session() {
@@ -187,7 +187,7 @@ ish_miss_prepare_session() {
         else
             tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev" Enter
         fi
-        tmux send-key -t ${name}:$win.1 "vim -O src/main.shy src/main.go" Enter
+        tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
