@@ -141,7 +141,7 @@ require_fork() {
                 fi
             done
 
-            "$tag" == "" && local opt="-depth 1"
+            # [ "$tag" = "" ] && local opt="--depth 1"
             ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$name"
             git clone $opt ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$name >/dev/null
 
