@@ -55,12 +55,12 @@ ish_show() {
         -time) echo -n "$(date +"%Y-%m-%d %H:%M:%S")";;
         *)
             if local k=$1 && [ "${k:0:1}" = "-" ] ; then
-                local color=$(eval "echo -ne \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
-                [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$color"
+                local color=$(eval "printf \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+                [ "$ISH_USER_COLOR" = "true" ] && printf "$color"
                 space=""
             else
-                echo -ne "$1"
-                [ "$ISH_USER_COLOR" = "true" ] && echo -ne "$ISH_SHOW_COLOR_end"
+                printf "$1"
+                [ "$ISH_USER_COLOR" = "true" ] && printf "$ISH_SHOW_COLOR_end"
             fi
             ;;
     esac; [ "$#" -gt "0" ] && shift && echo -n "$space"; done; echo
@@ -126,7 +126,7 @@ require_list() {
 }
 require_pull() {
     local back=$PWD
-    cd "$1" && git pull; cd $back
+    # cd "$1" && git pull; cd $back
 }
 require_fork() {
     local name=$1 mod=$1 tag=$2 && shift 2; [ "$tag" = "" ] || name=$mod@$tag

@@ -176,6 +176,10 @@ ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
     local win=${name##*-} left=3 right=2
     ish_log_debug "session: $name:$win"
+    case "$(uname -s)" in
+        Darwin) left=2 right=3;;
+    esac
+
 
     if ! tmux has-session -t miss; then
         TMUX="" tmux new-session -d -s $name -n $win
