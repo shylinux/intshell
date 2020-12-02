@@ -126,7 +126,10 @@ require_list() {
 }
 require_pull() {
     local back=$PWD
-    # cd "$1" && git pull; cd $back
+    [ "$ISH_REQUIRE_SKIP" = "true" ] && return
+    ish_log_debug pwd $PWD
+    cd "$1" && git pull; cd $back
+    echo
 }
 require_fork() {
     local name=$1 mod=$1 tag=$2 && shift 2; [ "$tag" = "" ] || name=$mod@$tag
@@ -141,7 +144,7 @@ require_fork() {
                 fi
             done
 
-            # [ "$tag" = "" ] && local opt="--depth 1"
+            [ "$ISH_CTX_CLONE_SIMPLE" = "true" ] && local opt="--depth 1" || opt=""
             ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$name"
             git clone $opt ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$name >/dev/null
 
@@ -165,7 +168,7 @@ require() { # require [ as name ] [mod] file arg...
     [ -z "$1" ] && require_help && return
     local name=${ISH_CTX_MODULE#ish_} && [ "$1" = "as" ] && name=$2 && shift 2
     local mod=$1 tag= && shift; mod=${mod#https://}
-    ish_log_require as $name -g $mod
+    ish_log_require as ctx $name -g $mod
 
     # 本地脚本
     local file=$(require_path $mod)

@@ -1,11 +1,9 @@
 highlight ishKey    ctermfg=yellow
-
-syntax match ishKey "local"
-syntax match ishKey "alias"
+highlight ishFunc    ctermfg=cyan
 
 syntax match ishKey "require"
+syntax match ishFunc "ish_miss_prepare"
 
 set foldmethod=marker
 set foldmarker={,}
-
 

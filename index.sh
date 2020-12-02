@@ -11,7 +11,8 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
         temp_source plug.sh conf.sh miss.sh
         case "$(uname)" in
             Darwin)
-                xcode-select --install
+                xcode-select --install 2>/dev/null
+                # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
                 ;;
             Linux)
                 ish_log_request "mirrors.aliyun.com"
@@ -23,7 +24,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
         esac
 
         [ -d contexts ] || git clone --depth 1 https://github.com/shylinux/contexts $PWD/contexts
-        cd contexts && source etc/miss.sh
+        ISH_CTX_CLONE_SIMPLE=true cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
         export ctx_log=${ctx_log:=/dev/stdout}

@@ -40,7 +40,7 @@ ish_ctx_cli_prepare() {
     esac
 
     [ -d ~/.ish ] || ln -s $PWD/.ish ~/.ish
-    grep "source ~/.ish/plug.sh" ~/$rc || cat >> ~/$rc <<END
+    grep "source ~/.ish/plug.sh" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
     require conf.sh

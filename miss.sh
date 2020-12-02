@@ -1,9 +1,6 @@
 #!/bin/sh
 
-[ "$ISH_CONF_PRE" != "" ] || source $PWD/.ish/plug.sh || source ~/.ish/plug.sh
-
 export ctx_dev=${ctx_dev:="$ISH_CONF_DEV"}
-export ctx_mod=${ctx_mod:="gdb,log,ssh,ctx"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
 
@@ -28,20 +25,10 @@ ish_miss_create_link() {
     ish_miss_create_path $1 && ln -s $2 $1
 }
 
-ish_miss_prepare() {
-    echo
-    for repos in "$@"; do local name=${repos##*/}
-        [ "$name" = "$repos" ] && repos=shylinux/$name
-        [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
-        repos=${repos#https://}; require $repos
-        ish_miss_create_link usr/$name $(require_path $repos)
-        require_pull usr/$name
-    done
-}
 ish_miss_prepare_develop() {
-    echo $PATH| grep "$PWD/usr/local/go/bin" || export PATH=$PWD/usr/local/go/bin:$PATH
-    echo $PATH| grep "$PWD/usr/local/bin" || export PATH=$PWD/usr/local/bin:$PATH
-    echo $PATH| grep "$PWD/bin" || export PATH=$PWD/bin:$PATH
+    echo $PATH| grep "$PWD/usr/local/go/bin" &>/dev/null || export PATH=$PWD/usr/local/go/bin:$PATH
+    echo $PATH| grep "$PWD/usr/local/bin" &>/dev/null || export PATH=$PWD/usr/local/bin:$PATH
+    echo $PATH| grep "$PWD/bin" &>/dev/null || export PATH=$PWD/bin:$PATH
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
@@ -76,24 +63,24 @@ ish_miss_prepare_compile() {
 
 export ctx_log=\${ctx_log:=bin/boot.log}
 export ctx_pid=\${ctx_pid:=var/run/ice.pid}
-export ctx_mod=\${ctx_mod:=gdb,log,ssh,ctx}
 
 restart() {
     [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
 }
 start() {
     trap HUP hup && while true; do
-        date && ice.bin \$@ 2>\$ctx_log && echo -e \"\n\nrestarting...\" && break
+        echo -e "\n\nrestarting..." && date && $ish_miss_ice_bin \$@ 2>\$ctx_log && break
     done
 }
 stop() {
     [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
 }
 serve() {
-    stop && start \$@
+    stop
+    start \$@
 }
 
-cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd=serve
+cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd="start space connect dev dev"
 \$cmd \$*
 END
     chmod u+x $ish_miss_ice_sh
@@ -144,47 +131,20 @@ END
 Volcanos("onengine", {})
 END
 }
-
-ish_miss_prepare_volcanos() {
-    ish_miss_prepare volcanos
-}
-ish_miss_prepare_learning() {
-    ish_miss_prepare learning
-}
-ish_miss_prepare_icebergs() {
-    ish_miss_prepare icebergs
-}
-ish_miss_prepare_toolkits() {
-    ish_miss_prepare toolkits
-}
-ish_miss_prepare_intshell() {
-    echo
-    ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
-    ish_miss_create_link usr/intshell $PWD/.ish
-    require_pull usr/intshell
-
-    declare|grep "^ish_ctx_cli_prepare ()" || require base/cli/cli.sh
-    ish_ctx_cli_prepare
-}
-ish_miss_prepare_contexts() {
-    echo
-    ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
-    require_pull ./
-    pwd
-}
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
-    local win=${name##*-} left=3 right=2
+    local win=$2 && [ "$win" = "" ] && win=${name##*-}
     ish_log_debug "session: $name:$win"
-    case "$(uname -s)" in
-        Darwin) left=2 right=3;;
-    esac
 
-
-    if ! tmux has-session -t miss; then
+    if ! tmux has-session -t $name; then
         TMUX="" tmux new-session -d -s $name -n $win
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:$win.2
+
+        local left=3 right=2; case "$(uname -s)" in
+            Darwin) left=2 right=3;;
+        esac
+
         tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
         if [ "$name" = "miss" ]; then
             tmux send-key -t ${name}:$win.$left "ish_miss_serve dev shy" Enter
@@ -197,15 +157,49 @@ ish_miss_prepare_session() {
     [ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
 
-ish_miss_restart() {
-    [ -e $ctx_pid ] && kill -2 `cat $ctx_pid` || echo
+ish_miss_prepare() {
+    for repos in "$@"; do local name=${repos##*/}
+        [ "$name" = "$repos" ] && repos=shylinux/$name
+        [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
+        repos=${repos#https://}; require $repos
+        ish_miss_create_link usr/$name $(require_path $repos)
+        require_pull usr/$name
+    done
 }
+ish_miss_prepare_contexts() {
+    ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
+    require_pull ./
+}
+ish_miss_prepare_intshell() {
+    ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
+    ish_miss_create_link usr/intshell $PWD/.ish
+    require_pull usr/intshell
+
+    declare|grep "^ish_ctx_cli_prepare ()" &>/dev/null || require base/cli/cli.sh
+    ish_ctx_cli_prepare
+}
+ish_miss_prepare_toolkits() {
+    ish_miss_prepare toolkits
+}
+ish_miss_prepare_icebergs() {
+    ish_miss_prepare icebergs
+}
+ish_miss_prepare_learning() {
+    ish_miss_prepare learning
+}
+ish_miss_prepare_volcanos() {
+    ish_miss_prepare volcanos
+}
+
 ish_miss_stop() {
-    [ -e $ctx_pid ] && kill -3 `cat $ctx_pid` || echo
+    [ -e "$ctx_pid" ] && kill -3 `cat $ctx_pid` &>/dev/null
+}
+ish_miss_restart() {
+    [ -e "$ctx_pid" ] && kill -2 `cat $ctx_pid` &>/dev/null
 }
 ish_miss_start() {
     while true; do
-        echo -e "\n\nrestarting..." && date && $ish_miss_ice_bin $@ 2>$ctx_log && break
+        date && $ish_miss_ice_bin $@ 2>$ctx_log && break || echo -e "\n\nrestarting..."
     done
 }
 ish_miss_space() {
@@ -219,3 +213,4 @@ ish_miss_serve() {
 ish_miss_log() {
     tail -f $ctx_log
 }
+
