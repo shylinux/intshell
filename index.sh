@@ -5,6 +5,25 @@ temp_source() {
         ctx_temp=$(mktemp); curl -sL $ctx_dev/intshell/$script >$ctx_temp; source $ctx_temp
     done 
 }
+prepare_tmux() {
+    [ -d "etc" ] || mkdir etc
+    [ -f "etc/tmux.conf" ] || curl -sL $ctx_dev/intshell/misc/tmux/tmux.conf -o etc/tmux.conf
+
+    [ -d "bin" ] || mkdir bin
+    [ -f "bin/tmux.sh" ] || cat <<END >>bin/tmux.sh
+#!/bin/bash
+
+tmux_cmd="tmux -S bin/tmux.socket -f etc/tmux.conf"
+session=miss && [ -s "\$1" ] && session=\$1 && shift
+
+if \$tmux_cmd has-session -t \$session; then
+    \$tmux_cmd attach -t \$session
+else
+    \$tmux_cmd new-session -s \$session
+fi
+END
+    chmod u+x bin/tmux.sh
+}
 
 ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
     dev) # 开发环境
@@ -27,6 +46,8 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
         ISH_CTX_CLONE_SIMPLE=true cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
+        prepare_tmux
+
         export ctx_log=${ctx_log:=/dev/stdout}
         mkdir bin &>/dev/null; curl -sL $ctx_dev/publish/ice.sh -o bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev
         ;;
