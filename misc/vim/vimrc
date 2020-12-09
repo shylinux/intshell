@@ -16,7 +16,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	set sessionoptions+=tabpages,globals
 
 	Plug 'scrooloose/nerdtree'
-	let g:NERDTreeWinPos="right"
+	let g:NERDTreeWinPos="left"
+
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
 

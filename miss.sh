@@ -158,6 +158,7 @@ ish_miss_prepare_session() {
 }
 
 ish_miss_prepare() {
+    ISH_CONF_PATH=$PWD/.ish/pluged
     for repos in "$@"; do local name=${repos##*/}
         [ "$name" = "$repos" ] && repos=shylinux/$name
         [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
