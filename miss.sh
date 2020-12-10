@@ -95,7 +95,7 @@ import (
 	_ "github.com/shylinux/icebergs/misc"
 )
 
-func main() { println(ice.Run()) }
+func main() { print(ice.Run()) }
 END
     [ -f go.mod ] || go mod init ${PWD##*/}
 
