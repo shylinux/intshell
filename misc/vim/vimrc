@@ -15,6 +15,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'gcmt/taboo.vim'
 	set sessionoptions+=tabpages,globals
 
+    Plug 'majutsushi/tagbar'
 	Plug 'scrooloose/nerdtree'
 	let g:NERDTreeWinPos="left"
 
