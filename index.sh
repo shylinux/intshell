@@ -2,12 +2,12 @@
 
 temp_source() {
     for script in "$@"; do
-        ctx_temp=$(mktemp); curl -sL $ctx_dev/intshell/$script >$ctx_temp; source $ctx_temp
+        ctx_temp=$(mktemp); curl -fsSL $ctx_dev/intshell/$script >$ctx_temp; source $ctx_temp
     done 
 }
 prepare_tmux() {
     [ -d "etc" ] || mkdir etc
-    [ -f "etc/tmux.conf" ] || curl -sL $ctx_dev/intshell/misc/tmux/tmux.conf -o etc/tmux.conf
+    [ -f "etc/tmux.conf" ] || curl -fsSL $ctx_dev/intshell/misc/tmux/tmux.conf -o etc/tmux.conf
 
     [ -d "bin" ] || mkdir bin
     [ -f "bin/tmux.sh" ] || cat <<END >>bin/tmux.sh
@@ -49,7 +49,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
         prepare_tmux
 
         export ctx_log=${ctx_log:=/dev/stdout}
-        mkdir bin &>/dev/null; curl -sL $ctx_dev/publish/ice.sh -o bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev
+        mkdir bin &>/dev/null; curl -fsSL $ctx_dev/publish/ice.sh -o bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev
         ;;
     *) # 终端环境
         temp_source plug.sh conf.sh
