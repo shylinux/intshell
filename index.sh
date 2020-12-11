@@ -44,7 +44,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
 
         # [ -d contexts ] || git clone --depth 1 https://github.com/shylinux/contexts $PWD/contexts
         [ -d contexts ] || git clone --depth 1 https://gitee.com/shylinuxc/contexts $PWD/contexts
-        ISH_CTX_CLONE_SIMPLE=true cd contexts && source etc/miss.sh
+        ISH_CONF_HUB_PROXY=$ctx_dev/code/git/ && cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
         prepare_tmux
