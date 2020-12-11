@@ -35,14 +35,15 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 ;;
             Linux)
                 ish_log_request "mirrors.aliyun.com"
-                curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-8.repo && yum -y update
+                curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo && yum -y update
                 yum install -y wget make tmux git vim
                 ;;
             *)
                 ;;
         esac
 
-        [ -d contexts ] || git clone --depth 1 https://github.com/shylinux/contexts $PWD/contexts
+        # [ -d contexts ] || git clone --depth 1 https://github.com/shylinux/contexts $PWD/contexts
+        [ -d contexts ] || git clone --depth 1 https://gitee.com/shylinuxc/contexts $PWD/contexts
         ISH_CTX_CLONE_SIMPLE=true cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
