@@ -35,7 +35,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 ;;
             Linux)
                 ish_log_request "mirrors.aliyun.com"
-                curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo && yum -y update
+                # curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo && yum -y update
                 yum install -y wget make tmux git vim
                 ;;
             *)
