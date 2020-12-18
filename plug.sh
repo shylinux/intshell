@@ -18,6 +18,7 @@ ISH_CONF_MISS=${ISH_CONF_MISS:="etc/miss.sh"}
 ISH_CONF_PATH=${ISH_CONF_PATH:=$PWD/.ish/pluged}
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
 ISH_CONF_HUB_PROXY=${ISH_CONF_HUB_PROXY:="https://"}
+ISH_CONF_DEV=${ISH_CONF_DEV:="http://localhost:9020"}
 
 [ "$ISH_CONF_PRE" = "" ] && declare -r ISH_CONF_PRE=ish
 ish_conf() {
