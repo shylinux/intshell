@@ -86,7 +86,7 @@ nnoremap <F3> :TagbarToggle<CR>
 "}}}
 " 编程配置{{{
 set keywordprg=man\ -a
-set path+=.,..,./usr/,.ish/pluged/,~/.ish/pluged/,$GOROOT/src,/usr/include
+set path+=.,..,./usr/,./usr/icebergs/,./usr/volcanos/,.ish/pluged/,~/.ish/pluged/,$GOROOT/src,/usr/include
 
 let javaScript_fold=1
 function! Config(type)
