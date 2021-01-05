@@ -214,4 +214,23 @@ ish_miss_serve() {
 ish_miss_log() {
     tail -f $ctx_log
 }
+ish_miss_version() {
+    cat > src/version.go <<END
+package main
+
+import (
+	"github.com/shylinux/icebergs"
+)
+
+func init() {
+	ice.Info.Build.Time = \`$(date +"%Y-%m-%d %H:%M:%S")\`
+	ice.Info.Build.Hash = \`$(git log -n1 --pretty="%H")\`
+	ice.Info.Build.Remote = \`$(git config remote.origin.url)\`
+	ice.Info.Build.Branch = \`$(git rev-parse --abbrev-ref HEAD)\`
+    ice.Info.Build.Version = \`$(git describe --tags)\`
+    ice.Info.Build.HostName = \`$(hostname)\`
+    ice.Info.Build.UserName = \`$(whoami)\`
+}
+END
+}
 
