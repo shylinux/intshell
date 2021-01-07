@@ -80,7 +80,7 @@ serve() {
     start \$@
 }
 
-cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd="start space connect dev dev"
+cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd="start space dial dev dev"
 \$cmd \$*
 END
     chmod u+x $ish_miss_ice_sh
@@ -205,7 +205,7 @@ ish_miss_start() {
 }
 ish_miss_space() {
     ish_miss_stop
-    ish_miss_start space connect $@
+    ish_miss_start space dial $@
 }
 ish_miss_serve() {
     ish_miss_stop
