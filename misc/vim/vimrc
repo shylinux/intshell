@@ -18,6 +18,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
     Plug 'majutsushi/tagbar'
 	Plug 'scrooloose/nerdtree'
 	let g:NERDTreeWinPos="left"
+	let g:NERDTreeWinSize=20
 
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
