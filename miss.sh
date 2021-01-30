@@ -228,9 +228,11 @@ func init() {
 	ice.Info.Build.Remote = \`$(git config remote.origin.url)\`
 	ice.Info.Build.Branch = \`$(git rev-parse --abbrev-ref HEAD)\`
 	ice.Info.Build.Version = \`$(git describe --tags)\`
-	info.Build.HostName = \`$(hostname)\`
+	ice.Info.Build.HostName = \`$(hostname)\`
 	ice.Info.Build.UserName = \`$(whoami)\`
 }
 END
+
+    cat src/version.go
 }
 
