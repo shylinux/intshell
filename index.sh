@@ -2,27 +2,15 @@
 
 temp_source() {
     for script in "$@"; do
-        ctx_temp=$(mktemp); curl -fsSL $ctx_dev/intshell/$script >$ctx_temp; source $ctx_temp
+        ctx_temp=$(mktemp); curl -fsSL $ctx_dev/intshell/$script -o $ctx_temp; source $ctx_temp
     done 
 }
+down_source() {
+    [ -f "$1" ] || curl -fsSL $ctx_dev/$2 --create-dirs -o $1
+}
 prepare_tmux() {
-    [ -d "etc" ] || mkdir etc
-    [ -f "etc/tmux.conf" ] || curl -fsSL $ctx_dev/intshell/misc/tmux/tmux.conf -o etc/tmux.conf
-
-    [ -d "bin" ] || mkdir bin
-    [ -f "bin/tmux.sh" ] || cat <<END >>bin/tmux.sh
-#!/bin/bash
-
-tmux_cmd="tmux -S bin/tmux.socket -f etc/tmux.conf"
-session=miss && [ -s "\$1" ] && session=\$1 && shift
-
-if \$tmux_cmd has-session -t \$session; then
-    \$tmux_cmd attach -t \$session
-else
-    \$tmux_cmd new-session -s \$session
-fi
-END
-    chmod u+x bin/tmux.sh
+    down_source etc/tmux.conf intshell/misc/tmux/tmux.conf
+    down_source bin/tmux.sh intshell/misc/tmux/local.sh
 }
 
 ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
@@ -42,15 +30,13 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 ;;
         esac
 
-        # [ -d contexts ] || git clone --depth 1 https://github.com/shylinux/contexts $PWD/contexts
         [ -d contexts ] || git clone --depth 1 https://gitee.com/shylinuxc/contexts $PWD/contexts
         ISH_CONF_HUB_PROXY=$ctx_dev/code/git/ && cd contexts && source etc/miss.sh
         ;;
     ice) # 生产环境
         prepare_tmux
-
-        export ctx_log=${ctx_log:=/dev/stdout}
-        mkdir bin &>/dev/null; curl -fsSL $ctx_dev/publish/ice.sh -o bin/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev
+        export ctx_log=${ctx_log:=/dev/stdout}; shift
+        down_source bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev "$@"
         ;;
     *) # 终端环境
         temp_source plug.sh conf.sh
