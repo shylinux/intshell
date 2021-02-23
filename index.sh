@@ -22,16 +22,14 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
                 # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
                 ;;
             Linux)
-                ish_log_request "mirrors.aliyun.com"
-                # curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo && yum -y update
+                # ish_log_request "mirrors.aliyun.com"
+                # curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-8.repo && yum -y update
                 yum install -y wget make tmux git vim
-                ;;
-            *)
                 ;;
         esac
 
-        [ -d contexts ] || git clone --depth 1 https://gitee.com/shylinuxc/contexts $PWD/contexts
-        ISH_CONF_HUB_PROXY=$ctx_dev/code/git/ && cd contexts && source etc/miss.sh
+        export ISH_CONF_HUB_PROXY=$ctx_dev/code/git/
+        down_source go.mod publish/go.mod && down_source etc/miss.sh publish/miss.sh && source etc/miss.sh
         ;;
     ice) # 生产环境
         prepare_tmux

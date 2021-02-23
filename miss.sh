@@ -50,7 +50,8 @@ ish_miss_prepare_develop() {
 
     ish_log_require "$pkg"
     mkdir -p usr/local; cd usr/local
-    curl -O https://dl.google.com/go/$pkg || wget https://dl.google.com/go/$pkg
+
+    curl -O $ctx_dev/publish/$pkg || curl -O https://dl.google.com/go/$pkg || wget https://dl.google.com/go/$pkg
     tar xvf $pkg
     cd -
 
