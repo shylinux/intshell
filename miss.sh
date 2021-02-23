@@ -167,6 +167,18 @@ ish_miss_prepare() {
         require_pull usr/$name
     done
 }
+ish_miss_prepare_volcanos() {
+    ish_miss_prepare volcanos
+}
+ish_miss_prepare_learning() {
+    ish_miss_prepare learning
+}
+ish_miss_prepare_icebergs() {
+    ish_miss_prepare icebergs
+}
+ish_miss_prepare_toolkits() {
+    ish_miss_prepare toolkits
+}
 ish_miss_prepare_contexts() {
     ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
     require_pull ./
@@ -178,18 +190,6 @@ ish_miss_prepare_intshell() {
 
     declare|grep "^ish_ctx_cli_prepare ()" &>/dev/null || require base/cli/cli.sh
     ish_ctx_cli_prepare
-}
-ish_miss_prepare_toolkits() {
-    ish_miss_prepare toolkits
-}
-ish_miss_prepare_icebergs() {
-    ish_miss_prepare icebergs
-}
-ish_miss_prepare_learning() {
-    ish_miss_prepare learning
-}
-ish_miss_prepare_volcanos() {
-    ish_miss_prepare volcanos
 }
 
 ish_miss_stop() {

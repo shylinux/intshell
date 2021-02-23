@@ -35,7 +35,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
         ;;
     ice) # 生产环境
         prepare_tmux
-        export ctx_log=${ctx_log:=/dev/stdout}; shift
+        export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}; shift
         down_source bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh && bin/ice.sh serve serve start dev dev "$@"
         ;;
     *) # 终端环境
