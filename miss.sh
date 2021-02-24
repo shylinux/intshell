@@ -51,7 +51,9 @@ ish_miss_prepare_develop() {
     ish_log_require "$pkg"
     mkdir -p usr/local; cd usr/local
 
-    curl -O $ctx_dev/publish/$pkg || curl -O https://dl.google.com/go/$pkg || wget https://dl.google.com/go/$pkg
+    curl -fsSOL $ctx_dev/publish/$pkg
+    [ `ish_ctx_cli_file_size` -gt 0 ] || curl -fsSOL https://dl.google.com/go/$pkg
+    [ `ish_ctx_cli_file_size` -gt 0 ] || wget https://dl.google.com/go/$pkg
     tar xvf $pkg
     cd -
 }
@@ -151,6 +153,13 @@ ish_miss_prepare_session() {
             tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev" Enter
         fi
         tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
+
+        case `uname` in
+            Darwin)
+                sleep 3
+                open http://localhost:9020
+                ;;
+        esac
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win

@@ -10,6 +10,13 @@ ish_ctx_dev_vim_home() {
     curl -so ~/.vim/autoload/auto.vim --create-dirs $ctx_dev/intshell/misc/vim/auto.vim
     curl -so ~/.vimrc $ctx_dev/intshell/misc/vim/vimrc
 }
+ish_ctx_dev_vim_clear() {
+    for path in volcanos learning icebergs toolkits intshell; do
+        for file in `find usr/$path/ -name "*swp"`; do
+            ish_log_debug "rm $file"; rm $file
+        done
+    done
+}
 
 ish_ctx_dev_vim_prepare() {
     local from=$PWD/usr/intshell/misc/vim

@@ -6,6 +6,10 @@ ish_ctx_cli_mkfile() {
     touch $1
     echo $name
 }
+ish_ctx_cli_file_size() {
+    local size=`ls -s $1 2>/dev/null| grep -o "[0-9]*"|head -n1`
+    [ "$size" = "" ] && size=0; echo $size
+}
 ish_ctx_cli_jobs() {
     local out=$1 && shift && local err=$1 && shift
     ish_log_debug "pid: $? out: $out err: $err cmd: $@"
