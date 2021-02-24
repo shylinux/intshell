@@ -50,9 +50,8 @@ ish_miss_prepare_develop() {
 
     ish_log_require "$pkg"
     mkdir -p usr/local; cd usr/local
-
-    curl -fsSOL $ctx_dev/publish/$pkg
-    [ `ish_ctx_cli_file_size` -gt 0 ] || curl -fsSOL https://dl.google.com/go/$pkg
+    [ `ish_ctx_cli_file_size` -gt 0 ] || curl -fSOL $ctx_dev/publish/$pkg
+    [ `ish_ctx_cli_file_size` -gt 0 ] || curl -fSOL https://dl.google.com/go/$pkg
     [ `ish_ctx_cli_file_size` -gt 0 ] || wget https://dl.google.com/go/$pkg
     tar xvf $pkg
     cd -
