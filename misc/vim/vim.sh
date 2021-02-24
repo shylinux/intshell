@@ -27,4 +27,5 @@ ish_ctx_dev_vim_prepare() {
 
     ish_miss_create_link ~/.vimrc $from/vimrc
     vim -c PlugInstall -c exit -c exit
+    vim -c GoInstallBinaries -c exit -c exit
 }

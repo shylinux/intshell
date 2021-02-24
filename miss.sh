@@ -54,8 +54,6 @@ ish_miss_prepare_develop() {
     curl -O $ctx_dev/publish/$pkg || curl -O https://dl.google.com/go/$pkg || wget https://dl.google.com/go/$pkg
     tar xvf $pkg
     cd -
-
-    vim -c GoInstallBinaries -c exit -c exit
 }
 ish_miss_prepare_compile() {
     export ISH_CONF_TASK=${PWD##*/}
