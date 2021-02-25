@@ -18,6 +18,21 @@ prepare_tmux() {
     down_source etc/tmux.conf intshell/misc/tmux/tmux.conf
     down_source bin/tmux.sh intshell/misc/tmux/local.sh
 }
+prepare_ice() {
+    bin="ice"
+    case `uname -s` in
+        Darwin) bin=${bin}.darwin ;;
+        Linux) bin=${bin}.linux ;;
+        *) bin=${bin}.windows ;;
+    esac
+    case `uname -m` in
+        x86_64) bin=${bin}.amd64 ;;
+        arm*) bin=${bin}.arm ;;
+        *) bin=${bin}.386 ;;
+    esac
+    down_source bin/ice.bin publish/$bin && chmod u+x bin/ice.bin
+    down_source bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
+}
 
 ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
     dev) # 开发环境
@@ -40,9 +55,7 @@ ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
     ice) # 生产环境
         prepare_tmux
         export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}; shift
-        down_source bin/ice.bin publish/ice.bin && chmod u+x bin/ice.bin
-        down_source bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
-        bin/ice.sh serve serve start dev dev "$@"
+        prepare_ice && bin/ice.sh serve serve start dev dev "$@"
         ;;
     *) # 终端环境
         # ISH_CONF_LEVEL="debug"
