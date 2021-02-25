@@ -43,7 +43,7 @@ ish_ctx_cli_prepare() {
         zsh) rc=".zshrc";;
     esac
 
-    [ -d ~/.ish ] || ln -s $PWD/.ish ~/.ish
+    [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
     grep "source ~/.bash_local" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 [ -f ~/.bash_local ] && source ~/.bash_local
 END
