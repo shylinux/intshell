@@ -154,10 +154,7 @@ ish_miss_prepare_session() {
         tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 
         case `uname` in
-            Darwin)
-                sleep 3
-                open http://localhost:9020
-                ;;
+            Darwin) sleep 5 && open http://localhost:9020 ;;
         esac
     fi
 

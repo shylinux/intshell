@@ -16,6 +16,10 @@ ish_ctx_dev_vim_clear() {
             ish_log_debug "rm $file"; rm $file
         done
     done
+
+    for file in `find ./ -name "*swp"`; do
+        ish_log_debug "rm $file"; rm "$file"
+    done
 }
 
 ish_ctx_dev_vim_prepare() {
