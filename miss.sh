@@ -10,7 +10,6 @@ ish_miss_miss_sh="etc/miss.sh"
 ish_miss_main_go="src/main.go"
 ish_miss_main_shy="src/main.shy"
 ish_miss_init_shy="etc/init.shy"
-ish_miss_order_js="usr/publish/order.js"
 
 ish_miss_create_path() {
     local target=$1 && [ -d ${target%/*} ] && return
@@ -24,11 +23,27 @@ ish_miss_create_link() {
     [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
     ish_miss_create_path $1 && ln -s $2 $1
 }
+ish_miss_insert_path() {
+    for p in "$@"; do
+        echo $PATH| grep "$p" &>/dev/null || export PATH=$p:$PATH
+    done
+}
+ish_miss_download_pkg() {
+    for url in "$@"; do local pkg=${url##*/}
+        [ `ish_ctx_cli_file_size $pkg` -gt 0 ] && break
+        ish_log_require $ctx_dev/publish/$pkg
+        curl -fSOL $ctx_dev/publish/$pkg
+        tar xvf $pkg 
 
-ish_miss_prepare_develop() {
-    echo $PATH| grep "$PWD/usr/local/go/bin" &>/dev/null || export PATH=$PWD/usr/local/go/bin:$PATH
-    echo $PATH| grep "$PWD/usr/local/bin" &>/dev/null || export PATH=$PWD/usr/local/bin:$PATH
-    echo $PATH| grep "$PWD/bin" &>/dev/null || export PATH=$PWD/bin:$PATH
+        [ `ish_ctx_cli_file_size $pkg` -gt 0 ] && break
+        ish_log_require $url
+        curl -fSOL $url || wget $url
+        tar xvf $pkg 
+    done
+}
+
+ish_miss_prepare_compile() {
+    ish_miss_insert_path "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" 
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
@@ -46,45 +61,12 @@ ish_miss_prepare_develop() {
         Linux) goos=linux;;
         *) goos=windows;;
     esac
+
     local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
-
-    ish_log_require "$pkg"
-    mkdir -p usr/local; cd usr/local
-    [ `ish_ctx_cli_file_size $pkg` -gt 0 ] || curl -fSOL $ctx_dev/publish/$pkg
-    [ `ish_ctx_cli_file_size $pkg` -gt 0 ] || curl -fSOL https://dl.google.com/go/$pkg
-    [ `ish_ctx_cli_file_size $pkg` -gt 0 ] || wget https://dl.google.com/go/$pkg
-    tar xvf $pkg
-    cd -
+    mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd -
 }
-ish_miss_prepare_compile() {
-    export ISH_CONF_TASK=${PWD##*/}
-    ish_miss_create_file $ish_miss_ice_sh <<END
-#! /bin/sh
-
-export ctx_log=\${ctx_log:=bin/boot.log}
-export ctx_pid=\${ctx_pid:=var/run/ice.pid}
-
-restart() {
-    [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
-}
-start() {
-    trap HUP hup && while true; do
-        echo -e "\n\nrestarting..." && date && $ish_miss_ice_bin \$@ 2>\$ctx_log && break
-    done
-}
-stop() {
-    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
-}
-serve() {
-    stop
-    start \$@
-}
-
-cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd="start space dial dev dev"
-\$cmd \$*
-END
-    chmod u+x $ish_miss_ice_sh
-
+ish_miss_prepare_develop() {
+    # src/main.go
     ish_miss_create_file $ish_miss_main_go <<END
 package main
 
@@ -99,6 +81,7 @@ func main() { print(ice.Run()) }
 END
     [ -f go.mod ] || go mod init ${PWD##*/}
 
+    # Makefile
     ish_miss_create_file Makefile << END
 export GOPROXY=https://goproxy.cn,direct
 export GOPRIVATE=github.com
@@ -108,29 +91,90 @@ all:
 	@echo && date
 	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
 END
+
+    # bin/ice.sh
+    ish_miss_create_file $ish_miss_ice_sh <<END
+#! /bin/sh
+
+export ctx_log=\${ctx_log:=bin/boot.log}
+export ctx_pid=\${ctx_pid:=var/run/ice.pid}
+
+restart() {
+    [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
+}
+start() {
+    trap HUP hup && while true; do
+        date && $ish_miss_ice_bin \$@ 2>\$ctx_log && break || echo -e "\n\nrestarting..." 
+    done
+}
+stop() {
+    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
+}
+serve() {
+    stop && start "\$@"
+}
+
+cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd="start space dial dev dev"
+\$cmd "\$@"
+END
+    chmod u+x $ish_miss_ice_sh
 }
 ish_miss_prepare_install() {
+    # etc/init.shy
     ish_miss_create_file $ish_miss_init_shy <<END
-~cli
-
 ~aaa
 
 ~web
 
-~mdb
+~cli
 
 ~ssh
 
+~mdb
+
 END
 
+    # src/main.shy
     ish_miss_create_file $ish_miss_main_shy <<END
 title main
 END
-
-    ish_miss_create_file $ish_miss_order_js <<END
-Volcanos("onengine", {})
-END
 }
+
+ish_miss_prepare() {
+    local name=${1##*/} repos=${1#https://}
+    [ "$name" = "$repos" ] && repos=shylinux/$name
+    [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
+
+    ISH_CONF_PATH=$PWD/.ish/pluged require $repos
+    ish_miss_create_link usr/$name $(require_path $repos)
+    require_pull usr/$name
+}
+ish_miss_prepare_contexts() {
+    ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
+    [ -d .git ] || git init
+    require_pull ./
+}
+ish_miss_prepare_intshell() {
+    ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
+    ish_miss_create_link usr/intshell $PWD/.ish
+    require_pull usr/intshell
+
+    declare|grep "^ish_ctx_cli_prepare ()" &>/dev/null || require base/cli/cli.sh
+    ish_ctx_cli_prepare
+}
+ish_miss_prepare_icebergs() {
+    ish_miss_prepare icebergs
+}
+ish_miss_prepare_toolkits() {
+    ish_miss_prepare toolkits
+}
+ish_miss_prepare_volcanos() {
+    ish_miss_prepare volcanos
+}
+ish_miss_prepare_learning() {
+    ish_miss_prepare learning
+}
+
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
     local win=$2 && [ "$win" = "" ] && win=${name##*-}
@@ -141,7 +185,7 @@ ish_miss_prepare_session() {
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:$win.2
 
-        local left=3 right=2; case "$(uname -s)" in
+        local left=3 right=2; case `uname -s` in
             Darwin) left=2 right=3;;
         esac
 
@@ -153,54 +197,18 @@ ish_miss_prepare_session() {
         fi
         tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 
-        case `uname` in
+        case `uname -s` in
             Darwin) sleep 5 && open http://localhost:9020 ;;
         esac
     fi
 
     [ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
-
-ish_miss_prepare() {
-    ISH_CONF_PATH=$PWD/.ish/pluged
-    for repos in "$@"; do local name=${repos##*/}
-        [ "$name" = "$repos" ] && repos=shylinux/$name
-        [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
-        repos=${repos#https://}; require $repos
-        ish_miss_create_link usr/$name $(require_path $repos)
-        require_pull usr/$name
-    done
-}
-ish_miss_prepare_volcanos() {
-    ish_miss_prepare volcanos
-}
-ish_miss_prepare_learning() {
-    ish_miss_prepare learning
-}
-ish_miss_prepare_icebergs() {
-    ish_miss_prepare icebergs
-}
-ish_miss_prepare_toolkits() {
-    ish_miss_prepare toolkits
-}
-ish_miss_prepare_contexts() {
-    ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
-    require_pull ./
-}
-ish_miss_prepare_intshell() {
-    ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
-    ish_miss_create_link usr/intshell $PWD/.ish
-    require_pull usr/intshell
-
-    declare|grep "^ish_ctx_cli_prepare ()" &>/dev/null || require base/cli/cli.sh
-    ish_ctx_cli_prepare
-}
-
 ish_miss_stop() {
-    [ -e "$ctx_pid" ] && kill -3 `cat $ctx_pid` &>/dev/null
+    [ -e "$ctx_pid" ] && kill -3 `cat $ctx_pid` &>/dev/null || echo
 }
 ish_miss_restart() {
-    [ -e "$ctx_pid" ] && kill -2 `cat $ctx_pid` &>/dev/null
+    [ -e "$ctx_pid" ] && kill -2 `cat $ctx_pid` &>/dev/null || echo
 }
 ish_miss_start() {
     while true; do
@@ -208,35 +216,11 @@ ish_miss_start() {
     done
 }
 ish_miss_space() {
-    ish_miss_stop
-    ish_miss_start space dial $@
+    ish_miss_stop && ish_miss_start space dial $@
 }
 ish_miss_serve() {
-    ish_miss_stop
-    ish_miss_start serve start $@
+    ish_miss_stop && ish_miss_start serve start $@
 }
 ish_miss_log() {
     tail -f $ctx_log
 }
-ish_miss_version() {
-    cat > src/version.go <<END
-package main
-
-import (
-	"github.com/shylinux/icebergs"
-)
-
-func init() {
-	ice.Info.Build.Time = \`$(date +"%Y-%m-%d %H:%M:%S")\`
-	ice.Info.Build.Hash = \`$(git log -n1 --pretty="%H")\`
-	ice.Info.Build.Remote = \`$(git config remote.origin.url)\`
-	ice.Info.Build.Branch = \`$(git rev-parse --abbrev-ref HEAD)\`
-	ice.Info.Build.Version = \`$(git describe --tags)\`
-	ice.Info.Build.HostName = \`$(hostname)\`
-	ice.Info.Build.UserName = \`$(whoami)\`
-}
-END
-
-    cat src/version.go
-}
-

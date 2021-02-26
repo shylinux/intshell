@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 ish_ctx_dev_git_prepare() {
     git config --global alias.s status

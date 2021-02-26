@@ -1,13 +1,11 @@
 #!/bin/sh
 
 temp_intshell() {
-    for script in "$@"; do
-        ctx_temp=$(mktemp); curl -fsSL $ctx_dev/intshell/$script -o $ctx_temp; source $ctx_temp
-    done 
+    for script in "$@"; do temp_source intshell/$script; done 
 }
 temp_source() { # path...
     for script in "$@"; do
-        ctx_temp=$(mktemp); curl -fsSL $ctx_dev/$script -o $ctx_temp; source $ctx_temp
+        ctx_temp=$(mktemp) && curl -fsSL $ctx_dev/$script -o $ctx_temp && source $ctx_temp
     done 
 }
 down_source() { # path url
@@ -30,8 +28,8 @@ prepare_ice() {
     down_source bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
 }
 prepare_tmux() {
-    down_source etc/tmux.conf intshell/misc/tmux/tmux.conf
-    down_source bin/tmux.sh intshell/misc/tmux/local.sh
+    down_intshell etc/tmux.conf misc/tmux/tmux.conf
+    down_intshell bin/tmux.sh misc/tmux/local.sh
 }
 prepare_main() {
     ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
@@ -54,8 +52,8 @@ prepare_main() {
             ;;
         ice) # 生产环境
             prepare_tmux
-            export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}; shift
-            prepare_ice && bin/ice.sh serve serve start dev dev "$@"
+            export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
+            shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         *) # 终端环境
             # ISH_CONF_LEVEL="debug"

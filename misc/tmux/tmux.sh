@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 ish_ctx_dev_tmux_prepare() {
     ish_miss_create_link ~/.tmux.conf $PWD/usr/intshell/misc/tmux/tmux.conf
 }
-
 ish_ctx_dev_tmux_session() {
     local tmux_cmd="tmux -S bin/tmux.socket -f etc/tmux.conf"
     local session=miss && [ -s "$1" ] && session=$1 && shift
