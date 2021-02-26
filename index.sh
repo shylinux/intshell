@@ -28,8 +28,8 @@ prepare_ice() {
     down_source bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
 }
 prepare_tmux() {
-    down_intshell etc/tmux.conf misc/tmux/tmux.conf
-    down_intshell bin/tmux.sh misc/tmux/local.sh
+    down_source etc/tmux.conf intshell/misc/tmux/tmux.conf
+    down_source bin/tmux.sh intshell/misc/tmux/local.sh
 }
 prepare_main() {
     ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
