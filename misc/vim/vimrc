@@ -13,6 +13,8 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'vim-scripts/matrix.vim--Yang'
 	Plug 'vim-airline/vim-airline'
 	Plug 'gcmt/taboo.vim'
+    Plug 'posva/vim-vue'
+
 	set sessionoptions+=tabpages,globals
 
     Plug 'majutsushi/tagbar'

@@ -225,3 +225,16 @@ ish_miss_log() {
     tail -f $ctx_log
 }
 
+ish_miss_repos() {
+    local back=$PWD
+    local remote=https://github.com/shylinux
+    for repos in volcanos icebergs intshell contexts toolkits learning word-dict wubi-dict linux-story nginx-story golang-story redis-story mysql-story; do
+        cd ~/contexts/usr/$repos
+        git remote remove origin && git remote add origin $remote/$repos
+        git fetch && git branch --set-upstream-to=origin/master master
+        git pull
+        echo
+    done
+    cd $back
+}
+
