@@ -110,6 +110,9 @@ function! Config(type)
         set filetype=css
         set foldmethod=marker
         set foldmarker={,}
+    elseif a:type == "vue"
+        set tabstop=2
+        set shiftwidth=2
     elseif a:type == "js"
         set filetype=javascript
         source ~/.vim/syntax/javascript.vim
@@ -124,6 +127,7 @@ autocmd BufNewFile,BufReadPost *.json call Config("json")
 autocmd BufNewFile,BufReadPost *.conf call Config("conf")
 autocmd BufNewFile,BufReadPost *.wxml call Config("xml")
 autocmd BufNewFile,BufReadPost *.wxss call Config("css")
+autocmd BufNewFile,BufReadPost *.vue call Config("vue")
 autocmd BufNewFile,BufReadPost *.js call Config("js")
 "}}}
 
