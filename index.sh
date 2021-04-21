@@ -61,4 +61,5 @@ prepare_main() {
             temp_source publish/order.sh
     esac
 }
+
 prepare_main "$@"
