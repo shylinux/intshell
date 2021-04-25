@@ -47,7 +47,8 @@ prepare_main() {
                     ;;
             esac
 
-            export ISH_CONF_HUB_PROXY=$ctx_dev/code/git/
+            # export ISH_CONF_HUB_PROXY=$ctx_dev/code/git/
+            git config --gloal url."https://shylinux.com/code/git/repos".insteadOf "https://github.com/shylinux"
             down_source go.mod publish/go.mod && down_source etc/miss.sh publish/miss.sh && source etc/miss.sh
             ;;
         ice) # 生产环境
