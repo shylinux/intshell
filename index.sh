@@ -1,15 +1,13 @@
 #!/bin/sh
 
-temp_intshell() {
+temp_intshell() { # 加载脚本 file...
     for script in "$@"; do temp_source intshell/$script; done 
 }
-temp_source() { # path...
-    for script in "$@"; do
-        ctx_temp=$(mktemp) && curl -fsSL $ctx_dev/$script -o $ctx_temp && source $ctx_temp
-    done 
+temp_source() { # 加载文件 path...
+    ctx_temp=$(mktemp) && down_source $ctx_temp $1 && shift && source $ctx_temp "$@"
 }
-down_source() { # path url
-    [ -f "$1" ] || curl -fsSL $ctx_dev/$2 --create-dirs -o $1
+down_source() { # 下载文件 file path
+    curl -fsSL $ctx_dev/$2 --create-dirs -o $1
 }
 
 prepare_ice() {
@@ -31,8 +29,18 @@ prepare_tmux() {
     down_source etc/tmux.conf intshell/misc/tmux/tmux.conf
     down_source bin/tmux.sh intshell/misc/tmux/local.sh
 }
+
 prepare_main() {
     ctx_dev=${ctx_dev:="https://shylinux.com"}; case "$1" in
+        source) # 源码安装
+            git clone https://github.com/shylinux/contexts
+            cd contexts && source etc/miss.sh
+            # ish_miss_serve
+            ;;
+        binary) # 应用安装
+            export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
+            shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
+            ;;
         dev) # 开发环境
             temp_intshell plug.sh conf.sh miss.sh
             case "$(uname)" in
@@ -52,14 +60,13 @@ prepare_main() {
             down_source go.mod publish/go.mod && down_source etc/miss.sh publish/miss.sh && source etc/miss.sh
             ;;
         ice) # 生产环境
-            prepare_tmux
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
             shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         *) # 终端环境
-            # ISH_CONF_LEVEL="debug"
             temp_intshell plug.sh conf.sh
-            temp_source publish/order.sh
+            temp_source publish/order.sh "$@"
+            ;;
     esac
 }
 
