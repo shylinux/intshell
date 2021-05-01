@@ -3,10 +3,10 @@
 temp_intshell() { # 加载脚本 file...
     for script in "$@"; do temp_source intshell/$script; done 
 }
-temp_source() { # 加载文件 path...
+temp_source() { # 加载文件 url arg...
     ctx_temp=$(mktemp) && down_source $ctx_temp $1 && shift && source $ctx_temp "$@"
 }
-down_source() { # 下载文件 file path
+down_source() { # 下载文件 dir url
     curl -fsSL $ctx_dev/$2 --create-dirs -o $1
 }
 
