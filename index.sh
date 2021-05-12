@@ -31,10 +31,17 @@ prepare_tmux() {
 prepare_script() {
     for script in "$@"; do temp_file intshell/$script; done 
 }
+prepare_system() {
+    case "$(uname)" in
+        Darwin) xcode-select --install 2>/dev/null ;;
+        Linux) yum install -y tmux make git vim ;;
+    esac
+}
 
 main() {
     case "$1" in
         source) # 源码安装
+            prepare_system
             git clone https://github.com/shylinux/contexts
             cd contexts && source etc/miss.sh
             ;;
@@ -44,13 +51,11 @@ main() {
             bin/ice.sh serve serve start dev dev "$@"
             ;;
         dev) # 开发环境
+            prepare_system
             prepare_script plug.sh conf.sh miss.sh
-            case "$(uname)" in
-                Darwin) xcode-select --install 2>/dev/null ;;
-                Linux) yum install -y wget tmux make git vim ;;
-            esac
 
-            git config --gloal url."$ctx_dev/code/git/repos".insteadOf "https://github.com/shylinux"
+            # git config --global url."$ctx_dev/code/git/repos".insteadOf "https://github.com/shylinux"
+            git config --global url."https://shylinux.com/code/git/repos".insteadOf "https://github.com/shylinux"
             down_file go.mod publish/go.mod && down_file etc/miss.sh publish/miss.sh && source etc/miss.sh
             ;;
         app) # 生产环境

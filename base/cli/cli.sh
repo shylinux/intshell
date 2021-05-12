@@ -45,6 +45,12 @@ ish_ctx_cli_prepare() {
 
     [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
     grep "source ~/.bash_local" ~/$rc &>/dev/null || cat >> ~/$rc <<END
+if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
+    require conf.sh
+
+    ish_ctx_cli_prompt
+fi
+
 [ -f ~/.bash_local ] && source ~/.bash_local
 END
 }
