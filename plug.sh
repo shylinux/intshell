@@ -35,11 +35,11 @@ ish_conf() {
 ISH_USER_EMAIL=${ISH_USER_EMAIL:="shylinuxc@gmail.com"}
 ISH_USER_COLOR=${ISH_USER_COLOR:="true"}
 ISH_USER_ERR_COUNT=0
-ish_user() {
-    whoami
-}
 ish_user_err_clear() {
     ISH_USER_ERR_COUNT=0
+}
+ish_user() {
+    whoami
 }
 # }
 ## 3.可视化 # {
@@ -161,7 +161,7 @@ require_fork() {
 require_temp() {
     for name in "$@"; do
         local temp=$(mktemp) && curl -sL $ctx_dev/intshell/$name >$temp && echo $temp
-        ish_log_request "$ctx_dev/intshell/$name => $temp"
+        ish_log_request "$temp <= $ctx_dev/intshell/$name"
     done
 }
 require() { # require [ as name ] [mod] file arg...

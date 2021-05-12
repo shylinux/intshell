@@ -7,9 +7,9 @@ export ctx_log=${ctx_log:=bin/boot.log}
 ish_miss_ice_sh="bin/ice.sh"
 ish_miss_ice_bin="bin/ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
-ish_miss_main_go="src/main.go"
-ish_miss_main_shy="src/main.shy"
 ish_miss_init_shy="etc/init.shy"
+ish_miss_main_shy="src/main.shy"
+ish_miss_main_go="src/main.go"
 
 ish_miss_create_path() {
     local target=$1 && [ -d ${target%/*} ] && return
@@ -30,12 +30,12 @@ ish_miss_insert_path() {
 }
 ish_miss_download_pkg() {
     for url in "$@"; do local pkg=${url##*/}
-        [ `ish_ctx_cli_file_size $pkg` -gt 0 ] && break
+        [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $ctx_dev/publish/$pkg
         curl -fSOL $ctx_dev/publish/$pkg
         tar xvf $pkg 
 
-        [ `ish_ctx_cli_file_size $pkg` -gt 0 ] && break
+        [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $url
         curl -fSOL $url || wget $url
         tar xvf $pkg 
@@ -159,8 +159,8 @@ ish_miss_prepare_intshell() {
     ish_miss_create_link usr/intshell $PWD/.ish
     require_pull usr/intshell
 
-    declare|grep "^ish_ctx_cli_prepare ()" &>/dev/null || require base/cli/cli.sh
-    ish_ctx_cli_prepare
+    declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
+    ish_sys_cli_prepare
 }
 ish_miss_prepare_icebergs() {
     ish_miss_prepare icebergs
