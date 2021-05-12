@@ -40,7 +40,8 @@ main() {
             ;;
         binary) # 应用安装
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
+            shift && prepare_ice
+            bin/ice.sh serve serve start dev dev "$@"
             ;;
         dev) # 开发环境
             prepare_script plug.sh conf.sh miss.sh
