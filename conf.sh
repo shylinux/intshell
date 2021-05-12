@@ -1,5 +1,5 @@
 #!/bin/sh
 
 require miss.sh
-require base/base.sh
-require misc/misc.sh
+require sys/sys.sh
+require dev/dev.sh

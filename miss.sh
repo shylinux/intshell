@@ -222,7 +222,7 @@ ish_miss_serve() {
     ish_miss_stop && ish_miss_start serve start $@
 }
 ish_miss_log() {
-    tail -f $ctx_log
+    touch $ctx_log && tail -f $ctx_log
 }
 
 ish_miss_repos() {
