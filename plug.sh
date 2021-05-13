@@ -88,11 +88,11 @@ ish_log_info() {
     ish_log info $info
 }
 ish_log_test() { ish_log "test" $@; }
-ish_log_debug() { ish_log "debug" "$@"; }
 ish_log_alias() { ish_log "alias" "$@"; }
 ish_log_source() { ish_log "source" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
 ish_log_require() { ish_log "require" "$@"; }
+ish_log_debug() { ish_log "debug" "$@" `_fileline 2`; }
 # }
 ## 2.模块加载 # {
 require_help() {
@@ -169,7 +169,7 @@ require() { # require [ as name ] [mod] file arg...
     [ -z "$1" ] && require_help && return
     local name=${ISH_CTX_MODULE#ish_} && [ "$1" = "as" ] && name=$2 && shift 2
     local mod=$1 tag= && shift; mod=${mod#https://}
-    ish_log_require as ctx $name -g $mod
+    ish_log_require $name -g $mod by `_fileline 2`
 
     # 本地脚本
     local file=$(require_path $mod)
@@ -216,5 +216,9 @@ _color() {
         prefix=$prefix$(_eval "echo \"\$ISH_SHOW_COLOR_${c}\"")
     done && shift
     echo "$prefix$*$ISH_SHOW_COLOR_end"
+}
+_fileline() {
+    local index=$((${1}-1))
+    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index]}:${FUNCNAME[$1]}"
 }
 

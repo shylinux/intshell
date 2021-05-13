@@ -3,7 +3,7 @@
 ish_sys_cli_alias() {
     [ "$#" = "0" ] && alias && return
     [ "$#" = "1" ] && alias $1 && return
-    ish_log_alias "-g" "$1" "=>" "$2"
+    ish_log_alias "-g" "$1" "=>" "$2" by `_fileline 2`
     alias $1="$2"
 }
 ish_sys_cli_shell() {
