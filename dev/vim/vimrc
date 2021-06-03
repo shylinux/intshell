@@ -97,6 +97,7 @@ function! Config(type)
         set foldmethod=syntax
         set foldnestmax=3
         let g:tagbar_ctags_bin = "gotags"
+        nnoremap <C-[> :GoImplements<CR>
     elseif a:type == "shy"
         set filetype=shy
         set commentstring=#%s
@@ -121,6 +122,7 @@ function! Config(type)
     endif
 endfunction
 
+autocmd BufWritePre *.go GoImports
 autocmd BufNewFile,BufReadPost *.go call Config("go")
 autocmd BufNewFile,BufReadPost *.shy call Config("shy")
 autocmd BufNewFile,BufReadPost *.json call Config("json")

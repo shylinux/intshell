@@ -156,7 +156,8 @@ ish_miss_prepare_contexts() {
 }
 ish_miss_prepare_intshell() {
     ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
-    ish_miss_create_link usr/intshell $PWD/.ish
+    [ -d $PWD/.ish ] && ish_miss_create_link usr/intshell $PWD/.ish
+    [ -d $HOME/.ish ] && ish_miss_create_link usr/intshell $HOME/.ish
     require_pull usr/intshell
 
     declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
