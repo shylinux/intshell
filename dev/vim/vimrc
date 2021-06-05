@@ -122,7 +122,7 @@ function! Config(type)
     endif
 endfunction
 
-autocmd BufWritePre *.go GoImports
+" autocmd BufWritePre *.go GoImports
 autocmd BufNewFile,BufReadPost *.go call Config("go")
 autocmd BufNewFile,BufReadPost *.shy call Config("shy")
 autocmd BufNewFile,BufReadPost *.json call Config("json")
