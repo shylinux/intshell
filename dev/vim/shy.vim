@@ -21,7 +21,8 @@ syntax match shyConfig "^return"
 
 
 highlight shyTitle    ctermbg=darkred ctermfg=white
+highlight shySection    ctermbg=darkgreen ctermfg=white
 syntax match shyTitle "^title"
 syntax match shyTitle "^chapter"
-syntax match shyTitle "^section"
+syntax match shySection "^section"
 
