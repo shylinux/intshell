@@ -24,7 +24,7 @@ endfunc
 func! ShyLogout()
     call ShySend("sess", {"cmds", "logout"}) | let g:ctx_sid = ""
 endfunc
-call ShyLogin()
+" call ShyLogin()
 " }}}
 " 功能函数{{{
 " 数据同步
@@ -109,11 +109,11 @@ func! ShyGrep(word)
 endfunc
 " }}}
 " 事件回调{{{
-autocmd! BufReadPost * call ShySync("bufs")
-autocmd! BufReadPost * call ShySync("read")
-autocmd! BufWritePre * call ShySync("write")
-autocmd! InsertLeave * call ShySync("insert")
-autocmd! CmdlineLeave * call ShySync("exec")
+" autocmd! BufReadPost * call ShySync("bufs")
+" autocmd! BufReadPost * call ShySync("read")
+" autocmd! BufWritePre * call ShySync("write")
+" autocmd! InsertLeave * call ShySync("insert")
+" autocmd! CmdlineLeave * call ShySync("exec")
 "}}}
 " 按键映射{{{
 nnoremap <C-G><C-G> :call ShyGrep(expand("<cword>"))<CR>

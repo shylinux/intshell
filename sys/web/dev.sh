@@ -12,7 +12,7 @@ ish_sys_dev_login() {
 ish_sys_dev_logout() {
     ish_sys_dev_request sess cmds logout 2>/dev/null && ish_sys_dev_sid=""
 }
-ish_sys_dev_login
+# ish_sys_dev_login
 
 ish_sys_dev_qrcode() {
     ish_sys_dev_request qrcode text "$@"
@@ -43,19 +43,18 @@ ish_sys_dev_sync() {
     ish_sys_dev_sync_last=$cmd
 }
 ish_sys_dev_init() {
-    if bind &>/dev/null; then
-        # bash
+    if bind &>/dev/null; then # bash
+        return
         trap ish_sys_dev_sync DEBUG
 
-    elif bindkey &>/dev/null; then
-        # zsh
+    elif bindkey &>/dev/null; then # zsh
         echo > /dev/null
     fi
 }
 ish_sys_dev_exit() {
     ish_sys_dev_logout
 }
-ish_sys_dev_init
+# ish_sys_dev_init
 
 ish_sys_dev_upload() {
     local file=$1 && shift
