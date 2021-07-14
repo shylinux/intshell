@@ -4,7 +4,7 @@
 # 1.PLUG
 # $ git clone https://github.com/shylinux/intshell ~/.ish
 # $ source ~/.ish/plug.sh
-#
+
 ## 1.配置 # {
 ISH_CONF_PRE=ish
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
