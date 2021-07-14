@@ -28,20 +28,19 @@ ish_miss_insert_path() {
         echo $PATH| grep "$p" &>/dev/null || export PATH=$p:$PATH
     done
 }
+
 ish_miss_download_pkg() {
+    declare|grep "^ish_sys_file_size ()" &>/dev/null || require sys/cli/file.sh
     for url in "$@"; do local pkg=${url##*/}
         [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $ctx_dev/publish/$pkg
-        curl -fSOL $ctx_dev/publish/$pkg
-        tar xvf $pkg 
+        curl -fsSOL $ctx_dev/publish/$pkg && tar xvf $pkg 
 
         [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $url
-        curl -fSOL $url || wget $url
-        tar xvf $pkg 
+        curl -fSOL $url && tar xvf $pkg 
     done
 }
-
 ish_miss_prepare_compile() {
     ish_miss_insert_path "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" 
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
@@ -63,7 +62,7 @@ ish_miss_prepare_compile() {
     esac
 
     local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
-    mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd -
+    local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
     # src/main.go
@@ -150,15 +149,17 @@ ish_miss_prepare() {
     require_pull usr/$name
 }
 ish_miss_prepare_contexts() {
-    ish_log_require "as ctx $(_color g github.com/shylinux/contexts)"
+    ish_log_require ctx -g github.com/shylinux/contexts
     [ -d .git ] || git init
     require_pull ./
 }
 ish_miss_prepare_intshell() {
-    ish_log_require "as ctx $(_color g github.com/shylinux/intshell)"
+    ish_log_require ctx -g github.com/shylinux/intshell
+    [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone ${ISH_CONF_HUB_PROXY:="https://"}github.com/shylinux/intshell $PWD/.ish
     [ -d $PWD/.ish ] && ish_miss_create_link usr/intshell $PWD/.ish
     [ -d $HOME/.ish ] && ish_miss_create_link usr/intshell $HOME/.ish
     require_pull usr/intshell
+
 
     declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
     ish_sys_cli_prepare
@@ -224,18 +225,5 @@ ish_miss_serve() {
 }
 ish_miss_log() {
     touch $ctx_log && tail -f $ctx_log
-}
-
-ish_miss_repos() {
-    local back=$PWD
-    local remote=https://github.com/shylinux
-    for repos in volcanos icebergs intshell contexts toolkits learning word-dict wubi-dict linux-story nginx-story golang-story redis-story mysql-story; do
-        cd ~/contexts/usr/$repos
-        git remote remove origin && git remote add origin $remote/$repos
-        git fetch && git branch --set-upstream-to=origin/master master
-        git pull
-        echo
-    done
-    cd $back
 }
 

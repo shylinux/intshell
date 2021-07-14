@@ -25,8 +25,8 @@ prepare_ice() {
     down_file bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
 }
 prepare_tmux() {
-    down_file etc/tmux.conf intshell/misc/tmux/tmux.conf
-    down_file bin/tmux.sh intshell/misc/tmux/local.sh
+    down_file etc/tmux.conf intshell/dev/tmux/tmux.conf
+    down_file bin/tmux.sh intshell/dev/tmux/local.sh
 }
 prepare_script() {
     for script in "$@"; do temp_file intshell/$script; done 
@@ -34,7 +34,7 @@ prepare_script() {
 prepare_system() {
     case "$(uname)" in
         Darwin) xcode-select --install 2>/dev/null ;;
-        Linux) yum install -y tmux make git vim ;;
+        Linux) yum install -y make git vim tmux ;;
     esac
 }
 
@@ -47,8 +47,7 @@ main() {
             ;;
         binary) # 应用安装
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            shift && prepare_ice
-            bin/ice.sh serve serve start dev dev "$@"
+            shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         dev) # 开发环境
             prepare_system
