@@ -30,8 +30,7 @@ ish_sys_cli_prepare() {
     grep "source ~/.bash_local" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
     require conf.sh
-
-    ish_sys_cli_prompt
+    require miss.sh
 fi
 
 [ -f ~/.bash_local ] && source ~/.bash_local

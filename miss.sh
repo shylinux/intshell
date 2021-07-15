@@ -98,6 +98,9 @@ END
 export ctx_log=\${ctx_log:=bin/boot.log}
 export ctx_pid=\${ctx_pid:=var/run/ice.pid}
 
+stop() {
+    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
+}
 restart() {
     [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
 }
@@ -105,9 +108,6 @@ start() {
     trap HUP hup && while true; do
         date && $ish_miss_ice_bin \$@ 2>\$ctx_log && break || echo -e "\n\nrestarting..." 
     done
-}
-stop() {
-    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
 }
 serve() {
     stop && start "\$@"
@@ -159,7 +159,6 @@ ish_miss_prepare_intshell() {
     [ -d $PWD/.ish ] && ish_miss_create_link usr/intshell $PWD/.ish
     [ -d $HOME/.ish ] && ish_miss_create_link usr/intshell $HOME/.ish
     require_pull usr/intshell
-
 
     declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
     ish_sys_cli_prepare
@@ -217,11 +216,11 @@ ish_miss_start() {
         date && $ish_miss_ice_bin $@ 2>$ctx_log && break || echo -e "\n\nrestarting..."
     done
 }
-ish_miss_space() {
-    ish_miss_stop && ish_miss_start space dial $@
-}
 ish_miss_serve() {
     ish_miss_stop && ish_miss_start serve start $@
+}
+ish_miss_space() {
+    ish_miss_stop && ish_miss_start space dial $@
 }
 ish_miss_log() {
     touch $ctx_log && tail -f $ctx_log

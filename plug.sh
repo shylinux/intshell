@@ -46,7 +46,7 @@ ish_log_request() { ish_log "request" "$@"; }
 ish_log_require() { ish_log "require" "$@"; }
 ish_log_debug() { ish_log "debug" "$@" `_fileline 2`; }
 # }
-## 2.加载 # {
+## 3.加载 # {
 require_path() { # 目录
     for name in "$@"; do
         [ -e $name ] && echo $name && continue
@@ -87,9 +87,8 @@ require() { # require [ as name ] [mod] file arg...
         file=$(require_fork "$mod" "$tag")/$1 && shift
     else
         file=$(require_temp $mod)
-    fi;
+    fi; [ -f "$file" ] || return 0
 
-    [ -f "$file" ] || return 0
     local back=$PWD && [ -d "${file%/*}" ] && cd ${file%/*}
     ISH_CTX_MODULE=$(_name ish_${name}) ISH_CTX_SCRIPT=$1 _load $file "$@"
     cd $back; return 0
@@ -104,6 +103,6 @@ _name() {
 }
 _fileline() {
     local index=$((${1}-1))
-    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index]}:${FUNCNAME[$1]}"
+    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index]}:${FUNCNAME[$index]}"
 }
 
