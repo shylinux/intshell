@@ -1,7 +1,7 @@
 #!/bin/sh
 
-ish_sys_date_date() { date +"%Y-%m-%d"; }
 ish_sys_date() { date +"%Y-%m-%d %H:%M:%S"; }
+ish_sys_date_date() { date +"%Y-%m-%d"; }
 ish_sys_date_time() { date +"%H:%M:%S"; }
 
 ish_sys_date_year() { date +"%Y"; }

@@ -40,6 +40,18 @@ prepare_ice() {
 
 main() {
     case "$1" in
+        module) # 创建模块
+            prepare_system; prepare_script plug.sh conf.sh miss.sh
+            ish_miss_prepare_compile
+            ish_miss_prepare_develop
+            ish_miss_prepare_install
+
+            ish_miss_prepare_contexts
+            ish_miss_prepare_volcanos
+
+            export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
+            make && ish_miss_serve dev dev
+            ;;
         source) # 源码安装
             prepare_system
             git clone https://github.com/shylinux/contexts

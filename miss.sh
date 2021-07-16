@@ -11,30 +11,12 @@ ish_miss_init_shy="etc/init.shy"
 ish_miss_main_shy="src/main.shy"
 ish_miss_main_go="src/main.go"
 
-ish_miss_create_path() {
-    local target=$1 && [ -d ${target%/*} ] && return
-    [ ${target%/*} != ${target} ] && mkdir -p ${target%/*} || return 0
-}
-ish_miss_create_file() {
-    [ -e $1 ] && return || ish_log_debug -g "create file ${PWD} $1"
-    ish_miss_create_path $1 && cat > $1
-}
-ish_miss_create_link() {
-    [ -e $1 ] && return || ish_log_debug -g "create link $1 => $2"
-    ish_miss_create_path $1 && ln -s $2 $1
-}
-ish_miss_insert_path() {
-    for p in "$@"; do
-        echo $PATH| grep "$p" &>/dev/null || export PATH=$p:$PATH
-    done
-}
-
 ish_miss_download_pkg() {
     declare|grep "^ish_sys_file_size ()" &>/dev/null || require sys/cli/file.sh
     for url in "$@"; do local pkg=${url##*/}
         [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $ctx_dev/publish/$pkg
-        curl -fsSOL $ctx_dev/publish/$pkg && tar xvf $pkg 
+        curl -fSOL $ctx_dev/publish/$pkg && tar xvf $pkg 
 
         [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $url
@@ -42,7 +24,7 @@ ish_miss_download_pkg() {
     done
 }
 ish_miss_prepare_compile() {
-    ish_miss_insert_path "$PWD/usr/publish" "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" 
+    ish_sys_path_insert "$PWD/usr/publish" "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" 
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
@@ -65,8 +47,18 @@ ish_miss_prepare_compile() {
     local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
+    declare|grep "^ish_dev_git_prepare ()" &>/dev/null || require dev/git/git.sh
+    ish_dev_git_prepare
+    # .gitignore
+    ish_sys_file_create .gitignore <<END
+bin/
+var/
+usr/
+.*
+END
+
     # src/main.go
-    ish_miss_create_file $ish_miss_main_go <<END
+    ish_sys_file_create $ish_miss_main_go <<END
 package main
 
 import (
@@ -81,7 +73,7 @@ END
     [ -f go.mod ] || go mod init ${PWD##*/}
 
     # Makefile
-    ish_miss_create_file Makefile << END
+    ish_sys_file_create Makefile << END
 export GOPROXY=https://goproxy.cn,direct
 export GOPRIVATE=github.com
 export CGO_ENABLED=0
@@ -92,7 +84,7 @@ all:
 END
 
     # bin/ice.sh
-    ish_miss_create_file $ish_miss_ice_sh <<END
+    ish_sys_file_create $ish_miss_ice_sh <<END
 #! /bin/sh
 
 export ctx_log=\${ctx_log:=bin/boot.log}
@@ -120,7 +112,7 @@ END
 }
 ish_miss_prepare_install() {
     # etc/init.shy
-    ish_miss_create_file $ish_miss_init_shy <<END
+    ish_sys_file_create $ish_miss_init_shy <<END
 ~aaa
 
 ~web
@@ -134,7 +126,7 @@ ish_miss_prepare_install() {
 END
 
     # src/main.shy
-    ish_miss_create_file $ish_miss_main_shy <<END
+    ish_sys_file_create $ish_miss_main_shy <<END
 title main
 END
 }
@@ -145,19 +137,19 @@ ish_miss_prepare() {
     [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
 
     ISH_CONF_PATH=$PWD/.ish/pluged require $repos
-    ish_miss_create_link usr/$name $(require_path $repos)
+    ish_sys_link_create usr/$name $(require_path $repos)
     require_pull usr/$name
 }
 ish_miss_prepare_contexts() {
-    ish_log_require ctx -g github.com/shylinux/contexts
+    ish_log_require -g github.com/shylinux/contexts
     [ -d .git ] || git init
-    require_pull ./
+    [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_intshell() {
-    ish_log_require ctx -g github.com/shylinux/intshell
+    ish_log_require -g github.com/shylinux/intshell
     [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone ${ISH_CONF_HUB_PROXY:="https://"}github.com/shylinux/intshell $PWD/.ish
-    [ -d $PWD/.ish ] && ish_miss_create_link usr/intshell $PWD/.ish
-    [ -d $HOME/.ish ] && ish_miss_create_link usr/intshell $HOME/.ish
+    [ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
+    [ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
     require_pull usr/intshell
 
     declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
