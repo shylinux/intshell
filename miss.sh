@@ -24,7 +24,7 @@ ish_miss_download_pkg() {
     done
 }
 ish_miss_prepare_compile() {
-    ish_sys_path_insert "$PWD/usr/publish" "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" 
+    ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish" 
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
@@ -47,6 +47,7 @@ ish_miss_prepare_compile() {
     local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
+    declare|grep "^ish_sys_file_create ()" &>/dev/null || require sys/cli/file.sh
     declare|grep "^ish_dev_git_prepare ()" &>/dev/null || require dev/git/git.sh
     ish_dev_git_prepare
     # .gitignore

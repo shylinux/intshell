@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ish_dev_tmux_prepare() {
-    ish_miss_create_link ~/.tmux.conf $PWD/usr/intshell/dev/tmux/tmux.conf
+    ish_sys_link_create ~/.tmux.conf $PWD/usr/intshell/dev/tmux/tmux.conf
 }
 ish_dev_tmux_session() {
     local tmux_cmd="tmux -S bin/tmux.socket -f etc/tmux.conf"
