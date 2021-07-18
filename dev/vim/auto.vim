@@ -19,12 +19,11 @@ func! ShySend(cmd, arg)
 endfunc
 
 func! ShyLogin()
-    let g:ctx_sid = ShySend("sess", {"username": $USER, "hostname": $HOSTNAME})
+    let g:ctx_sid = ShySend("sess", {"username": $USER, "hostname": hostname(), "pid": getpid()})
 endfunc
 func! ShyLogout()
-    call ShySend("sess", {"cmds", "logout"}) | let g:ctx_sid = ""
+    call ShySend("sess", {"cmds": "logout"}) | let g:ctx_sid = ""
 endfunc
-" call ShyLogin()
 " }}}
 " 功能函数{{{
 " 数据同步
@@ -69,29 +68,40 @@ endfunc
 set completefunc=ShyComplete
 
 " 收藏列表
-call ShyDefine("g:favor_note", "")
+call ShyDefine("g:favor_name", "")
 func! ShyFavor()
-    let tab_list = ["add topic"] + split(ShySend("favor", {"cmds": "select"}), "\n")
-    let tab = tab_list[inputlist(tab_list)-1]
-    if tab == "add topic" | let tab = input("tab: ", "数据结构") | end
+    let zone_list = ["add zone"] + split(ShySend("favor", {"cmds": "select"}), "\n")
+    let zone_show = [] | for i in range(0, len(zone_list)-1)
+        let zone_show = zone_show + [printf("%d. %s", i, zone_list[i])]
+    endfor
 
-    let g:favor_note = input("note: ", g:favor_note)
-    call ShySend("favor", {"cmds": "insert", "tab": tab, "note": g:favor_note, "arg": getline("."), "row": getpos(".")[1], "col": getpos(".")[2]})
+    if len(zone_list) > 1
+        let index = inputlist(zone_show) | let zone = zone_list[index]
+        if index == 0 | let zone = input("zone: ", "数据结构") | end
+    else
+        let zone = input("zone: ", "数据结构")
+    endif
+
+    let g:favor_name = input("name: ", g:favor_name)
+    call ShySend("favor", {"cmds": "insert", "zone": zone, "type": "file", "name": g:favor_name, "text": getline("."), "file": bufname("%"), "line": getpos(".")[1]})
 endfunc
 func! ShyFavors()
-    let tab_list = split(ShySend("favor", {"cmds": "select"}), "\n")
-    let tab = tab_list[inputlist(tab_list)-1]
+    let zone_list = split(ShySend("favor", {"cmds": "select"}), "\n")
+    let zone_show = [] | for i in range(0, len(zone_list)-1)
+        let zone_show = zone_show + [printf("%d. %s", i, zone_list[i])]
+    endfor
+    let index = inputlist(zone_show) | let zone = zone_list[index]
 
-    let res = split(ShySend("favor", {"tab": tab}), "\n")
-    let page = "" | let note = ""
+    let res = split(ShySend("favor", {"zone": zone}), "\n")
+    let page = "" | let name = ""
     for i in range(0, len(res)-1, 2)
         if res[i] != page
-            if note != "" | lexpr note | lopen | let note = "" | endif
+            if name != "" | lexpr name | lopen | let name = "" | endif
             execute exists(":TabooOpen")? "TabooOpen " . res[i]: "tabnew"
         endif
-        let page = res[i] | let note .= res[i+1] . "\n"
+        let page = res[i] | let name .= res[i+1] . "\n"
     endfor
-    if note != "" | lexpr note | let note = "" | endif
+    if name != "" | lexpr name | let name = "" | endif
 
     let view = inputlist(["列表", "默认", "垂直", "水平"])
     for i in range(0, len(res)-1, 2) | if i < 5
@@ -109,11 +119,12 @@ func! ShyGrep(word)
 endfunc
 " }}}
 " 事件回调{{{
-" autocmd! BufReadPost * call ShySync("bufs")
-" autocmd! BufReadPost * call ShySync("read")
-" autocmd! BufWritePre * call ShySync("write")
-" autocmd! InsertLeave * call ShySync("insert")
-" autocmd! CmdlineLeave * call ShySync("exec")
+call ShyLogin()
+autocmd! BufReadPost * call ShySync("read")
+autocmd! BufWritePre * call ShySync("write")
+autocmd! InsertLeave * call ShySync("insert")
+autocmd! CmdlineLeave * call ShySync("exec")
+autocmd! VimLeavePre * call ShyLogout()
 "}}}
 " 按键映射{{{
 nnoremap <C-G><C-G> :call ShyGrep(expand("<cword>"))<CR>
