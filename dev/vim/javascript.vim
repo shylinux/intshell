@@ -10,6 +10,10 @@ syntax match canConst "\<msg\>"
 syntax match canConst "\<res\>"
 syntax match canConst "\<target\>"
 
+highlight kitConst    ctermfg=yellow
+syntax match kitConst "\<kit\.[a-z0-9A-Z_.]*"
+
+
 highlight msgConst    ctermfg=cyan
 syntax match msgConst "\<m\.[a-z0-9A-Z_.]*"
 syntax match msgConst "\<msg\.[a-z0-9A-Z_.]*"
