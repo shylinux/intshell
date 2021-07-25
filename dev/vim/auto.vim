@@ -58,6 +58,8 @@ func! ShyComplete(firststart, base)
     endif
 
     " 符号转换
+    if a:base == ":" | return ["：", ":"] | end
+    if a:base == ";" | return ["；", ";"] | end
     if a:base == "," | return ["，", ","] | end
     if a:base == "." | return ["。", "."] | end
     if a:base == "\\" | return ["、", "\\"] | end
