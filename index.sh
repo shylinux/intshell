@@ -40,7 +40,7 @@ prepare_ice() {
 
 main() {
     case "$1" in
-        module) # 创建模块
+        project) # 创建项目
             prepare_system; prepare_script plug.sh conf.sh miss.sh
             ish_miss_prepare_compile
             ish_miss_prepare_develop
