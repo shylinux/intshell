@@ -8,12 +8,29 @@ _down_file() { # 下载文件 dir url
 _temp_file() { # 加载文件 url arg...
     ctx_temp=$(mktemp) && _down_file $ctx_temp $1 && shift && source $ctx_temp "$@"
 }
+_down_tar() { # 下载文件 dir url
+    echo "download $ctx_dev/$2"
+    curl --create-dirs -o $1 -fSL $ctx_dev/$2 && tar -xvf $1
+}
 
 prepare_system() {
     case "$(uname)" in
         Darwin) xcode-select --install 2>/dev/null ;;
-        Linux) yum install -y make git vim tmux ;;
+        Linux)
+            if yum &>/dev/null; then
+                yum install -y make git vim tmux
+            else
+
+            fi
+            ;;
     esac
+}
+prepare_package() {
+    prepare_system
+    local back=$PWD; cd ~/
+    _down_tar go.tar.gz publish/go.tar.gz
+    _down_tar vim.tar.gz publish/vim.tar.gz
+    cd $back
 }
 prepare_script() {
     for script in "$@"; do _temp_file intshell/$script; done 
@@ -62,10 +79,7 @@ main() {
             shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         dev) # 开发环境
-            prepare_system; prepare_script plug.sh conf.sh miss.sh
-
-            # git config --global url."$ctx_dev/code/git/repos".insteadOf "https://github.com/shylinux"
-            git config --global url."https://shylinux.com/code/git/repos".insteadOf "https://github.com/shylinux"
+            prepare_package; prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_config
             _down_file go.mod publish/go.mod && _down_file etc/miss.sh publish/miss.sh && source etc/miss.sh
             ;;
         app) # 生产环境

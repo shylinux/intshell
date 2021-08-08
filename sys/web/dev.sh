@@ -6,6 +6,12 @@ ish_sys_dev_request() {
     local url=$ctx_dev/code/bash/$1 && shift
     ish_sys_web_request "$url" "$@" pwd "${PWD}" sid "$ish_sys_dev_sid"
 }
+ish_sys_dev_source() {
+    local ctx_temp=$(mktemp); ish_sys_dev_request "$@" >$ctx_temp && source $ctx_temp "$@"
+}
+ish_sys_dev_config() {
+    ish_sys_dev_source config
+}
 ish_sys_dev_qrcode() {
     ish_sys_dev_request qrcode text "$@"
 }

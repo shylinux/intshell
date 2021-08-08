@@ -9,3 +9,6 @@ ish_dev_git_prepare() {
     git config --global push.default simple
     git config --global pull.ff only
 }
+ish_dev_git_config() {
+    ish_sys_dev_request
+}
