@@ -17,11 +17,7 @@ prepare_system() {
     case "$(uname)" in
         Darwin) xcode-select --install 2>/dev/null ;;
         Linux)
-            if yum &>/dev/null; then
-                yum install -y make git vim tmux
-            else
-
-            fi
+            yum install -y make git vim tmux
             ;;
     esac
 }
