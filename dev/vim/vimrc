@@ -121,6 +121,9 @@ function! Config(type)
         set filetype=nginx
     elseif a:type == "json"
         set foldmethod=syntax
+    elseif a:type == "yaml"
+        set tabstop=2
+        set shiftwidth=2
     elseif a:type == "xml"
         set filetype=xml
     elseif a:type == "css"
@@ -143,6 +146,7 @@ autocmd BufNewFile,BufReadPost *.go call Config("go")
 autocmd BufNewFile,BufReadPost *.shy call Config("shy")
 autocmd BufNewFile,BufReadPost *.conf call Config("conf")
 autocmd BufNewFile,BufReadPost *.json call Config("json")
+autocmd BufNewFile,BufReadPost *.yaml call Config("yaml")
 autocmd BufNewFile,BufReadPost *.wxml call Config("xml")
 autocmd BufNewFile,BufReadPost *.wxss call Config("css")
 autocmd BufNewFile,BufReadPost *.vue call Config("vue")
