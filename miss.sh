@@ -60,12 +60,7 @@ END
     ish_sys_file_create $ish_miss_main_go <<END
 package main
 
-import (
-	ice "github.com/shylinux/icebergs"
-	_ "github.com/shylinux/icebergs/base"
-	_ "github.com/shylinux/icebergs/core"
-	_ "github.com/shylinux/icebergs/misc"
-)
+import "github.com/shylinux/ice"
 
 func main() { print(ice.Run()) }
 END
