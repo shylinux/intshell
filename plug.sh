@@ -59,7 +59,7 @@ require_path() { # 目录
 require_fork() {  # 仓库
     local name=$1 mod=$1 tag=$2 && shift 2; [ "$tag" = "" ] || name=$mod@$tag
     local p=$(require_path $name); [ "$p" != "" ] && echo $p && return
-    echo "$mod"| grep "^git" &>/dev/null || return
+    # echo "$mod"| grep "^git" &>/dev/null || return
 
     ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$name"
     git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$name &>/dev/null
