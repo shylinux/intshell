@@ -127,8 +127,7 @@ END
 
 ish_miss_prepare() {
     local name=${1##*/} repos=${1#https://}
-    [ "$name" = "$repos" ] && repos=shylinux/$name
-    [ "$repos" = "shylinux/$name" ] && repos=shylinux.com/x/$name
+    [ "$name" = "$repos" ] && repos=shylinux.com/x/$name
 
     ISH_CONF_PATH=$PWD/.ish/pluged require $repos
     ish_sys_link_create usr/$name $(require_path $repos)

@@ -44,7 +44,7 @@ ish_log_alias() { ish_log "alias" "$@"; }
 ish_log_source() { ish_log "source" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
 ish_log_require() { ish_log "require" "$@"; }
-ish_log_debug() { ish_log "debug" "$@" `_fileline 2`; }
+ish_log_debug() { ish_log "debug" "$@" `_fileline 2 3`; }
 # }
 ## 3.加载 # {
 require_path() { # 目录
@@ -80,10 +80,12 @@ require() { # require [ as name ] [mod] file arg...
     local name=${ISH_CTX_MODULE#ish_} && [ "$1" = "as" ] && name=$2 && shift 2
     local mod=$1 tag= && shift; mod=${mod#https://}
     tag=${mod#*@} mod=${mod%@*}; [ "$tag" = "$mod" ] && tag=""
-    ish_log_require $name -g $mod by `_fileline 2`
+    ish_log_require $name -g $mod by `_fileline 2 2`
 
     local file=$(require_path $mod)
     [ -f "$file" ] || if echo $mod| grep "^git" &>/dev/null; then
+        file=$(require_fork "$mod" "$tag")/$1 && shift
+    elif echo $mod| grep "shylinux.com/x/" &>/dev/null; then
         file=$(require_fork "$mod" "$tag")/$1 && shift
     else
         file=$(require_temp $mod)
@@ -102,7 +104,8 @@ _name() {
     local name="$*" && echo ${name//[^a-zA-Z0-9_]/_}
 }
 _fileline() {
-    local index=$((${1}-1))
-    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index]}:${FUNCNAME[$index]}"
+    local index1=$((${1}-1))
+    local index2=$((${2}-1))
+    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index1]}:${FUNCNAME[$index2]}"
 }
 
