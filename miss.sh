@@ -60,7 +60,7 @@ END
     ish_sys_file_create $ish_miss_main_go <<END
 package main
 
-import "github.com/shylinux/ice"
+import "shylinux.com/x/ice"
 
 func main() { print(ice.Run()) }
 END
@@ -128,20 +128,20 @@ END
 ish_miss_prepare() {
     local name=${1##*/} repos=${1#https://}
     [ "$name" = "$repos" ] && repos=shylinux/$name
-    [ "$repos" = "shylinux/$name" ] && repos=github.com/shylinux/$name
+    [ "$repos" = "shylinux/$name" ] && repos=shylinux.com/x/$name
 
     ISH_CONF_PATH=$PWD/.ish/pluged require $repos
     ish_sys_link_create usr/$name $(require_path $repos)
     require_pull usr/$name
 }
 ish_miss_prepare_contexts() {
-    ish_log_require -g github.com/shylinux/contexts
+    ish_log_require -g shylinux.com/x/contexts
     [ -d .git ] || git init
     [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_intshell() {
-    ish_log_require -g github.com/shylinux/intshell
-    [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone ${ISH_CONF_HUB_PROXY:="https://"}github.com/shylinux/intshell $PWD/.ish
+    ish_log_require -g shylinux.com/x/intshell
+    [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone ${ISH_CONF_HUB_PROXY:="https://"}shylinux.com/x/intshell $PWD/.ish
     [ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
     [ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
     require_pull usr/intshell

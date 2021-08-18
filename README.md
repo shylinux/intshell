@@ -22,7 +22,7 @@ INTSHELL automatically...
 ### 1. Set up INTSHELL
 
 ```sh
-git clone https://github.com/shylinux/intshell.git ~/.ish
+git clone https://shylinux.com/x/intshell.git ~/.ish
 ```
 
 ### 2. Configure Plugins:
@@ -38,14 +38,14 @@ fi
 ### 3. Use Plugins:
 **use by auto load**
 ```sh
-$ ish github.com/shylinux/intshell/base.cli.os_os_system
+$ ish shylinux.com/x/intshell/base.cli.os_os_system
 GNU/Linux
 
 ```
 
 **use by manual load**
 ```sh
-$ require github.com/shylinux/intshell base/cli/os.sh
+$ require shylinux.com/x/intshell base/cli/os.sh
 ```
 
 after load os.sh, you call all the function directly

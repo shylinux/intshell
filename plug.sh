@@ -2,7 +2,7 @@
 # PMS: a plugin manger system
 #
 # 1.PLUG
-# $ git clone https://github.com/shylinux/intshell ~/.ish
+# $ git clone https://shylinux.com/x/intshell ~/.ish
 # $ source ~/.ish/plug.sh
 
 ## 1.配置 # {

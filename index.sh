@@ -67,7 +67,7 @@ main() {
             ;;
         source) # 源码安装
             prepare_system
-            git clone https://github.com/shylinux/contexts
+            git clone https://shylinux.com/x/contexts
             cd contexts && source etc/miss.sh
             ;;
         binary) # 应用安装
