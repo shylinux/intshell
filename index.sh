@@ -60,7 +60,6 @@ main() {
             ish_miss_prepare_install
 
             ish_miss_prepare_contexts
-            ish_miss_prepare_volcanos
 
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
             make && ish_miss_serve dev dev
