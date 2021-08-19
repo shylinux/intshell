@@ -8,7 +8,7 @@
 ## 1.配置 # {
 ISH_CONF_PRE=ish
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
-ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require request source alias debug"}
+ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="debug"}
 ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
 
 ISH_CONF_PATH=${ISH_CONF_PATH:=$PWD/.ish/pluged}
@@ -44,7 +44,7 @@ ish_log_alias() { ish_log "alias" "$@"; }
 ish_log_source() { ish_log "source" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
 ish_log_require() { ish_log "require" "$@"; }
-ish_log_debug() { ish_log "debug" "$@" `_fileline 2 3`; }
+ish_log_debug() { ish_log "debug" "$@" `_fileline 2 2`; }
 # }
 ## 3.加载 # {
 require_path() { # 目录
@@ -105,7 +105,6 @@ _name() {
 }
 _fileline() {
     local index1=$((${1}-1))
-    local index2=$((${2}-1))
-    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index1]}:${FUNCNAME[$index2]}"
+    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index1]}:${FUNCNAME[$index1]}"
 }
 
