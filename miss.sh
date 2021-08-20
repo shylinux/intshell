@@ -211,3 +211,15 @@ ish_miss_log() {
     touch $ctx_log && tail -f $ctx_log
 }
 
+ish_miss_packet() {
+    tar zcvf ish.tar.gz .ish
+    tar zcvf vim.tar.gz .vim
+    tar zcvf go.tar.gz go/pkg
+    tar zcvf local.bin.tar.gz usr/local/bin
+
+    ish_sys_dev_upload ish.tar.gz
+    ish_sys_dev_upload vim.tar.gz
+    ish_sys_dev_upload go.tar.gz
+    ish_sys_dev_upload local.bin.tar.gz
+}
+
