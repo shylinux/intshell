@@ -29,6 +29,7 @@ ish_miss_prepare_compile() {
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
     export GOBIN=${GOBIN:=$PWD/usr/local/bin}
     export ISH_CONF_PATH=$PWD/.ish/pluged
+    export GOSUMDB=off
     [ -d "$GOROOT" ] && return
 
     local goarch=amd64; case "$(uname -m)" in
