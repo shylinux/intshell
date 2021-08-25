@@ -52,9 +52,9 @@ prepare_ice() {
 }
 
 main() {
+    ISH_CONF_LEVEL="require request source debug"
     case "$1" in
         project) # 创建项目
-            ISH_CONF_LEVEL="require request source debug"
             prepare_system; prepare_script plug.sh conf.sh miss.sh
             ish_miss_prepare_compile
             ish_miss_prepare_develop
@@ -66,7 +66,6 @@ main() {
             make && ish_miss_serve
             ;;
         source) # 源码安装
-            ISH_CONF_LEVEL="require request source debug"
             prepare_system
             git clone https://shylinux.com/x/contexts
             cd contexts && source etc/miss.sh
