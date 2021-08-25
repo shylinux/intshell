@@ -64,7 +64,7 @@ main() {
             ish_miss_prepare_contexts
 
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            make && ish_miss_serve dev shy
+            make && ish_miss_serve
             ;;
         source) # 源码安装
             prepare_system
@@ -73,7 +73,7 @@ main() {
             ;;
         binary) # 应用安装
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            shift && prepare_ice && bin/ice.sh serve serve start dev shy "$@"
+            shift && prepare_ice && bin/ice.sh serve serve start "$@"
             ;;
         dev) # 开发环境
             prepare_package; prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_config
