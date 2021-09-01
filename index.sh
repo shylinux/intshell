@@ -2,6 +2,9 @@
 
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
 
+_down_big_file() { # 下载文件 dir url
+    curl --create-dirs -o $1 -fL $ctx_dev/$2
+}
 _down_file() { # 下载文件 dir url
     curl --create-dirs -o $1 -fsSL $ctx_dev/$2
 }
@@ -47,7 +50,7 @@ prepare_ice() {
         arm*) bin=${bin}.arm ;;
         *) bin=${bin}.386 ;;
     esac
-    _down_file bin/ice.bin publish/$bin && chmod u+x bin/ice.bin
+    _down_big_file bin/ice.bin publish/$bin && chmod u+x bin/ice.bin
     _down_file bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
 }
 

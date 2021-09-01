@@ -4,6 +4,8 @@ export ctx_dev=${ctx_dev:="$ISH_CONF_DEV"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
 
+require sys/cli/file.sh
+
 ish_miss_ice_sh="bin/ice.sh"
 ish_miss_ice_bin="bin/ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
@@ -178,7 +180,7 @@ ish_miss_prepare_session() {
 
         tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
         if [ "$name" = "miss" ]; then
-            tmux send-key -t ${name}:$win.$left "ish_miss_serve dev shy" Enter
+            tmux send-key -t ${name}:$win.$left "ish_miss_serve" Enter
         else
             tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev" Enter
         fi
