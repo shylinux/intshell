@@ -149,6 +149,7 @@ autocmd BufNewFile,BufReadPost *.json call Config("json")
 autocmd BufNewFile,BufReadPost *.yaml call Config("yaml")
 autocmd BufNewFile,BufReadPost *.wxml call Config("xml")
 autocmd BufNewFile,BufReadPost *.wxss call Config("css")
+autocmd BufNewFile,BufReadPost *.css call Config("css")
 autocmd BufNewFile,BufReadPost *.vue call Config("vue")
 autocmd BufNewFile,BufReadPost *.js call Config("js")
 "}}}
