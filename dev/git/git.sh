@@ -1,9 +1,11 @@
 #!/bin/bash
 
 ish_dev_git_prepare() {
-    git config --global alias.l "log --oneline --decorate"
+    git config --global alias.t tag
     git config --global alias.s status
     git config --global alias.b branch
+    git config --global alias.l "log --oneline --decorate"
+
     git config --global color.ui always
     git config --global core.quotepath false
     git config --global credential.helper store
