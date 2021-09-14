@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ish_dev_git_prepare() {
+    git config --global alias.l "log --oneline --decorate"
     git config --global alias.s status
     git config --global alias.b branch
     git config --global color.ui always

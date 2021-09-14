@@ -50,7 +50,7 @@ ish_log_debug() { ish_log "debug" "$@" `_fileline 2 2`; }
 require_path() { # 目录
     for name in "$@"; do
         [ -e $name ] && echo $name && continue
-        for p in $ISH_CONF_PATH $ISH_CONF_ROOT; do
+        for p in $PWD/.ish/pluged $ISH_CONF_PATH $ISH_CONF_ROOT; do
             [ -e $p/$name ] && echo $p/$name && break
             [ -e ${p%/*}/$name ] && echo ${p%/*}/$name && break
         done
