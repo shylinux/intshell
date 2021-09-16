@@ -40,7 +40,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 endif
 "}}}
 " 基本配置"{{{
-set cc=80
+set cc=120
 set nowrap
 set number
 set relativenumber
