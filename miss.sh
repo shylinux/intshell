@@ -117,8 +117,6 @@ ish_miss_prepare_install() {
 
 ~cli
 
-~ssh
-
 ~mdb
 
 END
