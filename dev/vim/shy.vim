@@ -6,6 +6,8 @@ syn match Comment	    "\"[^\"]*\""
 highlight shyString     ctermfg=magenta
 syn match shyString	    "\`[^\`]*\`"
 syn region shyString	start="`" end="`"
+syn match shyString	    "false"
+syn match shyString	    "true"
 
 highlight shyContext    ctermfg=red
 syntax match shyContext "\~[a-z\.]\+"
