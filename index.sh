@@ -3,7 +3,7 @@
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
 
 _down_big_file() { # 下载文件 dir url
-    curl --create-dirs -o $1 -fL $ctx_dev/$2
+    [ -f "$1" ] || curl --create-dirs -o $1 -fL $ctx_dev/$2
 }
 _down_file() { # 下载文件 dir url
     curl --create-dirs -o $1 -fsSL $ctx_dev/$2
