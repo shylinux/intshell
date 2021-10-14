@@ -51,13 +51,21 @@ ish_miss_prepare_compile() {
 ish_miss_prepare_develop() {
     declare|grep "^ish_dev_git_prepare ()" &>/dev/null || require dev/git/git.sh
     ish_dev_git_prepare
+
     # .gitignore
     ish_sys_file_create .gitignore <<END
+src/binpack.go
 src/version.go
+etc/local.shy
+etc/local.sh
+etc/path
+*.swp
+*.swo
 bin/
 var/
 usr/
 .*
+
 END
 
     # src/main.go
@@ -88,16 +96,16 @@ END
 export ctx_log=\${ctx_log:=bin/boot.log}
 export ctx_pid=\${ctx_pid:=var/run/ice.pid}
 
-stop() {
-    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
-}
-restart() {
-    [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
-}
 start() {
     trap HUP hup && while true; do
         date && $ish_miss_ice_bin \$@ 2>\$ctx_log && break || echo -e "\n\nrestarting..." 
     done
+}
+restart() {
+    [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
+}
+stop() {
+    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
 }
 serve() {
     stop && start "\$@"
@@ -117,13 +125,15 @@ ish_miss_prepare_install() {
 
 ~cli
 
+~ctx
+
 ~mdb
 
 END
 
     # src/main.shy
     ish_sys_file_create $ish_miss_main_shy <<END
-title main
+title "${PWD##*/}"
 END
 }
 
@@ -164,7 +174,6 @@ ish_miss_prepare_volcanos() {
 ish_miss_prepare_learning() {
     ish_miss_prepare learning
 }
-
 ish_miss_prepare_session() {
     local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
     local win=$2 && [ "$win" = "" ] && win=${name##*-}
@@ -194,16 +203,17 @@ ish_miss_prepare_session() {
 
     [ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
-ish_miss_stop() {
-    [ -e "$ctx_pid" ] && kill -3 `cat $ctx_pid` &>/dev/null || echo
-}
-ish_miss_restart() {
-    [ -e "$ctx_pid" ] && kill -2 `cat $ctx_pid` &>/dev/null || echo
-}
+
 ish_miss_start() {
     while true; do
         date && $ish_miss_ice_bin $@ 2>$ctx_log && break || echo -e "\n\nrestarting..."
     done
+}
+ish_miss_restart() {
+    [ -e "$ctx_pid" ] && kill -2 `cat $ctx_pid` &>/dev/null || echo
+}
+ish_miss_stop() {
+    [ -e "$ctx_pid" ] && kill -3 `cat $ctx_pid` &>/dev/null || echo
 }
 ish_miss_serve() {
     ish_miss_stop && ish_miss_start serve start $@

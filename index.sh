@@ -11,7 +11,12 @@ _down_file() { # 下载文件 dir url
 _temp_file() { # 加载文件 url arg...
     ctx_temp=$(mktemp) && _down_file $ctx_temp $1 && shift && source $ctx_temp "$@"
 }
-_down_tar() { # 下载文件 dir url
+_down_tars() { # 下载文件 file...
+    for file in "$@"; do
+        _down_tar $file publish/$file
+    done
+}
+_down_tar() { # 下载文件 file path
     [ -f $1 ] && return
     echo "download $ctx_dev/$2"
     curl --create-dirs -o $1 -fSL $ctx_dev/$2 && tar -xvf $1
@@ -25,10 +30,7 @@ prepare_system() {
 }
 prepare_package() {
     prepare_system; local back=$PWD; cd ~/
-    _down_tar go.tar.gz publish/go.tar.gz
-    _down_tar vim.tar.gz publish/vim.tar.gz
-    _down_tar ish.tar.gz publish/ish.tar.gz
-    _down_tar local.bin.tar.gz publish/local.bin.tar.gz
+    _down_tars local.bin.tar.gz ish.tar.gz go.tar.gz vim.tar.gz 
     cd $back
 }
 prepare_script() {
@@ -55,7 +57,7 @@ prepare_ice() {
 }
 
 main() {
-    ISH_CONF_LEVEL="require request source debug"
+    ISH_CONF_LEVEL="debug require request source alias"
     case "$1" in
         project) # 创建项目
             prepare_system; prepare_script plug.sh conf.sh miss.sh
@@ -66,12 +68,12 @@ main() {
             ish_miss_prepare_contexts
 
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            make && ish_miss_serve
+            shift && make && ish_miss_serve "$@"
             ;;
         source) # 源码安装
             prepare_system
             git clone https://shylinux.com/x/contexts
-            cd contexts && source etc/miss.sh
+            shift && cd contexts && source etc/miss.sh "$@"
             ;;
         binary) # 应用安装
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
