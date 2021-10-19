@@ -81,7 +81,7 @@ END
     # Makefile
     ish_sys_file_create Makefile << END
 export GOPROXY=https://goproxy.cn,direct
-export GOPRIVATE=github.com
+export GOPRIVATE=shylinux.com,github.com
 export CGO_ENABLED=0
 
 all:
