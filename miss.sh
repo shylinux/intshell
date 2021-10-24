@@ -7,7 +7,8 @@ export ctx_log=${ctx_log:=bin/boot.log}
 require sys/cli/file.sh
 
 ish_miss_ice_sh="bin/ice.sh"
-ish_miss_ice_bin="bin/ice.bin"
+# ish_miss_ice_bin="bin/ice.bin"
+ish_miss_ice_bin="ice.bin"
 ish_miss_miss_sh="etc/miss.sh"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_main_shy="src/main.shy"
