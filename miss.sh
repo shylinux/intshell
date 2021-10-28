@@ -26,7 +26,7 @@ ish_miss_download_pkg() {
     done
 }
 ish_miss_prepare_compile() {
-    ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish" 
+    ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
     export GORPIVATE=${GOPRIVATE:=github.com}
     export GOROOT=${GOROOT:=$PWD/usr/local/go}
