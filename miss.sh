@@ -87,7 +87,7 @@ export CGO_ENABLED=0
 
 all:
 	@echo && date
-	go build -v -o $ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
+	go build -v -o bin/$ish_miss_ice_bin $ish_miss_main_go && chmod u+x $ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
 END
 
     # bin/ice.sh
