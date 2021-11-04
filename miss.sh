@@ -37,6 +37,7 @@ ish_miss_prepare_compile() {
 
     local goarch=amd64; case "$(uname -m)" in
         x86_64) goarch=amd64;;
+        arm64) goarch=arm64;;
         i686) goarch=386;;
         *) goos=arm;;
     esac
@@ -46,7 +47,7 @@ ish_miss_prepare_compile() {
         *) goos=windows;;
     esac
 
-    local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
+    local pkg=go${GOVERSION:=1.17.2}.${goos}-${goarch}.tar.gz
     local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
