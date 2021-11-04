@@ -119,6 +119,14 @@ func! ShyGrep(word)
     silent execute "grep --exclude-dir='.git'  --exclude='*.swo'  --exclude='*.swp' --exclude='*.tags' -rn '\\<" . input("word: ", a:word) . "\\>' " . g:grep_dir
     copen
 endfunc
+func! ShyTags(pattern, flags, info)
+    let tags_list = split(ShySend("tags", {"pre": getline("."), "pattern": a:pattern}), "\n")
+    let list = [] | for i in range(0, len(tags_list)-1, 3)
+        let list = list + [ { "name": tags_list[i], "filename": tags_list[i+1], "cmd": tags_list[i+2] } ]
+    endfor
+    echo list
+    return list
+endfunc
 " }}}
 " 事件回调{{{
 call ShyLogin()
@@ -127,6 +135,8 @@ autocmd! BufWritePre * call ShySync("write")
 autocmd! InsertLeave * call ShySync("insert")
 autocmd! CmdlineLeave * call ShySync("exec")
 autocmd! VimLeavePre * call ShyLogout()
+
+autocmd BufNewFile,BufReadPost *.js set tagfunc=ShyTags
 "}}}
 " 按键映射{{{
 nnoremap <C-G><C-G> :call ShyGrep(expand("<cword>"))<CR>
