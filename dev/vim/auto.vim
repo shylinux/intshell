@@ -65,7 +65,14 @@ func! ShyComplete(firststart, base)
     if a:base == "\\" | return ["、", "\\"] | end
 
     " 单词转换
-    return ShyInput(a:base)
+    let list = ShyInput(a:base)
+    if len(list) > 0  && list[0] == "func"
+        let res = [] | for i in range(1, len(list)-1, 2)
+            let res = res + [ { "word": list[i], "info": list[i+1] } ]
+        endfor
+        return res
+    endif
+    return list
 endfunc
 set completefunc=ShyComplete
 
