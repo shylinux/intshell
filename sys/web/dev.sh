@@ -34,7 +34,7 @@ ish_sys_dev_download() {
 ish_sys_dev_trash=${ish_sys_dev_trash:=~/trash}
 ish_sys_dev_trash() {
     local from=$PWD/$1 to=$ish_sys_dev_trash/$(ish_sys_date_filename)-`echo $PWD/$1| tr '/' '_'`
-    local size=`du -sb $from|cut -f1 2>/dev/null`
+    local size=`du -sb $from 2>/dev/null |cut -f1 2>/dev/null`
     ish_sys_dev_request trash cmds insert size "$size" from "$from" to "$to" &>/dev/null
     mkdir -p $ish_sys_dev_trash &>/dev/null; mv $from $to
 }

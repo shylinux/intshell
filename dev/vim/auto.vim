@@ -127,11 +127,17 @@ func! ShyGrep(word)
     copen
 endfunc
 func! ShyTags(pattern, flags, info)
-    let tags_list = split(ShySend("tags", {"pre": getline("."), "pattern": a:pattern}), "\n")
-    let list = [] | for i in range(0, len(tags_list)-1, 3)
+    let line = getline(".")
+    let end = col(".") | while end > 0 && line[end] =~ '\w' | let end -= 1 | endwhile
+    let begin = end - 1 | while begin > 0 && line[begin] =~ '\w' | let begin -= 1 | endwhile
+
+    let tags_list = split(ShySend("tags", {"module": line[begin+1:end-1], "pre": getline("."), "pattern": a:pattern}), "\n")
+    echo tags_list
+    let list = [] | if len(tags_list) == 0 | return list | endif
+    echo tags_list
+    for i in range(0, len(tags_list)-1, 3)
         let list = list + [ { "name": tags_list[i], "filename": tags_list[i+1], "cmd": tags_list[i+2] } ]
     endfor
-    echo list
     return list
 endfunc
 " }}}
