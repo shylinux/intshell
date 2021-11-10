@@ -68,6 +68,7 @@ main() {
             ish_miss_prepare_contexts
 
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
+            go get shylinux.com/x/ice
             shift && make && ish_miss_serve "$@"
             ;;
         source) # 源码安装
