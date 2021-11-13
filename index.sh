@@ -89,8 +89,9 @@ main() {
             shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         *) # 终端环境
+            ISH_CONF_LEVEL="debug"
             prepare_script plug.sh conf.sh
-            _temp_file publish/order.sh "$@"
+            ish_sys_dev_run "$@"
             ;;
     esac
 }

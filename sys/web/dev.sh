@@ -68,3 +68,21 @@ ish_sys_dev_init() {
 }
 ish_sys_dev_init
 
+ish_sys_dev_run() {
+    local cmd="run/action/run"; for key in "$@"; do cmd=$cmd"/"$key; done
+    local res=$(mktemp); ish_sys_dev_request $cmd >$res
+    if head -n1 $res|grep "warn: not login" &>/dev/null; then
+        local url=$ctx_dev/chat/cmd/web.code.bash.grant/$ish_sys_dev_sid
+        ish_sys_dev_qrcode $url
+        echo
+        return
+    elif head -n1 $res|grep "warn: not right" &>/dev/null; then
+        local url=$ctx_dev/chat/cmd/web.code.bash.grant/$ish_sys_dev_sid
+        ish_sys_dev_qrcode $url
+        echo
+        return
+    fi
+
+    local cmd="run/action/command"; for key in "$@"; do cmd=$cmd"/"$key; done
+    local ctx_temp=$(mktemp); ish_sys_dev_request $cmd >$ctx_temp && source $ctx_temp $res
+}
