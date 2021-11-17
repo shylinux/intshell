@@ -58,6 +58,8 @@ func! ShyComplete(firststart, base)
     endif
 
     " 符号转换
+    if a:base == "(" | return ["（", "("] | end
+    if a:base == ")" | return ["）", ")"] | end
     if a:base == ":" | return ["：", ":"] | end
     if a:base == ";" | return ["；", ";"] | end
     if a:base == "," | return ["，", ","] | end
@@ -149,7 +151,7 @@ autocmd! InsertLeave * call ShySync("insert")
 autocmd! CmdlineLeave * call ShySync("exec")
 autocmd! VimLeavePre * call ShyLogout()
 
-autocmd BufNewFile,BufReadPost *.js set tagfunc=ShyTags
+" autocmd BufNewFile,BufReadPost *.js set tagfunc=ShyTags
 "}}}
 " 按键映射{{{
 nnoremap <C-G><C-G> :call ShyGrep(expand("<cword>"))<CR>
