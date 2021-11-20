@@ -25,12 +25,18 @@ _down_tar() { # 下载文件 file path
 prepare_system() {
     case "$(uname)" in
         Darwin) xcode-select --install 2>/dev/null ;;
-        Linux) yum install -y make git vim tmux ;;
+        Linux) 
+            if [ "$USER" == root ]; then
+                yum install -y make git vim tmux
+            else
+                sudo yum install -y make git vim tmux
+            fi
+            ;;
     esac
 }
 prepare_package() {
     prepare_system; local back=$PWD; cd ~/
-    _down_tars local.bin.tar.gz ish.tar.gz go.tar.gz vim.tar.gz 
+    _down_tars local.bin.tar.gz vim.tar.gz 
     cd $back
 }
 prepare_script() {
@@ -81,7 +87,7 @@ main() {
             shift && prepare_ice && bin/ice.sh serve serve start "$@"
             ;;
         dev) # 开发环境
-            prepare_package; prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_config
+            prepare_package; prepare_script plug.sh conf.sh miss.sh
             _down_file go.mod publish/go.mod && _down_file etc/miss.sh publish/miss.sh && source etc/miss.sh
             ;;
         app) # 生产环境
