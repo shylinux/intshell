@@ -1,7 +1,6 @@
 syntax match Comment "#.*$"
 syntax match Comment "\<Name: [^,]*"
-syntax match Comment "\<Name: \"[^\"]*\""
-syntax match Comment "\<Help: \"[^\"]*\""
+syntax match Comment "\<Help: [^,]*"
 
 highlight kitConst    ctermfg=yellow
 syntax match kitConst "\<kit\.[a-z0-9A-Z_.]*"
