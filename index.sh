@@ -26,7 +26,7 @@ prepare_system() {
     case "$(uname)" in
         Darwin) xcode-select --install 2>/dev/null ;;
         Linux) 
-            if [ "$USER" == root ]; then
+            if [ `whoami` == root ]; then
                 yum install -y make git vim tmux
             else
                 sudo yum install -y make git vim tmux
