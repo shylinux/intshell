@@ -237,5 +237,10 @@ ish_miss_packet() {
     tar zcvf "vim.tar.gz" .vim/plugged
     mv "vim.tar.gz" contexts/usr/publish
     cd $back
+
+    cp usr/local/go1.17.3.linux-amd64.tar.gz usr/publish/
+    cp etc/miss.sh usr/publish/
+    cp go.mod usr/publish/
+    cp go.sum usr/publish/
 }
 

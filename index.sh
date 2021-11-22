@@ -88,7 +88,11 @@ main() {
             ;;
         dev) # 开发环境
             prepare_package; prepare_script plug.sh conf.sh miss.sh
-            _down_file go.mod publish/go.mod && _down_file etc/miss.sh publish/miss.sh && source etc/miss.sh
+            export PATH=~/contexts/usr/local/bin:$PATH
+            mkdir ~/contexts; cd ~/contexts
+            _down_file go.mod publish/go.mod
+            _down_file go.sum publish/go.sum
+            _down_file etc/miss.sh publish/miss.sh && source etc/miss.sh
             ;;
         app) # 生产环境
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
