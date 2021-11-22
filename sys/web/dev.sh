@@ -66,7 +66,7 @@ ish_sys_dev_init() {
         echo > /dev/null
     fi
 }
-ish_sys_dev_init
+# ish_sys_dev_init
 
 ish_sys_dev_run_login() {
     local url=$ctx_dev/chat/cmd/web.code.bash.grant/$ish_sys_dev_sid
