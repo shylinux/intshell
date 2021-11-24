@@ -6,9 +6,8 @@ export ctx_log=${ctx_log:=bin/boot.log}
 
 require sys/cli/file.sh
 
-ish_miss_ice_sh="bin/ice.sh"
-# ish_miss_ice_bin="bin/ice.bin"
 ish_miss_ice_bin="ice.bin"
+ish_miss_ice_sh="bin/ice.sh"
 ish_miss_miss_sh="etc/miss.sh"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_main_shy="src/main.shy"
@@ -33,7 +32,7 @@ ish_miss_prepare_compile() {
     export GOBIN=${GOBIN:=$PWD/usr/local/bin}
     export ISH_CONF_PATH=$PWD/.ish/pluged
     export GOSUMDB=off
-    [ -d "$GOROOT" ] && return
+    [ -f "$GOROOT/bin/go" ] && return
 
     local goarch=amd64; case "$(uname -m)" in
         x86_64) goarch=amd64;;
@@ -227,17 +226,27 @@ ish_miss_log() {
     touch $ctx_log && tail -f $ctx_log
 }
 
+ish_miss_publish() {
+    for file in "$@"; do
+        cp $file usr/publish/
+    done
+}
 ish_miss_packet() {
+    local publish=usr/publish
+    local path=""; for line in `cat etc/path`; do
+        if echo $line| grep "^usr/publish"; then continue; fi
+        if echo $line| grep "^bin"; then continue; fi
+        if echo $line| grep "^/"; then continue; fi
+        path=$path" "$line
+    done
+    tar zcvf $publish/contexts.bin.tar.gz $path
+
     local back=$PWD; cd ~
-    tar zcvf "local.bin.tar.gz" contexts/usr/local/bin
-    mv "local.bin.tar.gz" contexts/usr/publish
     tar zcvf "vim.tar.gz" .vim/plugged
-    mv "vim.tar.gz" contexts/usr/publish
     cd $back
 
-    cp usr/local/go1.17.3.linux-amd64.tar.gz usr/publish/
-    cp etc/miss.sh usr/publish/
-    cp go.mod usr/publish/
-    cp go.sum usr/publish/
+    ish_miss_publish ~/vim.tar.gz
+    ish_miss_publish usr/local/go1.17.3.linux-amd64.tar.gz
+    ish_miss_publish etc/miss.sh etc/path go.mod go.sum 
 }
 

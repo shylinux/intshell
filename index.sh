@@ -35,9 +35,9 @@ prepare_system() {
     esac
 }
 prepare_package() {
-    prepare_system; local back=$PWD; cd ~/
-    _down_tars local.bin.tar.gz vim.tar.gz 
-    cd $back
+    local back=$PWD; cd ~/; _down_tars vim.tar.gz; cd $back
+    _down_tars contexts.bin.tar.gz 
+    rm -f usr/local/go/bin/go
 }
 prepare_script() {
     for script in "$@"; do _temp_file intshell/$script; done 
@@ -88,11 +88,12 @@ main() {
             ;;
         dev) # 开发环境
             prepare_package; prepare_script plug.sh conf.sh miss.sh
-            export PATH=~/contexts/usr/local/bin:$PATH
-            mkdir ~/contexts; cd ~/contexts
             _down_file go.mod publish/go.mod
             _down_file go.sum publish/go.sum
-            _down_file etc/miss.sh publish/miss.sh && source etc/miss.sh
+            _down_file etc/miss.sh publish/miss.sh
+            _down_file etc/path publish/path
+            source etc/miss.sh
+            ish_miss_serve dev dev
             ;;
         app) # 生产环境
             export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}

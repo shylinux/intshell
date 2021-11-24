@@ -9,6 +9,13 @@ ish_sys_path_insert() {
         echo $PATH| grep "$p" &>/dev/null || export PATH=$p:$PATH
     done
 }
+ish_sys_path_load() {
+    local path=${CTX_ROOT:=$PWD}
+    for line in `cat ${path}/etc/path 2>/dev/null`; do
+        if echo $line| grep -v "^/" &>/dev/null; then line=$path/$line; fi
+        ish_sys_path_insert $line
+    done
+}
 ish_sys_file_size() {
     local size=`ls -s $1 2>/dev/null| grep -o "[0-9]*"|head -n1`
     [ "$size" = "" ] && size=0; echo $size
