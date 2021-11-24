@@ -259,3 +259,19 @@ ish_miss_packet() {
     ish_miss_publish etc/miss.sh etc/path go.mod go.sum 
 }
 
+ish_miss_go_sum() {
+    go mod download shylinux.com/x/ice
+    go mod download shylinux.com/x/icebergs
+    go mod download shylinux.com/x/toolkits
+    
+    go mod download shylinux.com/x/websocket
+    go mod download shylinux.com/x/go-qrcode
+    go mod download shylinux.com/x/go-sql-mysql
+    
+    go mod download shylinux.com/x/linux-story
+    go mod download shylinux.com/x/nginx-story
+    go mod download shylinux.com/x/golang-story
+    go mod download shylinux.com/x/redis-story
+    go mod download shylinux.com/x/mysql-story
+
+}
