@@ -231,6 +231,11 @@ ish_miss_publish() {
         cp $file usr/publish/
     done
 }
+ish_miss_make() {
+    echo && date
+    [ -f src/version.go ] || echo "package main" > src/version.go
+    go build -v -o bin/ice.bin src/main.go src/version.go && chmod u+x bin/ice.bin && ./bin/ice.sh restart
+}
 ish_miss_packet() {
     local publish=usr/publish
     local path=""; for line in `cat etc/path`; do
@@ -240,6 +245,7 @@ ish_miss_packet() {
         path=$path" "$line
     done
     tar zcvf $publish/contexts.bin.tar.gz $path
+    tar zcvf $publish/contexts.lib.tar.gz usr/local/lib
 
     local back=$PWD; cd ~
     tar zcvf "vim.tar.gz" .vim/plugged
