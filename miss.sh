@@ -152,6 +152,9 @@ ish_miss_prepare_contexts() {
     ish_log_require -g shylinux.com/x/contexts
     [ -d .git ] || git init
     [ "`git remote`" = "" ] || require_pull ./
+    touch etc/conf/bash_local.sh
+    touch etc/conf/vim_local.vim
+    touch etc/conf/nginx.conf
 }
 ish_miss_prepare_intshell() {
     ish_log_require -g shylinux.com/x/intshell

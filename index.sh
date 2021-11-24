@@ -35,10 +35,10 @@ prepare_system() {
     esac
 }
 prepare_package() {
-    local back=$PWD; cd ~/; _down_tars vim.tar.gz; cd $back
     _down_tars contexts.bin.tar.gz 
     _down_tars contexts.lib.tar.gz 
     _down_file etc/path publish/path
+    local back=$PWD; cd ~/; _down_tars vim.tar.gz; cd $back
     export VIM=$PWD/usr/install/vim-vim-12be734/_install/share/vim/vim82/
     export LD_LIBRARY_PATH=$PWD/usr/local/lib
     rm -f usr/local/go/bin/go
@@ -93,10 +93,11 @@ main() {
         dev) # 开发环境
             ISH_CONF_LEVEL="debug"
             prepare_package; prepare_script plug.sh conf.sh miss.sh; ish_sys_path_load
+            git config --global init.templatedir $PWD/usr/install/git-2.31.1/_install/share/git-core/templates/
+            git config --global init.defaultBranch master
             _down_file go.mod publish/go.mod
             _down_file go.sum publish/go.sum
             _down_file etc/miss.sh publish/miss.sh
-            ish_sys_cli_alias make ish_miss_make
             source etc/miss.sh
             ;;
         app) # 生产环境
