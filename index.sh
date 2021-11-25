@@ -94,6 +94,7 @@ main() {
             ISH_CONF_LEVEL="debug"
             prepare_package; prepare_script plug.sh conf.sh miss.sh; ish_sys_path_load
             git config --global init.templatedir $PWD/usr/install/git-2.31.1/_install/share/git-core/templates/
+            git config --global url."$ctx_dev".insteadOf https://shylinux.com
             git config --global init.defaultBranch master
             _down_file go.mod publish/go.mod
             _down_file go.sum publish/go.sum
