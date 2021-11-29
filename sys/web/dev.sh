@@ -83,6 +83,7 @@ ish_sys_dev_run_prepare() {
 }
 ish_sys_dev_run_output=""
 ish_sys_dev_run() {
+    if [ "$*" = "" ]; then return; fi
     local cmd="run/action/run"; for key in "$@"; do cmd=$cmd"/"$key; done
     ish_sys_dev_run_output=$(mktemp); ish_sys_dev_request $cmd >$ish_sys_dev_run_output
     if head -n1 $ish_sys_dev_run_output|grep "warn: not login" &>/dev/null; then

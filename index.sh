@@ -51,7 +51,7 @@ prepare_tmux() {
     _down_file bin/tmux.sh intshell/dev/tmux/local.sh
 }
 prepare_ice() {
-    bin="ice"
+    local bin="ice"
     case `uname -s` in
         Darwin) bin=${bin}.darwin ;;
         Linux) bin=${bin}.linux ;;
@@ -67,10 +67,9 @@ prepare_ice() {
 }
 
 main() {
-    ISH_CONF_LEVEL="debug require request source alias"
     case "$1" in
         project) # 创建项目
-            prepare_system; prepare_script plug.sh conf.sh miss.sh
+            prepare_script plug.sh conf.sh miss.sh; prepare_system
             ish_miss_prepare_compile
             ish_miss_prepare_develop
             ish_miss_prepare_install
@@ -91,8 +90,7 @@ main() {
             shift && prepare_ice && bin/ice.sh serve serve start "$@"
             ;;
         dev) # 开发环境
-            ISH_CONF_LEVEL="debug"
-            prepare_package; prepare_script plug.sh conf.sh miss.sh; ish_sys_path_load
+            prepare_script plug.sh conf.sh miss.sh; prepare_package; ish_sys_path_load
             git config --global init.templatedir $PWD/usr/install/git-2.31.1/_install/share/git-core/templates/
             git config --global url."$ctx_dev".insteadOf https://shylinux.com
             git config --global init.defaultBranch master
@@ -106,7 +104,6 @@ main() {
             shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         *) # 终端环境
-            ISH_CONF_LEVEL="debug"
             prepare_script plug.sh conf.sh
             ish_sys_dev_run "$@"
             ;;
