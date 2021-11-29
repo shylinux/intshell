@@ -187,22 +187,19 @@ ish_miss_prepare_session() {
     local win=$2 && [ "$win" = "" ] && win=${name##*-}
     ish_log_debug "session: $name:$win"
 
-    if ! tmux has-session -t $name; then
+    if ! tmux has-session -t $name &>/dev/null; then
         TMUX="" tmux new-session -d -s $name -n $win
         tmux split-window -d -p 30 -t $name
         tmux split-window -d -h -t ${name}:$win.2
 
-        local left=3 right=2; case `uname -s` in
-            Darwin) left=2 right=3;;
-        esac
-
+        local left=2 right=3
         tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
         if [ "$name" = "miss" ]; then
             tmux send-key -t ${name}:$win.$left "ish_miss_serve" Enter
         else
             tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev" Enter
         fi
-        tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
+        sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 
         case `uname -s` in
             Darwin) sleep 5 && open http://localhost:9020 ;;
@@ -242,25 +239,6 @@ ish_miss_make() {
     echo && date
     [ -f src/version.go ] || echo "package main" > src/version.go
     go build -v -o bin/ice.bin src/main.go src/version.go && chmod u+x bin/ice.bin && ./bin/ice.sh restart
-}
-ish_miss_packet() {
-    local publish=usr/publish
-    local path=""; for line in `cat etc/path`; do
-        if echo $line| grep "^usr/publish"; then continue; fi
-        if echo $line| grep "^bin"; then continue; fi
-        if echo $line| grep "^/"; then continue; fi
-        path=$path" "$line
-    done
-    tar zcvf $publish/contexts.bin.tar.gz $path
-    tar zcvf $publish/contexts.lib.tar.gz usr/local/lib
-
-    local back=$PWD; cd ~
-    tar zcvf "vim.tar.gz" .vim/plugged
-    cd $back
-
-    ish_miss_publish ~/vim.tar.gz
-    ish_miss_publish usr/local/go1.17.3.linux-amd64.tar.gz
-    ish_miss_publish etc/miss.sh etc/path go.mod go.sum 
 }
 
 ish_miss_go_sum() {
