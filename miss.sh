@@ -46,7 +46,7 @@ ish_miss_prepare_compile() {
         *) goos=windows;;
     esac
 
-    local pkg=go${GOVERSION:=1.17.3}.${goos}-${goarch}.tar.gz
+    local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
     local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
