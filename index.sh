@@ -104,7 +104,8 @@ main() {
             shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         *) # 终端环境
-            prepare_script plug.sh conf.sh
+            prepare_script plug.sh conf.sh miss.sh
+            ish_sys_dev_login
             ish_sys_dev_run "$@"
             ;;
     esac
