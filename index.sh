@@ -41,7 +41,6 @@ prepare_package() {
     local back=$PWD; cd ~/; _down_tars vim.tar.gz; cd $back
     export VIM=$PWD/usr/install/vim-vim-12be734/_install/share/vim/vim82/
     export LD_LIBRARY_PATH=$PWD/usr/local/lib
-    rm -f usr/local/go/bin/go
 }
 prepare_script() {
     for script in "$@"; do _temp_file intshell/$script; done 
