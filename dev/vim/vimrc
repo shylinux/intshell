@@ -117,13 +117,15 @@ function! Config(type)
     elseif a:type == "shy"
         set filetype=shy
         set commentstring=#%s
+        set shiftwidth=2
+        set tabstop=2
     elseif a:type == "conf"
         set filetype=nginx
     elseif a:type == "json"
         set foldmethod=syntax
     elseif a:type == "yaml"
-        set tabstop=2
         set shiftwidth=2
+        set tabstop=2
     elseif a:type == "xml"
         set filetype=xml
     elseif a:type == "css"
@@ -131,8 +133,8 @@ function! Config(type)
         set foldmethod=marker
         set foldmarker={,}
     elseif a:type == "vue"
-        set tabstop=2
         set shiftwidth=2
+        set tabstop=2
     elseif a:type == "js"
         set filetype=javascript
         set foldmethod=marker
