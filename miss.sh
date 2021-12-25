@@ -118,6 +118,14 @@ END
     chmod u+x $ish_miss_ice_sh
 }
 ish_miss_prepare_install() {
+    # etc/path
+    ish_sys_file_create etc/path <<END
+usr/local/go/bin
+usr/local/bin
+usr/publish
+bin
+END
+
     # etc/init.shy
     ish_sys_file_create $ish_miss_init_shy <<END
 ~aaa
