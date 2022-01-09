@@ -26,13 +26,14 @@ ish_miss_download_pkg() {
 }
 ish_miss_prepare_compile() {
     ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
+    export GORPIVATE=${GOPRIVATE:=shylinux.com,github.com}
     export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
-    export GORPIVATE=${GOPRIVATE:=github.com}
-    export GOROOT=${GOROOT:=$PWD/usr/local/go}
+    # export GOROOT=${GOROOT:=$PWD/usr/local/go}
     export GOBIN=${GOBIN:=$PWD/usr/local/bin}
     export ISH_CONF_PATH=$PWD/.ish/pluged
     export GOSUMDB=off
-    [ -f "$GOROOT/bin/go" ] && return
+
+    go version &>/dev/null && return
 
     local goarch=amd64; case "$(uname -m)" in
         x86_64) goarch=amd64;;
@@ -46,7 +47,7 @@ ish_miss_prepare_compile() {
         *) goos=windows;;
     esac
 
-    local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
+    local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz; ish_log_debug "download: $pkg"
     local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
