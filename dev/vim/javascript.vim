@@ -1,7 +1,7 @@
-syntax match Comment "\<Volcanos(\"[^\"]*\""
 syntax match Comment "\<shy(\"[^\"]*\""
 syntax match Comment "\<name: \"[^\"]*\""
 syntax match Comment "\<help: \"[^\"]*\""
+syntax match Comment "\<Volcanos(\"[^\"]*\""
 
 highlight canConst    ctermfg=yellow
 syntax match canConst "\<can\>"
@@ -21,6 +21,7 @@ syntax match msgConst "\<res\.[a-z0-9A-Z_.]*"
 syntax match msgConst "\<can\.[a-z0-9A-Z_]*"
 syntax match msgConst "\<sub\.[a-z0-9A-Z_.]*"
 syntax match msgConst "\<cb\>"
+syntax match msgConst "\<cbs\>"
 
 syntax match canConst "\<can\.base"
 syntax match canConst "\<can\.core"

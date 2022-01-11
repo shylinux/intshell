@@ -70,7 +70,11 @@ func! ShyComplete(firststart, base)
     let list = ShyInput(a:base)
     if len(list) > 0  && list[0] == "func"
         let res = [] | for i in range(1, len(list)-1, 2)
-            let res = res + [ { "word": list[i], "info": list[i+1] } ]
+            if len(list) > i+1
+                let res = res + [{"word": list[i], "info": list[i+1]}]
+            else
+                let res = res + [{"word": list[i]}]
+            endif
         endfor
         return res
     endif
@@ -134,9 +138,7 @@ func! ShyTags(pattern, flags, info)
     let begin = end - 1 | while begin > 0 && line[begin] =~ '\w' | let begin -= 1 | endwhile
 
     let tags_list = split(ShySend("tags", {"module": line[begin+1:end-1], "pre": getline("."), "pattern": a:pattern}), "\n")
-    echo tags_list
     let list = [] | if len(tags_list) == 0 | return list | endif
-    echo tags_list
     for i in range(0, len(tags_list)-1, 3)
         let list = list + [ { "name": tags_list[i], "filename": tags_list[i+1], "cmd": tags_list[i+2] } ]
     endfor
@@ -144,14 +146,13 @@ func! ShyTags(pattern, flags, info)
 endfunc
 " }}}
 " 事件回调{{{
-" call ShyLogin()
+call ShyLogin() | autocmd! VimLeavePre * call ShyLogout()
+autocmd BufNewFile,BufReadPost *.js set tagfunc=ShyTags
+
 " autocmd! BufReadPost * call ShySync("read")
 " autocmd! BufWritePre * call ShySync("write")
 " autocmd! InsertLeave * call ShySync("insert")
 " autocmd! CmdlineLeave * call ShySync("exec")
-" autocmd! VimLeavePre * call ShyLogout()
-
-" autocmd BufNewFile,BufReadPost *.js set tagfunc=ShyTags
 "}}}
 " 按键映射{{{
 nnoremap <C-G><C-G> :call ShyGrep(expand("<cword>"))<CR>
