@@ -88,7 +88,7 @@ main() {
             shift && cd contexts && source etc/miss.sh "$@"
             ;;
         binary) # 应用安装
-            export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
+            export PATH=${PWD}/bin:${PWD}/usr/local/go/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
             shift && prepare_ice && bin/ice.sh serve serve start "$@"
             ;;
         dev) # 开发环境
