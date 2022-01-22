@@ -102,7 +102,7 @@ main() {
             source etc/miss.sh
             ;;
         app) # 生产环境
-            export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
+            export PATH=${PWD}/bin:${PWD}/usr/local/go/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
             shift && prepare_ice && bin/ice.sh serve serve start dev dev "$@"
             ;;
         *) # 终端环境
