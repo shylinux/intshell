@@ -14,6 +14,7 @@ syntax match shyContext "\~[a-z\.]\+"
 
 highlight shyCommand    ctermfg=green
 syntax match shyCommand "^    [a-zA-Z0-9:._]\+"
+syntax match shyCommand "^\t[a-zA-Z0-9:._]\+"
 syntax match shyCommand "^[a-zA-Z0-9:._]\+"
 
 highlight shyConfig    ctermfg=yellow

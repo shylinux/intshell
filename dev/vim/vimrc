@@ -20,12 +20,12 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'airblade/vim-gitgutter'
 	Plug 'tpope/vim-fugitive'
 
-    Plug 'majutsushi/tagbar'
+	Plug 'majutsushi/tagbar'
 	Plug 'scrooloose/nerdtree'
 	let g:NERDTreeWinPos="left"
 	let g:NERDTreeWinSize=20
 
-    " Plug 'posva/vim-vue'
+	" Plug 'posva/vim-vue'
 	Plug 'fatih/vim-go'
 	Plug 'chr4/nginx.vim'
 	Plug 'othree/html5.vim'
@@ -88,62 +88,62 @@ nnoremap <F3> :TagbarToggle<CR>
 set keywordprg=man\ -a
 
 function! Config(type)
-    if a:type == "go"
-        set foldnestmax=3
-        set foldmethod=syntax
-        let g:tagbar_ctags_bin = "gotags"
-        nnoremap <C-[> :GoImplements<CR>
+	if a:type == "go"
+		set foldnestmax=3
+		set foldmethod=syntax
+		let g:tagbar_ctags_bin = "gotags"
+		nnoremap <C-[> :GoImplements<CR>
 
-        let g:go_updatetime = 300
-        " let g:go_auto_sameids = 0
-        let g:go_auto_type_info = 1
-        let g:go_version_warning = 0
+		let g:go_updatetime = 300
+		" let g:go_auto_sameids = 0
+		let g:go_auto_type_info = 1
+		let g:go_version_warning = 0
+		
+		let g:go_fmt_autosave = 1
+		let g:go_imports_autosave = 1
+		" let g:go_metalinter_autosave = 1
+		
+		let g:go_highlight_types = 1
+		let g:go_highlight_functions = 1
+		let g:go_highlight_operators = 1
+		let g:go_highlight_space_tab_error = 1
+		let g:go_highlight_trailing_whitespace_error = 1
+		
+		" autocmd BufWritePre *.go GoFmt
+		" autocmd BufWritePre *.go GoVet
+		" autocmd BufWritePre *.go GoLint
+		" autocmd BufWritePre *.go GoImports
 
-        let g:go_fmt_autosave = 1
-        let g:go_imports_autosave = 1
-        " let g:go_metalinter_autosave = 1
-
-        let g:go_highlight_types = 1
-        let g:go_highlight_functions = 1
-        let g:go_highlight_operators = 1
-        let g:go_highlight_space_tab_error = 1
-        let g:go_highlight_trailing_whitespace_error = 1
-
-        " autocmd BufWritePre *.go GoFmt
-        " autocmd BufWritePre *.go GoVet
-        " autocmd BufWritePre *.go GoLint
-        " autocmd BufWritePre *.go GoImports
-
-    elseif a:type == "shy"
-        set filetype=shy
-        set commentstring=#%s
-        set shiftwidth=2
-        set tabstop=2
-    elseif a:type == "conf"
-        set filetype=nginx
-    elseif a:type == "json"
-        set foldmethod=syntax
-    elseif a:type == "yaml"
-        set shiftwidth=2
-        set tabstop=2
-    elseif a:type == "xml"
-        set filetype=xml
-    elseif a:type == "css"
-        set filetype=css
-        set foldmethod=marker
-        set foldmarker={,}
-        set shiftwidth=2
-        set tabstop=2
-    elseif a:type == "vue"
-        set shiftwidth=2
-        set tabstop=2
-    elseif a:type == "js"
-        set filetype=javascript
-        set foldmethod=marker
-        set foldmarker={,}
-        let javaScript_fold=1
-        source ~/.vim/syntax/javascript.vim
-    endif
+	elseif a:type == "shy"
+		set filetype=shy
+		set commentstring=#%s
+		set shiftwidth=2
+		set tabstop=2
+	elseif a:type == "conf"
+		set filetype=nginx
+	elseif a:type == "json"
+		set foldmethod=syntax
+	elseif a:type == "yaml"
+		set shiftwidth=2
+		set tabstop=2
+	elseif a:type == "xml"
+		set filetype=xml
+	elseif a:type == "css"
+		set filetype=css
+		set foldmethod=marker
+		set foldmarker={,}
+		set shiftwidth=2
+		set tabstop=2
+	elseif a:type == "vue"
+		set shiftwidth=2
+		set tabstop=2
+	elseif a:type == "js"
+		set filetype=javascript
+		set foldmethod=marker
+		set foldmarker={,}
+		let javaScript_fold=1
+		source ~/.vim/syntax/javascript.vim
+	endif
 endfunction
 
 autocmd BufNewFile,BufReadPost *.go call Config("go")
