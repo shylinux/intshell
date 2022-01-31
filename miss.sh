@@ -229,6 +229,9 @@ ish_miss_restart() {
 ish_miss_stop() {
     [ -e "$ctx_pid" ] && kill -3 `cat $ctx_pid` &>/dev/null || echo
 }
+ish_miss_serve_log() {
+	ish_miss_stop && ctx_log=/dev/stdout ish_miss_start serve start $@
+}
 ish_miss_serve() {
     ish_miss_stop && ish_miss_start serve start $@
 }
