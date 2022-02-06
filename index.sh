@@ -59,7 +59,7 @@ prepare_ice() {
     esac
     case `uname -m` in
         x86_64) bin=${bin}.amd64 ;;
-        arm64) bin=${bin}.arm64 ;;
+        arm64) bin=${bin}.amd64 ;;
         arm*) bin=${bin}.arm ;;
         *) bin=${bin}.386 ;;
     esac
