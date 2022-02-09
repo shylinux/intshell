@@ -95,6 +95,7 @@ END
     ish_sys_file_create $ish_miss_ice_sh <<END
 #! /bin/sh
 
+export PATH=\${PATH}/bin:\$PATH
 export ctx_log=\${ctx_log:=bin/boot.log}
 export ctx_pid=\${ctx_pid:=var/run/ice.pid}
 
