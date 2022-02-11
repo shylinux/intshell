@@ -63,7 +63,6 @@ prepare_ice() {
         arm*) bin=${bin}.arm ;;
         *) bin=${bin}.386 ;;
     esac
-		echo $bin
     _down_big_file bin/ice.bin publish/$bin && chmod u+x bin/ice.bin
     _down_file bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
     [ -f bin/ice.bin ]
