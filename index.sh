@@ -3,8 +3,12 @@
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
 
 _down_big_file() { # 下载文件 dir url
-    echo "download $ctx_dev/$2"
-    [ -f "$1" ] || curl --create-dirs -o $1 -fL $ctx_dev/$2
+	[ -f "$1" ] && return || echo "download $ctx_dev/$2"
+	mkdir -p ${1%*/*}; if curl -h &>/dev/null; then
+		curl -o $1 -fL $ctx_dev/$2
+	else
+		wget -O $1 $ctx_dev/$2
+	fi
 }
 _down_file() { # 下载文件 dir url
     curl --create-dirs -o $1 -fsSL $ctx_dev/$2
@@ -20,7 +24,7 @@ _down_tars() { # 下载文件 file...
 _down_tar() { # 下载文件 file path
     [ -f $1 ] && return
     echo "download $ctx_dev/$2"
-    curl --create-dirs -o $1 -fSL $ctx_dev/$2 && tar -xf $1
+    curl --create-dirs -o $1 -fL $ctx_dev/$2 && tar -xf $1
 }
 
 prepare_system() {
@@ -63,9 +67,7 @@ prepare_ice() {
         arm*) bin=${bin}.arm ;;
         *) bin=${bin}.386 ;;
     esac
-    _down_big_file bin/ice.bin publish/$bin && chmod u+x bin/ice.bin
-    _down_file bin/ice.sh publish/ice.sh && chmod u+x bin/ice.sh
-    [ -f bin/ice.bin ]
+    _down_big_file bin/ice.bin publish/$bin && chmod u+x bin/ice.bin; [ -f bin/ice.bin ]
 }
 
 main() {
@@ -88,8 +90,12 @@ main() {
             shift && cd contexts && source etc/miss.sh "$@"
             ;;
         binary) # 应用安装
-            export PATH=${PWD}/bin:${PWD}/usr/local/go/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            shift && prepare_ice && bin/ice.sh serve serve start dev ops username root password root "$@"
+            export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://shylinux.com"
+            shift && prepare_ice && bin/ice.bin forever serve "$@"
+            ;;
+        app) # 生产环境
+            export ctx_log=${ctx_log:=/dev/stdout}
+            shift && prepare_ice && bin/ice.bin forever serve dev dev "$@"
             ;;
         dev) # 开发环境
             prepare_script plug.sh conf.sh miss.sh; prepare_package; ish_sys_path_load
@@ -100,10 +106,6 @@ main() {
             _down_file go.sum publish/go.sum
             _down_file etc/miss.sh publish/miss.sh
             source etc/miss.sh
-            ;;
-        app) # 生产环境
-            export PATH=${PWD}/bin:${PWD}/usr/local/go/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
-            shift && prepare_ice && bin/ice.sh serve serve start dev dev username root password root "$@"
             ;;
         *) # 终端环境
             prepare_script plug.sh conf.sh miss.sh
