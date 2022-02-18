@@ -34,11 +34,15 @@ prepare_script() {
     for script in "$@"; do _temp_file intshell/$script; done 
 }
 prepare_package() {
-    _down_tars contexts.bin.tar.gz 
-    _down_file etc/path publish/path
-    local back=$PWD; cd ~/; _down_tars vim.tar.gz; cd $back
+    _down_tars contexts.bin.tar.gz contexts.src.tar.gz
+    local back=$PWD; cd ~/; _down_tars contexts.home.tar.gz; cd $back
     export VIM=$PWD/usr/install/vim-vim-12be734/_install/share/vim/vim82/
     export LD_LIBRARY_PATH=$PWD/usr/local/lib
+
+   	ish_sys_path_load
+	git config --global init.templatedir $PWD/usr/install/git-2.31.1/_install/share/git-core/templates/
+	git config --global url."$ctx_dev".insteadOf https://shylinux.com
+	git config --global init.defaultBranch master
 }
 prepare_system() {
     case "$(uname)" in
@@ -100,11 +104,8 @@ main() {
             shift && prepare_ice && bin/ice.bin forever serve dev dev "$@"
             ;;
         dev) # 开发环境
-            prepare_script plug.sh conf.sh miss.sh; prepare_package; ish_sys_path_load
-            git config --global init.templatedir $PWD/usr/install/git-2.31.1/_install/share/git-core/templates/
-            git config --global url."$ctx_dev".insteadOf https://shylinux.com
-            git config --global init.defaultBranch master
-            _down_files etc/miss.sh Makefile go.mod go.sum && source etc/miss.sh
+            prepare_script plug.sh conf.sh miss.sh
+			shift && prepare_package && source etc/miss.sh "$@"
             ;;
         *) # 终端环境
             prepare_script plug.sh conf.sh miss.sh
