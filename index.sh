@@ -5,9 +5,9 @@ export ctx_dev=${ctx_dev:="https://shylinux.com"}
 _down_big_file() { # 下载文件 dir url
 	[ -f "$1" ] && return || echo "download $ctx_dev/$2"
 	echo $1| grep "/" &>/dev/null && mkdir -p ${1%*/*}; if curl -h &>/dev/null; then
-		curl -o $1 -fL $ctx_dev/$2
+		curl -o $1 -fL "$ctx_dev/$2?pod=$ctx_pod"
 	else
-		wget -O $1 $ctx_dev/$2
+		wget -O $1 "$ctx_dev/$2?pod=$ctx_pod"
 	fi
 }
 _down_files() { # 下载文件 file...
