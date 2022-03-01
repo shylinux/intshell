@@ -222,6 +222,7 @@ ish_miss_prepare_session() {
 ish_miss_start() {
     while true; do
         date && $ish_miss_ice_bin $@ 2>$ctx_log && break || echo -e "\n\nrestarting..."
+		sleep 1
     done
 }
 ish_miss_restart() {
