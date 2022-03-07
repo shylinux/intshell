@@ -13,6 +13,9 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'gcmt/taboo.vim'
 	set sessionoptions+=tabpages,globals
 
+	Plug 'artur-shaik/vim-javacomplete2'
+
+
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
 
@@ -137,6 +140,11 @@ function! Config(type)
 	elseif a:type == "vue"
 		set shiftwidth=2
 		set tabstop=2
+	elseif a:type == "java"
+		set shiftwidth=2
+		set tabstop=2
+		set omnifunc=javacomplete#Complete
+
 	elseif a:type == "js"
 		set filetype=javascript
 		set foldmethod=marker
@@ -146,6 +154,8 @@ function! Config(type)
 	endif
 endfunction
 
+
+autocmd BufNewFile,BufReadPost *.java call Config("java")
 autocmd BufNewFile,BufReadPost *.go call Config("go")
 autocmd BufNewFile,BufReadPost *.shy call Config("shy")
 autocmd BufNewFile,BufReadPost *.conf call Config("conf")
