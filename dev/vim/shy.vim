@@ -1,13 +1,13 @@
 
 set foldmethod=indent
-syn match Comment	    "#.*$"
-syn match Comment	    "\"[^\"]*\""
+syntax match Comment	    "#.*$"
+syntax match Comment	    "\"[^\"]*\""
 
 highlight shyString     ctermfg=magenta
-syn match shyString	    "\`[^\`]*\`"
-syn region shyString	start="`" end="`"
-syn match shyString	    "false"
-syn match shyString	    "true"
+syntax region shyString	start="`" end="`"
+syntax match shyString	    "\`[^\`]*\`"
+syntax match shyString	    "false"
+syntax match shyString	    "true"
 
 highlight shyContext    ctermfg=red
 syntax match shyContext "\~[a-z\.]\+"
