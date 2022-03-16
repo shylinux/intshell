@@ -205,9 +205,9 @@ ish_miss_prepare_session() {
         local left=2 right=3
         tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
         if [ "$name" = "miss" ]; then
-            tmux send-key -t ${name}:$win.$left "ish_miss_serve" Enter
+            tmux send-key -t ${name}:$win.$left "ish_miss_serve"
         else
-            tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev" Enter
+            tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev"
         fi
         sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 
