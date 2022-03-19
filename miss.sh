@@ -24,9 +24,6 @@ ish_miss_download_pkg() {
 }
 ish_miss_prepare_compile() {
     ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
-    export GORPIVATE=${GOPRIVATE:=shylinux.com,github.com}
-    export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
-    # export GOROOT=${GOROOT:=$PWD/usr/local/go}
     export GOBIN=${GOBIN:=$PWD/usr/local/bin}
     export ISH_CONF_PATH=$PWD/.ish/pluged
     export GOSUMDB=off
@@ -80,8 +77,6 @@ END
 
     # Makefile
     ish_sys_file_create Makefile << END
-export GOPROXY=https://goproxy.cn,direct
-export GOPRIVATE=shylinux.com,github.com
 export CGO_ENABLED=0
 
 all:
@@ -170,7 +165,7 @@ END
 }
 ish_miss_prepare_intshell() {
     ish_log_require -g shylinux.com/x/intshell
-    [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone ${ISH_CONF_HUB_PROXY:="https://"}shylinux.com/x/intshell $PWD/.ish
+    [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone https://shylinux.com/x/intshell $PWD/.ish
     [ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
     [ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
     require_pull usr/intshell
