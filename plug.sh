@@ -8,8 +8,6 @@ ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
 
 ISH_CONF_PATH=${ISH_CONF_PATH:="$PWD/.ish/pluged"}
 ISH_CONF_ROOT=${ISH_CONF_ROOT:="$HOME/.ish/pluged"}
-ISH_CONF_HUB_PROXY=${ISH_CONF_HUB_PROXY:="https://"}
-ISH_CONF_DEV=${ISH_CONF_DEV:="http://localhost:9020"}
 # }
 ## 2.日志 # {
 ISH_SHOW_COLOR_r="\e[31m"
@@ -55,8 +53,8 @@ require_fork() {  # 仓库 repos [tag]
     local name=$1 mod=$1 tag=$2 && shift 2; [ "$tag" = "" ] || name=$mod@$tag
     local p=$(require_path $name); [ "$p" != "" ] && echo $p && return
 
-    ish_log_debug -g "clone ${ISH_CONF_HUB_PROXY}$mod => $ISH_CONF_PATH/$name"
-    git clone ${ISH_CONF_HUB_PROXY}$mod $ISH_CONF_PATH/$name &>/dev/null
+    ish_log_debug -g "clone $mod => $ISH_CONF_PATH/$name"
+    git clone https://$mod $ISH_CONF_PATH/$name &>/dev/null
     echo $ISH_CONF_PATH/$name; [ "$tag" = "" ] && return
 
     cd "$ISH_CONF_PATH/$name"; git checkout $tag &>/dev/null && rm -rf .git; cd - &>/dev/null

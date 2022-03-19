@@ -6,7 +6,7 @@ endfunc
 
 " 后端通信
 call ShyDefine("g:ctx_sid", "")
-call ShyDefine("g:ctx_url", (len($ctx_dev) > 1? $ctx_dev: "http://127.0.0.1:9020") . "/code/vim/")
+call ShyDefine("g:ctx_url", (len($ctx_ops) > 1? $ctx_ops: "http://127.0.0.1:9020") . "/code/vim/")
 func! ShySend(cmd, arg)
     if has_key(a:arg, "sub") && a:arg["sub"] != "" | let temp = tempname()
         call writefile(split(a:arg["sub"], "\n"), temp, "b") | let a:arg["sub"] = "@" . temp

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-export ctx_dev=${ctx_dev:="$ISH_CONF_DEV"}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
 export ctx_log=${ctx_log:=bin/boot.log}
 
@@ -8,16 +7,15 @@ require sys/cli/file.sh
 
 ish_miss_ice_bin="ice.bin"
 ish_miss_ice_sh="bin/ice.sh"
-ish_miss_miss_sh="etc/miss.sh"
 ish_miss_init_shy="etc/init.shy"
 ish_miss_main_shy="src/main.shy"
 ish_miss_main_go="src/main.go"
 
 ish_miss_download_pkg() {
     for url in "$@"; do local pkg=${url##*/}
-        [ `ish_sys_file_size $pkg` -gt 0 ] && break
-        ish_log_require $ctx_dev/publish/$pkg
-        curl -fSOL $ctx_dev/publish/$pkg && tar xf $pkg 
+        # [ `ish_sys_file_size $pkg` -gt 0 ] && break
+        # ish_log_require $ctx_dev/publish/$pkg
+        # curl -fSOL $ctx_dev/publish/$pkg && tar xf $pkg 
 
         [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $url
