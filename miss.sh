@@ -164,14 +164,19 @@ END
 END
 }
 ish_miss_prepare_intshell() {
+	echo "what 1"
     ish_log_require -g shylinux.com/x/intshell
+	echo "what 2"
     [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone https://shylinux.com/x/intshell $PWD/.ish
     [ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
     [ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
     require_pull usr/intshell
+	echo "what 3"
 
     declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
+	echo "what 4.0"
     ish_sys_cli_prepare
+	echo "what 4"
 }
 ish_miss_prepare_icebergs() {
     ish_miss_prepare icebergs
