@@ -13,10 +13,6 @@ ish_miss_main_go="src/main.go"
 
 ish_miss_download_pkg() {
     for url in "$@"; do local pkg=${url##*/}
-        # [ `ish_sys_file_size $pkg` -gt 0 ] && break
-        # ish_log_require $ctx_dev/publish/$pkg
-        # curl -fSOL $ctx_dev/publish/$pkg && tar xf $pkg 
-
         [ `ish_sys_file_size $pkg` -gt 0 ] && break
         ish_log_require $url
         curl -fSOL $url && tar xf $pkg 
@@ -164,19 +160,14 @@ END
 END
 }
 ish_miss_prepare_intshell() {
-	echo "what 1"
     ish_log_require -g shylinux.com/x/intshell
-	echo "what 2"
     [ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone https://shylinux.com/x/intshell $PWD/.ish
     [ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
     [ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
     require_pull usr/intshell
-	echo "what 3"
 
     declare|grep "^ish_sys_cli_prepare ()" &>/dev/null || require sys/cli/cli.sh
-	echo "what 4.0"
     ish_sys_cli_prepare
-	echo "what 4"
 }
 ish_miss_prepare_icebergs() {
     ish_miss_prepare icebergs
