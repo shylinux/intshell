@@ -117,16 +117,6 @@ function! Config(type)
 		" autocmd BufWritePre *.go GoLint
 		" autocmd BufWritePre *.go GoImports
 
-	elseif a:type == "iml"
-		set filetype=iml
-		set commentstring=#%s
-		set shiftwidth=2
-		set tabstop=2
-	elseif a:type == "shy"
-		set filetype=shy
-		set commentstring=#%s
-		set shiftwidth=2
-		set tabstop=2
 	elseif a:type == "conf"
 		set filetype=nginx
 	elseif a:type == "json"
@@ -145,12 +135,6 @@ function! Config(type)
 	elseif a:type == "vue"
 		set shiftwidth=2
 		set tabstop=2
-	elseif a:type == "java"
-		set expandtab
-		set tabstop=4
-		set shiftwidth=4
-		set omnifunc=javacomplete#Complete
-
 	elseif a:type == "js"
 		set filetype=javascript
 		set foldmethod=marker
@@ -160,11 +144,33 @@ function! Config(type)
 	endif
 endfunction
 
+func! Configs()
+	let ext = expand("%:e")
+	if ext == "shy"
+		set filetype=shy
+		set tabstop=2
+		set shiftwidth=2
+		set commentstring=#%s
+	elseif ext == "iml"
+		set filetype=iml
+		set tabstop=2
+		set shiftwidth=2
+		set commentstring=#%s
+    elseif ext == "java"
+		set expandtab
+		set tabstop=4
+		set shiftwidth=4
+		set omnifunc=javacomplete#Complete
+	elseif ext == "groovy"
+		set expandtab
+		set tabstop=4
+		set shiftwidth=4
+	endif
+endfunc
 
-autocmd BufNewFile,BufReadPost *.java call Config("java")
+autocmd BufNewFile,BufReadPost * call Configs()
+
 autocmd BufNewFile,BufReadPost *.go call Config("go")
-autocmd BufNewFile,BufReadPost *.shy call Config("shy")
-autocmd BufNewFile,BufReadPost *.iml call Config("iml")
 autocmd BufNewFile,BufReadPost *.conf call Config("conf")
 autocmd BufNewFile,BufReadPost *.json call Config("json")
 autocmd BufNewFile,BufReadPost *.yaml call Config("yaml")
