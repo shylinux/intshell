@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# export ctx_dev=${ctx_dev:="https://contexts.com.cn"}
-export ctx_dev=${ctx_dev:="https://shylinux.com"}
+export ctx_dev=${ctx_dev:="https://contexts.com.cn"}
+# export ctx_dev=${ctx_dev:="https://shylinux.com"}
 
 _down_big_file() { # 下载文件 dir url
 	[ -f "$1" ] && return || echo "download $ctx_dev/$2"
@@ -97,8 +97,8 @@ main() {
             shift && cd contexts && source etc/miss.sh "$@"
             ;;
         binary) # 应用安装
-            # export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://contexts.com.cn"
-            export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://shylinux.com"
+            export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://contexts.com.cn"
+            # export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://shylinux.com"
             shift && prepare_ice && bin/ice.bin forever serve "$@"
             ;;
         app) # 生产环境
