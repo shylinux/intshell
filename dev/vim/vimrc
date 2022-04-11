@@ -91,7 +91,19 @@ nnoremap <F3> :TagbarToggle<CR>
 set keywordprg=man\ -a
 
 function! Config(type)
-	if a:type == "go"
+	if a:type == "conf"
+		set filetype=nginx
+	elseif a:type == "xml"
+		set filetype=xml
+	elseif a:type == "vue"
+		set shiftwidth=2
+		set tabstop=2
+	endif
+endfunction
+
+func! Configs()
+	let ext = expand("%:e")
+	if ext == "go"
 		set foldnestmax=3
 		set foldmethod=syntax
 		let g:tagbar_ctags_bin = "gotags"
@@ -117,68 +129,60 @@ function! Config(type)
 		" autocmd BufWritePre *.go GoLint
 		" autocmd BufWritePre *.go GoImports
 
-	elseif a:type == "conf"
-		set filetype=nginx
-	elseif a:type == "json"
+	elseif ext == "shy"
+		set filetype=shy
+		set tabstop=2
+		set shiftwidth=2
+		set commentstring=#%s
+
+	elseif ext == "json"
 		set foldmethod=syntax
-	elseif a:type == "yaml"
-		set shiftwidth=2
-		set tabstop=2
-	elseif a:type == "xml"
-		set filetype=xml
-	elseif a:type == "css"
-		set filetype=css
-		set foldmethod=marker
-		set foldmarker={,}
-		set shiftwidth=2
-		set tabstop=2
-	elseif a:type == "vue"
-		set shiftwidth=2
-		set tabstop=2
-	elseif a:type == "js"
+
+	elseif ext == "js"
 		set filetype=javascript
 		set foldmethod=marker
 		set foldmarker={,}
 		let javaScript_fold=1
 		source ~/.vim/syntax/javascript.vim
-	endif
-endfunction
 
-func! Configs()
-	let ext = expand("%:e")
-	if ext == "shy"
-		set filetype=shy
-		set tabstop=2
+	elseif ext == "css"
+		set filetype=css
+		set foldmethod=marker
+		set foldmarker={,}
 		set shiftwidth=2
-		set commentstring=#%s
+		set tabstop=2
+
 	elseif ext == "iml"
 		set filetype=iml
 		set tabstop=2
 		set shiftwidth=2
 		set commentstring=#%s
+
+	elseif ext == "yaml"
+		set shiftwidth=2
+		set tabstop=2
+
+	elseif ext == "proto"
+		set foldmarker={,}
+
+	elseif ext == "groovy"
+		set expandtab
+		set tabstop=4
+		set shiftwidth=4
+
     elseif ext == "java"
 		set expandtab
 		set tabstop=4
 		set shiftwidth=4
 		set omnifunc=javacomplete#Complete
-	elseif ext == "groovy"
-		set expandtab
-		set tabstop=4
-		set shiftwidth=4
+
 	endif
 endfunc
 
 autocmd BufNewFile,BufReadPost * call Configs()
-
-autocmd BufNewFile,BufReadPost *.go call Config("go")
 autocmd BufNewFile,BufReadPost *.conf call Config("conf")
-autocmd BufNewFile,BufReadPost *.json call Config("json")
-autocmd BufNewFile,BufReadPost *.yaml call Config("yaml")
 autocmd BufNewFile,BufReadPost *.wxml call Config("xml")
-autocmd BufNewFile,BufReadPost *.wxss call Config("css")
-autocmd BufNewFile,BufReadPost *.css call Config("css")
 autocmd BufNewFile,BufReadPost *.vue call Config("vue")
-autocmd BufNewFile,BufReadPost *.js call Config("js")
 "}}}
 
 "本地配置"{{{
