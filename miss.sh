@@ -20,9 +20,9 @@ ish_miss_download_pkg() {
 }
 ish_miss_prepare_compile() {
     ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
+    export GOPRVIATE=${GOPRVIATE:=shylinux.com,github.com}
     export GOBIN=${GOBIN:=$PWD/usr/local/bin}
     export ISH_CONF_PATH=$PWD/.ish/pluged
-    export GOSUMDB=off
 
     go version &>/dev/null && return
 
