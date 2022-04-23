@@ -47,13 +47,7 @@ ish_miss_prepare_develop() {
 
     # .gitignore
     ish_sys_file_create .gitignore <<END
-src/binpack.go
-src/version.go
-etc/local.shy
-etc/local.sh
-etc/path
-*.swp
-*.swo
+etc/
 bin/
 var/
 usr/
@@ -79,34 +73,6 @@ all:
 	@echo && date
 	go build -v -o bin/$ish_miss_ice_bin $ish_miss_main_go && chmod u+x bin/$ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
 END
-
-    # bin/ice.sh
-    ish_sys_file_create $ish_miss_ice_sh <<END
-#! /bin/sh
-
-export PATH=\${PATH}/bin:\$PATH
-export ctx_log=\${ctx_log:=bin/boot.log}
-export ctx_pid=\${ctx_pid:=var/run/ice.pid}
-
-start() {
-    trap HUP hup && while true; do
-        date && bin/$ish_miss_ice_bin \$@ 2>\$ctx_log && break || echo -e "\n\nrestarting..." 
-    done
-}
-restart() {
-    [ -e \$ctx_pid ] && kill -2 \`cat \$ctx_pid\` &>/dev/null || echo
-}
-stop() {
-    [ -e \$ctx_pid ] && kill -3 \`cat \$ctx_pid\` &>/dev/null || echo
-}
-serve() {
-    stop && start "\$@"
-}
-
-cmd=\$1 && [ -n \"\$cmd\" ] && shift || cmd="start space dial dev dev"
-\$cmd "\$@"
-END
-    chmod u+x $ish_miss_ice_sh
 }
 ish_miss_prepare_install() {
     # etc/path
@@ -239,9 +205,10 @@ ish_miss_publish() {
     done
 }
 ish_miss_make() {
+	local binarys=bin/ice.bin
     echo && date
     [ -f src/version.go ] || echo "package main" > src/version.go
-    go build -v -o bin/ice.bin src/main.go src/version.go && chmod u+x bin/ice.bin && ./bin/ice.sh restart
+	go build -v -o ${binarys} src/main.go src/version.go && ./${binarys} forever restart &>/dev/null
 }
 
 ish_miss_go_sum() {
