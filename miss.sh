@@ -71,7 +71,7 @@ export CGO_ENABLED=0
 
 all:
 	@echo && date
-	go build -v -o bin/$ish_miss_ice_bin $ish_miss_main_go && chmod u+x bin/$ish_miss_ice_bin && chmod u+x $ish_miss_ice_sh && ./$ish_miss_ice_sh restart
+	go build -v -o bin/$ish_miss_ice_bin $ish_miss_main_go ./$ish_miss_ice_bin forever restart
 END
 }
 ish_miss_prepare_install() {
