@@ -99,7 +99,7 @@ main() {
         binary) # 应用安装
             export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://contexts.com.cn"
             # export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://shylinux.com"
-            shift && prepare_ice && bin/ice.bin forever serve "$@"
+            shift && prepare_ice && bin/ice.bin forever serve dev "" "$@"
             ;;
         app) # 生产环境
             export ctx_log=${ctx_log:=/dev/stdout}
