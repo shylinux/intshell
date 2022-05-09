@@ -12,6 +12,7 @@ ish_dev_vim_prepare() {
     ish_sys_link_create ~/.vim/syntax/shy.vim $from/shy.vim
     ish_sys_link_create ~/.vim/syntax/go.vim $from/go.vim
     ish_sys_link_create ~/.vim/syntax/iml.vim $from/iml.vim
+    ish_sys_link_create ~/.vim/syntax/zml.vim $from/zml.vim
     ish_sys_link_create ~/.vim/syntax/css.vim $from/css.vim
     ish_sys_link_create ~/.vim/syntax/javascript.vim $from/javascript.vim
 

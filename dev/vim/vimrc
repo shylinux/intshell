@@ -152,6 +152,12 @@ func! Configs()
 		set shiftwidth=2
 		set tabstop=2
 
+	elseif ext == "zml"
+		set filetype=zml
+		set tabstop=2
+		set shiftwidth=2
+		set commentstring=#%s
+
 	elseif ext == "iml"
 		set filetype=iml
 		set tabstop=2
