@@ -63,7 +63,7 @@ func! ShyComplete(firststart, base)
     if a:base == ":" | return ["：", ":"] | end
     if a:base == ";" | return ["；", ";"] | end
     if a:base == "," | return ["，", ","] | end
-    if a:base == "." | return ["。", "."] | end
+    " if a:base == "." | return ["。", "."] | end
     if a:base == "\\" | return ["、", "\\"] | end
 
     " 单词转换
