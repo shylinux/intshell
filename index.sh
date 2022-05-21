@@ -107,11 +107,11 @@ main() {
             ;;
         dev) # 开发环境
             prepare_script plug.sh conf.sh miss.sh
-			shift && prepare_package && source etc/miss.sh "$@"
+						shift && prepare_package && source etc/miss.sh "$@"
             ;;
         *) # 终端环境
             prepare_script plug.sh conf.sh miss.sh
-            ish_sys_dev_login && ish_sys_dev_run "$@"
+            ish_sys_dev_login && [ -n "$*" ] && ish_sys_dev_run "$@"
             ;;
     esac
 }
