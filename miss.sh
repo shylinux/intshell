@@ -23,6 +23,7 @@ ish_miss_prepare_compile() {
 	export GOPRVIATE=${GOPRVIATE:=shylinux.com,github.com}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	export ISH_CONF_PATH=$PWD/.ish/pluged
+	export GO111MODULE=on
 
 	go version &>/dev/null && return
 
