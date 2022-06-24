@@ -69,6 +69,7 @@ prepare_ice() {
         *) bin=${bin}.windows ;;
     esac
     case `uname -m` in
+		aarch84) bin=${bin}.mipsle ;;
         x86_64) bin=${bin}.amd64 ;;
         arm64) bin=${bin}.amd64 ;;
         arm*) bin=${bin}.arm ;;
