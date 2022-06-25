@@ -13,9 +13,6 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'gcmt/taboo.vim'
 	set sessionoptions+=tabpages,globals
 
-	Plug 'artur-shaik/vim-javacomplete2'
-
-
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
 
