@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export ctx_dev=${ctx_dev:="https://shylinux.com"}
+export ctx_dev=${ctx_dev:="http://shylinux.com"}
 
 _down_big_file() { # 下载文件 dir url
 	[ -f "$1" ] && return || echo "download $ctx_dev/$2"
@@ -17,7 +17,7 @@ _down_file() { # 下载文件 dir url
 	echo $1| grep "/" &>/dev/null && mkdir -p ${1%*/*}; if curl -h &>/dev/null; then
 		curl -o $1 -fsSL $ctx_dev/$2
 	else
-		wget -O $1 $ctx_dev/$2
+		wget -O $1 -q $ctx_dev/$2
 	fi
 }
 _temp_file() { # 加载文件 url arg...
@@ -79,6 +79,12 @@ prepare_ice() {
 
 main() {
 	case "$1" in
+		intshell) # 创建项目
+			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
+			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
+			git version &>/dev/null && git clone https://shylinux.com/x/intshell $PWD/.ish && return
+			prepare_script plug.sh conf.sh miss.sh
+			;;
 		project) # 创建项目
 			prepare_script plug.sh conf.sh miss.sh; prepare_system
 			ish_miss_prepare_compile

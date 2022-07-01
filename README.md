@@ -19,7 +19,7 @@ INTSHELL automatically...
 - regenerates help tags after installing and updating
 
 ## Quick Start
-### 1. Set up INTSHELL
+### 1. Download INTSHELL
 
 ```sh
 git clone https://shylinux.com/x/intshell.git ~/.ish
@@ -30,74 +30,20 @@ Put this at the bottom of your .bashrc to use INTSHELL
 ```sh
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
     require conf.sh
+    require miss.sh
    # ... add other plugins
 fi
 
 ```
 
 ### 3. Use Plugins:
-**use by auto load**
-```sh
-$ ish shylinux.com/x/intshell/base.cli.os_os_system
-GNU/Linux
-
-```
-
 **use by manual load**
 ```sh
-$ require shylinux.com/x/intshell base/cli/os.sh
+$ require shylinux.com/x/intshell sys/cli/date.sh
 ```
 
-after load os.sh, you call all the function directly
+after load date.sh, you call all the function directly
 ```sh
-$ ish_ctx_os_system
-GNU/Linux
-
-$ ish_ctx_os_kernel
-Linux
-
-```
-
-## Create Plugins:
-### add plugin
-if the plugin named *demo*
-add the code to the file $ISH_PATH/demo/demo.sh
-```sh
-ish set repos "github.com/xxx/xxx"
-ish set owner "xxx@gmail.com"
-ish set product "plugin demo"
-ish set version "v0.0.1"
-
-${ISH_CTX_SCRIPT}_info() { ish mod $0
-    echo "repos: $(ish get repos)"
-    echo "owner: $(ish get owner)"
-    echo "product: $(ish get product)"
-    echo "version: $(ish get version)"
-}
-${ISH_CTX_SCRIPT}_help() { ish mod $0
-    echo "usage: ish mod/file.fun arg..."
-}
-${ISH_CTX_SCRIPT}_init() { ish mod $0
-    pwd
-}
-```
-
-### use plugin
-use the new plugin
-```sh
-$ ish demo/demo_info
-repos: github.com/xxx/demo
-owner: xxx@gmail.com
-product: plugin demo
-version: v0.0.1
-```
-
-### share plugin
-if you create git repos, and push it to the github, use by long name
-```sh
-$ ish github.com/xxx/demo/demo.info
-repos: github.com/xxx/xxx
-owner: xxx@gmail.com
-product: plugin demo
-version: v0.0.1
+$ ish_sys_date
+2022-07-01 15:50:30
 ```
