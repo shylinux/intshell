@@ -154,6 +154,8 @@ func! Configs()
 		set tabstop=2
 		set shiftwidth=2
 		set commentstring=#%s
+		" set smartindent
+		" set indentexpr=GetBlockIndent()
 
 	elseif ext == "iml"
 		set filetype=iml
@@ -189,6 +191,10 @@ func! Configs()
 		set omnifunc=javacomplete#Complete
 
 	endif
+endfunc
+
+func! GetBlockIndent ()
+	return 4
 endfunc
 
 autocmd BufNewFile,BufReadPost * call Configs()

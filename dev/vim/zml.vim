@@ -1,9 +1,10 @@
 highlight zmlCommand    ctermfg=yellow
-syntax match zmlCommand "^head"
-syntax match zmlCommand "^left"
-syntax match zmlCommand "^main"
-syntax match zmlCommand "^foot"
-syntax match zmlCommand "^menu"
+syntax match zmlCommand "head"
+syntax match zmlCommand "left"
+syntax match zmlCommand "main"
+syntax match zmlCommand "foot"
+syntax match zmlCommand "menu"
+syntax match zmlCommand "return"
 
 highlight zmlFunction    ctermfg=cyan
 syntax match zmlFunction "index"
