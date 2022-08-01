@@ -104,11 +104,11 @@ main() {
 			;;
 		binary) # 应用安装
 			export ctx_log=${ctx_log:=/dev/stdout} ctx_dev="https://shylinux.com"
-			shift && prepare_ice && bin/ice.bin forever serve dev "" "$@"
+			shift && prepare_ice && bin/ice.bin forever start dev "" "$@"
 			;;
 		app) # 生产环境
 			export ctx_log=${ctx_log:=/dev/stdout}
-			shift && prepare_ice && bin/ice.bin forever serve dev dev "$@"
+			shift && prepare_ice && bin/ice.bin forever start dev dev "$@"
 			;;
 		dev) # 开发环境
 			prepare_script plug.sh conf.sh miss.sh
