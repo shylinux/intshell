@@ -21,6 +21,7 @@ ish_miss_download_pkg() {
 ish_miss_prepare_compile() {
 	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
 	export GOPRVIATE=${GOPRVIATE:=shylinux.com,github.com}
+	export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	export ISH_CONF_PATH=$PWD/.ish/pluged
 	export GO111MODULE=on
@@ -79,15 +80,12 @@ END
 ish_miss_prepare_install() {
 	# etc/init.shy
 	ish_sys_file_create $ish_miss_init_shy <<END
-~aaa
+~cli
 
 ~web
 
-~cli
-
-~ctx
-
-~mdb
+~ssh
+	source local.shy
 
 END
 
@@ -140,20 +138,17 @@ ish_miss_prepare_session() {
 
 	if ! tmux has-session -t $name &>/dev/null; then
 		TMUX="" tmux new-session -d -s $name -n $win
-		tmux split-window -d -p 30 -t $name
-		tmux split-window -d -h -t ${name}:$win.2
+		tmux split-window -d -p 40 -t $name
 
-		local left=2 right=3
-		tmux send-key -t ${name}:$win.$right "ish_miss_log" Enter
 		if [ "$name" = "miss" ]; then
-			tmux send-key -t ${name}:$win.$left "ish_miss_serve"
+			tmux send-key -t ${name}:$win.2 "ish_miss_serve_log"
 		else
-			tmux send-key -t ${name}:$win.$left "ish_miss_space dev dev"
+			tmux send-key -t ${name}:$win.2 "ish_miss_space dev dev"
 		fi
 		sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 
 		case `uname -s` in
-			Darwin) sleep 5 && open http://localhost:9020 ;;
+			Darwin) sleep 3 && open http://localhost:9020 ;;
 		esac
 	fi
 
