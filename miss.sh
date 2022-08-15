@@ -20,7 +20,7 @@ ish_miss_download_pkg() {
 }
 ish_miss_prepare_compile() {
 	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
-	export GOPRVIATE=${GOPRVIATE:=shylinux.com,github.com}
+	export GOPRIVATE=${GOPRIVATE:=shylinux.com,github.com}
 	export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	export ISH_CONF_PATH=$PWD/.ish/pluged
@@ -44,6 +44,7 @@ ish_miss_prepare_compile() {
 	local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
 }
 ish_miss_prepare_develop() {
+	require dev/git/git.sh
 	ish_dev_git_prepare
 
 	# .gitignore
@@ -117,6 +118,7 @@ ish_miss_prepare_intshell() {
 	[ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
 	require_pull usr/intshell
 
+	require sys/cli/cli.sh
 	ish_sys_cli_prepare
 }
 ish_miss_prepare_icebergs() {
