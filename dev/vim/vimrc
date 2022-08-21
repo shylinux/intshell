@@ -127,19 +127,24 @@ func! Configs()
 		" autocmd BufWritePre *.go GoImports
 
 	elseif ext == "shy"
-		set filetype=shy
 		set tabstop=2
 		set shiftwidth=2
 		set commentstring=#%s
+		set foldmethod=indent
+		set filetype=shy
 
 	elseif ext == "json"
 		set foldmethod=syntax
 
-	elseif ext == "js"
-		set filetype=javascript
+	elseif ext == "sh"
 		set foldmethod=marker
 		set foldmarker={,}
+
+	elseif ext == "js"
 		let javaScript_fold=1
+		set foldmethod=marker
+		set foldmarker={,}
+		set filetype=javascript
 		source ~/.vim/syntax/javascript.vim
 
 	elseif ext == "css"

@@ -1,5 +1,4 @@
 
-set foldmethod=indent
 syntax match Comment	    "#.*$"
 syntax match Comment	    "\"[^\"]*\""
 

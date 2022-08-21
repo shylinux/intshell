@@ -9,6 +9,3 @@ syntax match ishFunc "ish_miss_make"
 syntax match ishKey "local"
 syntax match ishKey "white"
 
-set foldmethod=marker
-set foldmarker={,}
-
