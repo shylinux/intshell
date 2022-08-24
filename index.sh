@@ -83,8 +83,7 @@ main() {
 		intshell) # 创建项目
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
 			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
-			echo $PWD/.ish
-			git clone https://shylinux.com/x/intshell $PWD/.ish && return
+			git clone https://shylinux.com/x/intshell $PWD/.ish
 			source $PWD/.ish; require conf.sh; require miss.sh
 			;;
 		project) # 创建项目
