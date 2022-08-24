@@ -84,7 +84,7 @@ main() {
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
 			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
 			git clone https://shylinux.com/x/intshell $PWD/.ish
-			source $PWD/.ish; require conf.sh; require miss.sh
+			source $PWD/.ish/plug.sh; require conf.sh; require miss.sh
 			;;
 		project) # 创建项目
 			prepare_script plug.sh conf.sh miss.sh; prepare_system
