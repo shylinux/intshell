@@ -26,6 +26,7 @@ ish_sys_cli_prepare() {
         zsh) rc=".zshrc";;
     esac
 
+	[ -f ~/.bash_profile ] || echo "source ~/.bashrc" > ~/.bash_profile
     [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
     grep "source ~/.bash_local" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
