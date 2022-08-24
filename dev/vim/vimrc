@@ -29,7 +29,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'gcmt/taboo.vim'
 	set sessionoptions+=tabpages,globals
 
-	" Plug 'fatih/vim-go'
+	Plug 'fatih/vim-go'
 	" Plug 'posva/vim-vue'
 	Plug 'chr4/nginx.vim'
 	Plug 'othree/html5.vim'
@@ -121,7 +121,7 @@ func! Configs()
 		let g:go_highlight_space_tab_error = 1
 		let g:go_highlight_trailing_whitespace_error = 1
 		
-		au BufWritePost *.go silent call GoFmts()
+		" au BufWritePost *.go silent call GoFmts()
 		" autocmd BufWritePre *.go GoFmt
 		" autocmd BufWritePre *.go GoVet
 		" autocmd BufWritePre *.go GoLint

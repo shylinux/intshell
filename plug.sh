@@ -68,11 +68,10 @@ require_temp() { # 下载 file
         curl --create-dirs -fsSL -o $temp $ctx_dev/intshell/$name && echo $temp
     done
 }
-require() { # require [as name] [mod] file arg...
-    local name=${ISH_CTX_MODULE#ish_} && [ "$1" = "as" ] && name=$2 && shift 2
+require() { # require [mod] file arg...
     local mod=$1 tag= && shift; mod=${mod#https://}
     tag=${mod#*@} mod=${mod%@*}; [ "$tag" = "$mod" ] && tag=""
-    ish_log_require $name -g $mod by `_fileline 2 2`
+    ish_log_require -g $mod by `_fileline 2 2`
 
     local file=$(require_path $mod)
     [ -f "$file" ] || if echo $mod| grep "^git" &>/dev/null; then
