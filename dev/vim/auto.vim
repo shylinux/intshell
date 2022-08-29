@@ -129,7 +129,8 @@ endfunc
 call ShyDefine("g:grep_dir", "./")
 func! ShyGrep(word)
     let g:grep_dir = input("dir: ", g:grep_dir, "file")
-    silent execute "grep --exclude-dir='.git'  --exclude='*.swo'  --exclude='*.swp' --exclude='*.tags' -rn '\\<" . input("word: ", a:word) . "\\>' " . g:grep_dir
+    " silent execute "grep --exclude-dir='.git'  --exclude='*.swo'  --exclude='*.swp' --exclude='*.tags' -rn '\\<" . input("word: ", a:word) . "\\>' " . g:grep_dir
+    silent execute "grep -rn '\\<" . input("word: ", a:word) . "\\>' " . g:grep_dir
     copen
 endfunc
 func! ShyTags(pattern, flags, info)
