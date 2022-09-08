@@ -10,6 +10,7 @@ ish_dev_vim_prepare() {
     mkdir -p ~/.vim/syntax
     ish_sys_link_create ~/.vim/syntax/sh.vim $from/sh.vim
     ish_sys_link_create ~/.vim/syntax/shy.vim $from/shy.vim
+    ish_sys_link_create ~/.vim/syntax/c.vim $from/c.vim
     ish_sys_link_create ~/.vim/syntax/go.vim $from/go.vim
     ish_sys_link_create ~/.vim/syntax/zml.vim $from/zml.vim
     ish_sys_link_create ~/.vim/syntax/iml.vim $from/iml.vim

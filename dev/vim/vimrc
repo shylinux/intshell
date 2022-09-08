@@ -211,6 +211,7 @@ endfunction
 "本地配置"{{{
 if filereadable(expand("~/.vim/autoload/auto.vim")) | source ~/.vim/autoload/auto.vim | endif
 if filereadable(expand("~/.vim_local.vim")) | source ~/.vim_local.vim | endif
+if filereadable(expand("etc/vimrc")) | source etc/vimrc | endif
 autocmd BufReadPost * normal `"
 "}}}
 "主题色系"{{{
