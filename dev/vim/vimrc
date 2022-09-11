@@ -133,6 +133,8 @@ func! Configs()
 		set commentstring=#%s
 		set foldmethod=indent
 		set filetype=shy
+		nnoremap <C-]> :call ShyTagsSource()<CR>
+		nnoremap <C-[> :call ShyTagsServer()<CR>
 
 	elseif ext == "json"
 		set foldmethod=syntax
@@ -197,6 +199,8 @@ func! Configs()
 	endif
 endfunc
 
+autocmd BufEnter *.shy nnoremap <C-]> :call ShyTagsSource()<CR>
+autocmd BufEnter *.shy nnoremap <C-[> :call ShyTagsServer()<CR>
 autocmd BufNewFile,BufReadPost * call Configs()
 autocmd BufNewFile,BufReadPost *.conf call Config("conf")
 autocmd BufNewFile,BufReadPost *.wxml call Config("xml")

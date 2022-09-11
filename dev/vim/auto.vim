@@ -58,13 +58,13 @@ func! ShyComplete(firststart, base)
     endif
 
     " 符号转换
-    if a:base == "(" | return ["（", "("] | end
-    if a:base == ")" | return ["）", ")"] | end
-    if a:base == ":" | return ["：", ":"] | end
-    if a:base == ";" | return ["；", ";"] | end
-    if a:base == "," | return ["，", ","] | end
+    " if a:base == "(" | return ["（", "("] | end
+    " if a:base == ")" | return ["）", ")"] | end
+    " if a:base == ":" | return ["：", ":"] | end
+    " if a:base == ";" | return ["；", ";"] | end
+    " if a:base == "," | return ["，", ","] | end
     " if a:base == "." | return ["。", "."] | end
-    if a:base == "\\" | return ["、", "\\"] | end
+    " if a:base == "\\" | return ["、", "\\"] | end
 
     " 单词转换
     let list = ShyInput(a:base)
@@ -162,3 +162,10 @@ nnoremap <C-G>f :call ShyFavors()<CR>
 inoremap <C-K> <C-X><C-U>
 "}}}
 
+
+func! ShyTagsSource()
+	exec "" . ShySend("tags", {"cmds": "source", "pre": getline("."), "row": line("."), "col": col(".")})
+endfunc
+func! ShyTagsServer()
+	exec "" . ShySend("tags", {"cmds": "server", "pre": getline("."), "row": line("."), "col": col(".")})
+endfunc
