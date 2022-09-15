@@ -12,6 +12,7 @@ syntax match kitType "\<Zone\>"
 syntax match kitType "\<Handler\>"
 syntax match kitType "\<Commands\>"
 syntax match kitType "\<Actions\>"
+syntax match kitType "\<Configs\>"
 
 highlight kitConst    ctermfg=yellow
 syntax match kitConst "\<kit\.[a-z0-9A-Z_.]*"
