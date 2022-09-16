@@ -149,6 +149,8 @@ func! Configs()
 		set foldmarker={,}
 		set filetype=javascript
 		source ~/.vim/syntax/javascript.vim
+		nnoremap <C-]> :call ShyTagsSource()<CR>
+		nnoremap <C-[> :call ShyTagsServer()<CR>
 
 	elseif ext == "css"
 		set filetype=css
