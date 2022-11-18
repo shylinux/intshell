@@ -9,6 +9,8 @@ syntax match canConst "\<sub\>"
 syntax match canConst "\<msg\>"
 syntax match canConst "\<res\>"
 syntax match canConst "\<target\>"
+syntax match canConst "\<kit\>"
+syntax match canConst "\<ice\>"
 
 highlight kitConst    ctermfg=yellow
 syntax match kitConst "\<kit\.[a-z0-9A-Z_.]*"
