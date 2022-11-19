@@ -147,9 +147,9 @@ ish_miss_prepare_session() {
 		tmux split-window -d -p 40 -t $name
 
 		if [ "$name" = "miss" ]; then
-			tmux send-key -t ${name}:$win.2 "ish_miss_serve_log"
+			tmux send-key -t ${name}:$win.2 "ish_miss_serve_log" Enter
 		else
-			tmux send-key -t ${name}:$win.2 "ish_miss_space dev dev"
+			tmux send-key -t ${name}:$win.2 "ish_miss_space dev dev" Enter
 		fi
 		sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 
