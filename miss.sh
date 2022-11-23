@@ -186,7 +186,7 @@ ish_miss_serve() {
 	ish_miss_stop && ish_miss_start "$@"
 }
 ish_miss_space() {
-	ish_miss_stop && $ctx_bin forever start space dial dev ops "$@"
+	ish_miss_stop && $ctx_bin forever start space "$@"
 }
 ish_miss_space_log() {
 	ctx_log=/dev/stdout ish_miss_space "$@"
