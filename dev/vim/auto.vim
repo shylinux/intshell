@@ -147,7 +147,7 @@ func! ShyTags(pattern, flags, info)
 endfunc
 " }}}
 " 事件回调{{{
-call ShyLogin() | autocmd! VimLeavePre * call ShyLogout()
+" call ShyLogin() | autocmd! VimLeavePre * call ShyLogout()
 " autocmd BufNewFile,BufReadPost *.js set tagfunc=ShyTags
 
 " autocmd! BufReadPost * call ShySync("read")
