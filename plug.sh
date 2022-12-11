@@ -64,8 +64,8 @@ require_pull() { # 更新 repos
 }
 require_temp() { # 下载 file
     for name in "$@"; do local temp=$(mktemp) 
-        ish_log_request "$temp <= $ctx_dev/intshell/$name"
-        curl --create-dirs -fsSL -o $temp $ctx_dev/intshell/$name && echo $temp
+        ish_log_request "$temp <= $ctx_dev/$name"
+        curl --create-dirs -fsSL -o $temp $ctx_dev/$name && echo $temp
     done
 }
 require() { # require [mod] file arg...

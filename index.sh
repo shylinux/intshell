@@ -31,7 +31,10 @@ _down_tar() { # 下载文件 file path
 }
 
 prepare_script() {
-	for script in "$@"; do _temp_file intshell/$script; done 
+	for script in "$@"; do _temp_file $script; done 
+}
+prepare_require() {
+	for script in "$@"; do _temp_file require/$script; done 
 }
 prepare_package() {
 	_down_tars contexts.bin.tar.gz contexts.src.tar.gz
@@ -58,8 +61,8 @@ prepare_system() {
 	esac
 }
 prepare_tmux() {
-	_down_file etc/tmux.conf intshell/dev/tmux/tmux.conf
-	_down_file bin/tmux.sh intshell/dev/tmux/local.sh
+	_down_file etc/tmux.conf dev/tmux/tmux.conf
+	_down_file bin/tmux.sh dev/tmux/local.sh
 }
 prepare_ice() {
 	local bin="ice"
@@ -115,9 +118,13 @@ main() {
 			prepare_script plug.sh conf.sh miss.sh
 			shift && prepare_package && source etc/miss.sh "$@"
 			;;
+		cmd) # 开发环境
+			prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_init >/dev/null
+			shift; [ -n "$*" ] && ish_sys_dev_run "$@"
+			;;
 		*) # 终端环境
-			prepare_script plug.sh conf.sh miss.sh
-			ish_sys_dev_login && [ -n "$*" ] && ish_sys_dev_run "$@"
+			prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_init
+			prepare_require src/main.sh "$@"
 			;;
 	esac
 }
