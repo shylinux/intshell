@@ -10,7 +10,7 @@ func! DevSend(cmd, arg)
     endif
     let a:arg["sid"] = s:ctx_sid
     let a:arg["pwd"] = getcwd() | let a:arg["buf"] = bufname("%") | let a:arg["row"] = line(".") | let a:arg["col"] = col(".")
-    let args = "" | for k in sort(keys(a:arg)) | let args = args . " -F '" . k . "=" . a:arg[k] . "' " | endfor
+    let args = "" | for k in sort(keys(a:arg)) | let args = args . " -F '" . k . "=" .  substitute(a:arg[k], "'", "\\\"", "g") . "' " | endfor
     return system("curl -s " . s:ctx_url . a:cmd . args . " 2>/dev/null")
 endfunc
 func! DevSends(cmd, arg)
@@ -30,12 +30,11 @@ endfunc
 " 输入补全
 func! DevComplete(firststart, base)
 	if a:firststart | let line = getline('.') | let start = col('.') - 1
-		if match(line, '\s*ice ') >= 0 | return match(line, "ice ") | endif
 		while start > 0 && line[start - 1] =~ '\a' | let start -= 1 | endwhile
 		return start
 	endif
 	let list = DevSends("input", {"cmds": a:base, "pre": getline(".")})
-   	if len(list) == 0 || list[0] != "func" | return list | endif
+   	if len(list) == 0 || trim(list[0]) != "func" | return list | endif
 	let res = [] | for i in range(1, len(list)-1, 2)
 		if i+1 < len(list)
 			let res = res + [{"word": list[i], "info": list[i+1]}]
@@ -93,17 +92,24 @@ func! DevGrep(word)
     let s:grep_dir = input("dir: ", s:grep_dir, "file")
     silent exec "grep --exclude-dir='.git'  --exclude='*.swo'  --exclude='*.swp' --exclude='*.tags' -rn '\\<" . input("word: ", a:word) . "\\>' " . s:grep_dir | copen
 endfunc
-func! DevTags(pattern, flags, info)
+func! DevTags(pattern)
     let line = getline(".")
     let end = col(".") | while end > 0 && line[end] =~ '\w' | let end -= 1 | endwhile
     let begin = end - 1 | while begin > 0 && line[begin] =~ '\w' | let begin -= 1 | endwhile
-
-    let tags_list = split(DevSend("tags", {"module": line[begin+1:end-1], "pre": getline("."), "pattern": a:pattern}), "\n")
-    let list = [] | if len(tags_list) == 0 | return list | endif
-    for i in range(0, len(tags_list)-1, 3)
-        let list = list + [ { "name": tags_list[i], "filename": tags_list[i+1], "cmd": tags_list[i+2] } ]
-    endfor
-    return list
+    let ends = col(".") | while ends < len(line)+1 && line[ends] =~ '\w' | let ends += 1 | endwhile
+	let back = bufname("%")
+	let list = DevSends("tags/", {"zone": line[begin+1:end-1], "name": line[end+1:ends-1], "pre": getline(".")})
+	echo list
+	for file in list 
+		exec "vi +1 " . file
+		if search('\<'.line[end+1:ends-1].': func') > 0 
+			return
+		endif
+		if search('\<'.line[end+1:ends-1].': shy') > 0 
+			return
+		endif
+	endfor
+	exec "open ". back
 endfunc
 " 数据同步
 func! DevSync(target)
@@ -122,7 +128,6 @@ func! DevSync(target)
 endfunc
 " }}}
 " 事件回调{{{
-" autocmd! BufNewFile,BufReadPost *.js set tagfunc=DevTags
 " autocmd! BufReadPost * call DevSync("read")
 " autocmd! BufWritePre * call DevSync("write")
 " autocmd! InsertLeave * call DevSync("insert")
@@ -135,10 +140,21 @@ nnoremap <C-G>f :call DevFavors()<CR>
 inoremap <C-K> <C-X><C-U>
 "}}}
 
-
 func! DevTagsSource()
-	exec "" . DevSend("tags", {"cmds": "source", "pre": getline("."), "row": line("."), "col": col(".")})
+	let ext = expand("%:e") | if ext == "go"
+		GoDef
+	elseif ext == "js"
+		call DevTags("")
+	else
+		exec DevSend("tags/action/source", {"pre": getline(".")})
+	endif
 endfunc
 func! DevTagsServer()
-	exec "" . DevSend("tags", {"cmds": "server", "pre": getline("."), "row": line("."), "col": col(".")})
+	let ext = expand("%:e") | if ext == "go"
+		GoImplements
+	else
+		exec DevSend("tags/action/server", {"pre": getline(".")})
+	endif
 endfunc
+nnoremap <C-]> :call DevTagsSource()<CR>
+nnoremap <C-[> :call DevTagsServer()<CR>

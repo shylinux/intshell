@@ -72,7 +72,6 @@ func! Configs()
 		set foldnestmax=3
 		set foldmethod=syntax
 		let g:tagbar_ctags_bin = "gotags"
-		nnoremap <C-[> :GoImplements<CR>
 
 		let g:go_updatetime = 300
 		let g:go_auto_type_info = 1
@@ -95,8 +94,6 @@ func! Configs()
 		set filetype=shy
 		set commentstring=#%s
 		set foldmethod=indent
-		nnoremap <C-]> :call ShyTagsSource()<CR>
-		nnoremap <C-[> :call ShyTagsServer()<CR>
 
 	elseif ext == "json"
 		set foldmethod=syntax
@@ -107,8 +104,6 @@ func! Configs()
 		set foldmethod=marker
 		set foldmarker={,}
 		source ~/.vim/syntax/javascript.vim
-		nnoremap <C-]> :call ShyTagsSource()<CR>
-		nnoremap <C-[> :call ShyTagsServer()<CR>
 
 	elseif ext == "css"
 		set filetype=css
