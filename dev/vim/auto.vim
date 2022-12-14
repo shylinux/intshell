@@ -90,7 +90,8 @@ endfunc
 call DevDefine("s:grep_dir", "./")
 func! DevGrep(word)
     let s:grep_dir = input("dir: ", s:grep_dir, "file")
-    silent exec "grep --exclude-dir='.git'  --exclude='*.swo'  --exclude='*.swp' --exclude='*.tags' -rn '\\<" . input("word: ", a:word) . "\\>' " . s:grep_dir | copen
+	silent exec "grep -rn --exclude='*/.git/*' '\\<" . input("word: ", a:word) . "\\>' " . s:grep_dir | copen
+	" silent exec "grep --exclude-dir='.git' --exclude='*.swo'  --exclude='*.swp' --exclude='*.tags' -rn '\\<" . input("word: ", a:word) . "\\>' " . s:grep_dir | copen
 endfunc
 func! DevTags(pattern)
     let line = getline(".")
