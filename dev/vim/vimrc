@@ -64,14 +64,15 @@ nnoremap <C-L> <C-W>l
 " 编程配置{{{
 set keywordprg=man\ -a
 func! Configs()
-	let ext = expand("%:e") | if ext == "json"
+	let ext = expand("%:e")
+	exec "set" "filetype=" . ext
+   	if ext == "json"
 		set foldmethod=syntax
 
 	elseif ext == "js"
 		source ~/.vim/syntax/javascript.vim
 
 	elseif ext == "css"
-		set filetype=css
 		set foldmethod=marker
 		set foldmarker={,}
 
@@ -79,15 +80,10 @@ func! Configs()
 		set filetype=nginx
 
 	elseif ext == "iml"
-		set filetype=iml
 		set commentstring=#%s
 
 	elseif ext == "zml"
-		set filetype=zml
 		set commentstring=#%s
-
-	elseif ext == "xml"
-		set filetype=xml
 
 	elseif ext == "sql"
 		set expandtab
