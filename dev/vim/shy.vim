@@ -1,3 +1,6 @@
+set filetype=shy
+set commentstring=#%s
+set foldmethod=indent
 
 syntax match Comment	    "#.*$"
 syntax match Comment	    "\"[^\"]*\""

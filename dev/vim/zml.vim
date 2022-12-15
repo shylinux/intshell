@@ -1,3 +1,6 @@
+set filetype=zml
+set commentstring=#%s
+
 highlight zmlCommand    ctermfg=yellow
 syntax match zmlCommand "head"
 syntax match zmlCommand "left"

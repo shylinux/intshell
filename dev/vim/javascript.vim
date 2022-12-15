@@ -1,3 +1,8 @@
+let javaScript_fold=1
+set filetype=javascript
+set foldmethod=marker
+set foldmarker={,}
+
 syntax match Comment "\<shy(\"[^\"]*\""
 syntax match Comment "\<name: \"[^\"]*\""
 syntax match Comment "\<help: \"[^\"]*\""

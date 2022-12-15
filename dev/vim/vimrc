@@ -3,28 +3,25 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	call plug#begin()
 	Plug 'vim-airline/vim-airline'
 	Plug 'airblade/vim-gitgutter'
-	Plug 'tpope/vim-fugitive'
-	Plug 'mbbill/echofunc'
+	" Plug 'tpope/vim-fugitive'
+	" Plug 'mbbill/echofunc'
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
-
-	Plug 'majutsushi/tagbar'
+	" Plug 'majutsushi/tagbar'
 	Plug 'scrooloose/nerdtree'
 	let g:NERDTreeWinPos="left"
 	let g:NERDTreeWinSize=20
+	" Plug 'gcmt/taboo.vim'
+	" set sessionoptions+=tabpages,globals
 
-	Plug 'gcmt/taboo.vim'
-	set sessionoptions+=tabpages,globals
-
+	" Plug 'vim-syntastic/syntastic'
 	Plug 'vim-scripts/tComment'
-	Plug 'vim-syntastic/syntastic'
-	Plug 'fatih/vim-go'
-	" au BufWritePost *.go silent call GoFmts()
+	" Plug 'fatih/vim-go'
 	Plug 'chr4/nginx.vim'
-	Plug 'othree/html5.vim'
-	Plug 'vim-scripts/python.vim'
-	Plug 'plasticboy/vim-markdown'
-	Plug 'vim-scripts/matrix.vim--Yang'
+	" Plug 'othree/html5.vim'
+	" Plug 'vim-scripts/python.vim'
+	" Plug 'plasticboy/vim-markdown'
+	" Plug 'vim-scripts/matrix.vim--Yang'
 	call plug#end()
 endif
 "}}}
@@ -67,42 +64,10 @@ nnoremap <C-L> <C-W>l
 " 编程配置{{{
 set keywordprg=man\ -a
 func! Configs()
-	let ext = expand("%:e")
-	if ext == "go"
-		set foldnestmax=3
-		set foldmethod=syntax
-		let g:tagbar_ctags_bin = "gotags"
-
-		let g:go_updatetime = 300
-		let g:go_auto_type_info = 1
-		let g:go_version_warning = 0
-
-		let g:go_fmt_autosave = 1
-		let g:go_imports_autosave = 1
-
-		let g:go_highlight_types = 1
-		let g:go_highlight_functions = 1
-		let g:go_highlight_operators = 1
-		let g:go_highlight_space_tab_error = 1
-		let g:go_highlight_trailing_whitespace_error = 1
-
-	elseif ext == "sh"
-		set foldmethod=marker
-		set foldmarker={,}
-
-	elseif ext == "shy"
-		set filetype=shy
-		set commentstring=#%s
-		set foldmethod=indent
-
-	elseif ext == "json"
+	let ext = expand("%:e") | if ext == "json"
 		set foldmethod=syntax
 
 	elseif ext == "js"
-		let javaScript_fold=1
-		set filetype=javascript
-		set foldmethod=marker
-		set foldmarker={,}
 		source ~/.vim/syntax/javascript.vim
 
 	elseif ext == "css"
@@ -110,27 +75,23 @@ func! Configs()
 		set foldmethod=marker
 		set foldmarker={,}
 
-	elseif ext == "zml"
-		set filetype=zml
-		set commentstring=#%s
+	elseif ext == "conf"
+		set filetype=nginx
 
 	elseif ext == "iml"
 		set filetype=iml
 		set commentstring=#%s
 
+	elseif ext == "zml"
+		set filetype=zml
+		set commentstring=#%s
+
 	elseif ext == "xml"
 		set filetype=xml
 
-	elseif ext == "yaml"
-		set shiftwidth=2
-		set tabstop=2
-
-	elseif ext == "conf"
-		set filetype=nginx
-
 	elseif ext == "sql"
-		set foldmarker=(,)
 		set expandtab
+		set foldmarker=(,)
 
 	elseif ext == "proto"
 		set expandtab
@@ -143,19 +104,12 @@ func! Configs()
 		set expandtab
 		set omnifunc=javacomplete#Complete
 
-	elseif ext == "vue"
-		set shiftwidth=2
-		set tabstop=2
 	endif
-endfunc
-autocmd BufNewFile,BufReadPost * call Configs()
-function! GoFmts()
-	!gofmt -w % | !goimports -w % | edit!
-endfunction
+endfunc | autocmd BufNewFile,BufReadPost * call Configs()
 "}}}
 "本地配置"{{{
 for file in ["~/.vim/autoload/auto.vim", "~/.vim_local.vim", "etc/vimrc"]
-	if filereadable(expand(file)) | exec "source " . file | endif
+	if filereadable(expand(file)) | exec "source" file | endif
 endfor | autocmd BufReadPost * normal `"
 "}}}
 "主题色系"{{{

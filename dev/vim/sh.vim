@@ -1,3 +1,6 @@
+set foldmethod=marker
+set foldmarker={,}
+
 highlight ishKey    ctermfg=yellow
 highlight ishFunc    ctermfg=cyan
 
