@@ -3,7 +3,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	call plug#begin()
 	Plug 'vim-airline/vim-airline'
 	Plug 'airblade/vim-gitgutter'
-	" Plug 'tpope/vim-fugitive'
+	Plug 'tpope/vim-fugitive'
 	" Plug 'mbbill/echofunc'
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
@@ -64,8 +64,7 @@ nnoremap <C-L> <C-W>l
 " 编程配置{{{
 set keywordprg=man\ -a
 func! Configs()
-	let ext = expand("%:e")
-	exec "set" "filetype=" . ext
+	let ext = expand("%:e") | if ext != "" | exec "set" "filetype=" . ext | endif
    	if ext == "json"
 		set foldmethod=syntax
 
@@ -75,6 +74,9 @@ func! Configs()
 	elseif ext == "css"
 		set foldmethod=marker
 		set foldmarker={,}
+
+	elseif ext == "vimrc"
+		set filetype=vim
 
 	elseif ext == "conf"
 		set filetype=nginx
