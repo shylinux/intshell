@@ -11,6 +11,7 @@ syntax match Comment "\<Volcanos([^,{ ]*"
 highlight canConst    ctermfg=yellow
 syntax match canConst "\<can\>"
 syntax match canConst "\<sub\>"
+syntax match canConst "\<sup\>"
 syntax match canConst "\<msg\>"
 syntax match canConst "\<res\>"
 syntax match canConst "\<target\>"
