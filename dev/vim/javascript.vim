@@ -1,5 +1,4 @@
 let javaScript_fold=1
-set filetype=javascript
 set foldmethod=marker
 set foldmarker={,}
 

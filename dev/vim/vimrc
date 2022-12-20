@@ -69,6 +69,7 @@ func! Configs()
 		set foldmethod=syntax
 
 	elseif ext == "js"
+		set filetype=javascript
 		source ~/.vim/syntax/javascript.vim
 
 	elseif ext == "css"
