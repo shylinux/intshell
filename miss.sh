@@ -17,7 +17,7 @@ ish_miss_download_pkg() {
 ish_miss_prepare_compile() {
 	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
 	export GOPRIVATE=${GOPRIVATE:=shylinux.com}
-	export GOPROXY=${GOPROXY:=https://goproxy.cn,direct}
+	export GOPROXY=${GOPROXY:=https://goproxy.cn}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	export ISH_CONF_PATH=$PWD/.ish/pluged
 	go version &>/dev/null && return
