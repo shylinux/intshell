@@ -16,7 +16,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 
 	" Plug 'vim-syntastic/syntastic'
 	Plug 'vim-scripts/tComment'
-	" Plug 'fatih/vim-go'
+	Plug 'fatih/vim-go'
 	Plug 'chr4/nginx.vim'
 	" Plug 'othree/html5.vim'
 	" Plug 'vim-scripts/python.vim'
