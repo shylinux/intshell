@@ -83,7 +83,7 @@ prepare_ice() {
 
 main() {
 	case "$1" in
-		intshell) # 创建项目
+		intshell) # 安装环境
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
 			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
 			git clone https://shylinux.com/x/intshell $PWD/.ish
@@ -94,9 +94,7 @@ main() {
 			ish_miss_prepare_compile
 			ish_miss_prepare_develop
 			ish_miss_prepare_install
-
 			ish_miss_prepare_contexts
-
 			export PATH=${PWD}/bin:$PATH ctx_log=${ctx_log:=/dev/stdout}
 			go get shylinux.com/x/ice
 			shift && make && ish_miss_serve "$@"
@@ -118,7 +116,7 @@ main() {
 			prepare_script plug.sh conf.sh miss.sh
 			shift && prepare_package && source etc/miss.sh "$@"
 			;;
-		cmd) # 开发环境
+		cmd) # 命令环境
 			prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_init >/dev/null
 			shift; [ -n "$*" ] && ish_sys_dev_run "$@"
 			;;
