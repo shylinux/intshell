@@ -64,7 +64,7 @@ nnoremap <C-L> <C-W>l
 " 编程配置{{{
 set keywordprg=man\ -a
 func! Configs()
-	let ext = expand("%:e") | if ext != "" | exec "set" "filetype=" . ext | endif
+	let ext = expand("%:e") | if &ft == "" && ext != "" | exec "set" "filetype=" . ext | endif
    	if ext == "json"
 		set foldmethod=syntax
 
