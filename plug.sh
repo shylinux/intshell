@@ -73,15 +73,12 @@ require_temp() { # 下载 file
     done
 }
 require() { # require [mod] file arg...
-    local mod=$1 tag= && shift; mod=${mod#https://}
-    tag=${mod#*@} mod=${mod%@*}; [ "$tag" = "$mod" ] && tag=""
-    ish_log_require -g $mod by `_fileline 2 2`
-
+    local mod=$1 && shift
     local file=$(require_path $mod)
     [ -f "$file" ] || if echo $mod| grep "^git" &>/dev/null; then
-        file=$(require_fork "$mod" "$tag")/$1 && shift
+        file=$(require_fork "$mod")/$1 && shift
     elif echo $mod| grep "shylinux.com/x/" &>/dev/null; then
-        file=$(require_fork "$mod" "$tag")/$1 && shift
+        file=$(require_fork "$mod")/$1 && shift
     else
         file=$(require_temp $mod)
     fi; [ -f "$file" ] || return 0

@@ -78,7 +78,7 @@ ish_sys_dev_init() {
 }
 ish_sys_dev_complete() {
 	local res=$(ish_sys_dev_request run/action/complete line "$COMP_LINE" cword "$COMP_CWORD" point "$COMP_POINT" words "$COMP_WORDS")
-	COMPREPLY=($(compgen -W "$res" "${COMP_WORDS[${COMP_CWORD}]}"))
+	# COMPREPLY=($(compgen -W "$res" "${COMP_WORDS[${COMP_CWORD}]}"))
 }
 ish_sys_dev_run_preload=""
 ish_sys_dev_run_prepare() {
