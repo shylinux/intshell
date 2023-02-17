@@ -5,7 +5,7 @@ ISH_CONF_HOME=${ISH_CONF_HOME:="$HOME/.ish/pluged"}
 ISH_CONF_PATH=${ISH_CONF_PATH:="$PWD/.ish/pluged"}
 
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
-ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require request notice debug"}
+ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="notice debug"}
 ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
 # }
 ## 2.日志 # {
