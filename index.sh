@@ -50,8 +50,8 @@ prepare_system() {
 		Linux) 
 			echo "yum install make git vim tmux"
 			if [ `whoami` == root ]; then
-				apk add git
-				# yum install -y make git vim tmux
+				# apk add git
+				yum install -y make git vim tmux
 			else
 				sudo yum install -y make git vim tmux
 			fi
