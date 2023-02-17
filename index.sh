@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export ctx_dev=${ctx_dev:="http://shylinux.com"}
+export ctx_dev=${ctx_dev:="https://shylinux.com"}
 
 _down_big_file() { # 下载文件 dir url
 	[ -f "$1" ] && return || echo "download $ctx_dev/$2"
@@ -32,9 +32,6 @@ _down_tar() { # 下载文件 file path
 
 prepare_script() {
 	for script in "$@"; do _temp_file $script; done 
-}
-prepare_require() {
-	for script in "$@"; do _temp_file require/$script; done 
 }
 prepare_package() {
 	_down_tars contexts.bin.tar.gz contexts.src.tar.gz
@@ -122,9 +119,8 @@ main() {
 			;;
 		*) # 终端环境
 			prepare_script plug.sh conf.sh miss.sh; ish_sys_dev_init
-			prepare_require src/main.sh "$@"
+			_temp_file require/src/main.sh "$@"
 			;;
 	esac
 }
-
 main "$@"

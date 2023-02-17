@@ -5,7 +5,7 @@ ISH_CONF_HOME=${ISH_CONF_HOME:="$HOME/.ish/pluged"}
 ISH_CONF_PATH=${ISH_CONF_PATH:="$PWD/.ish/pluged"}
 
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
-ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="notice debug"}
+ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="require request notice debug"}
 ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
 # }
 ## 2.日志 # {
@@ -63,9 +63,13 @@ require_pull() { # 更新 repos
     local back=$PWD; cd "$(require_fork $1)" && ish_log_notice pwd $PWD && git pull; cd $back; echo
 }
 require_temp() { # 下载 file
-    for name in "$@"; do local temp=$(mktemp) 
-        ish_log_request "$temp <= $ctx_dev/$name"
-        curl --create-dirs -fsSL -o $temp $ctx_dev/$name && echo $temp
+    for name in "$@"; do local temp=$(mktemp); ish_log_request "$temp <= $ctx_dev/$name"
+    	echo $name| grep "^src/" &>/dev/null && name="require/$name"
+		if curl -h &>/dev/null; then
+    	    curl --create-dirs -fsSL -o $temp $ctx_dev/$name && echo $temp
+  	    else
+			wget -O $temp -q $ctx_dev/$name && echo $temp
+   	    fi
     done
 }
 require() { # require [mod] file arg...
