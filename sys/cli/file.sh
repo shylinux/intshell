@@ -15,6 +15,11 @@ ish_sys_path_load() {
         if echo $line| grep -v "^/" &>/dev/null; then line=$path/$line; fi
         ish_sys_path_insert $line
     done
+    local path=$PWD
+    for line in `cat ${path}/etc/path 2>/dev/null`; do
+        if echo $line| grep -v "^/" &>/dev/null; then line=$path/$line; fi
+        ish_sys_path_insert $line
+    done
 }
 ish_sys_file_size() {
     local size=`ls -s $1 2>/dev/null| grep -o "[0-9]*"|head -n1`
