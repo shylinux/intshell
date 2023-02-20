@@ -3,7 +3,6 @@
 ## 1.配置 # {
 ISH_CONF_HOME=${ISH_CONF_HOME:="$HOME/.ish/pluged"}
 ISH_CONF_PATH=${ISH_CONF_PATH:="$PWD/.ish/pluged"}
-
 ISH_CONF_LOG=${ISH_CONF_LOG:="/dev/stderr"}
 ISH_CONF_LEVEL=${ISH_CONF_LEVEL:="notice debug"}
 ISH_CONF_COLOR=${ISH_CONF_COLOR:="true"}
@@ -35,17 +34,15 @@ ish_log() {
 ish_log_debug() { ish_log "debug" "$@" `_fileline 2 2`; }
 ish_log_require() { ish_log "require" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
-ish_log_source() { ish_log "source" "$@"; }
 ish_log_notice() { ish_log "notice" "$@"; }
 ish_log_alias() { ish_log "alias" "$@"; }
 # }
 ## 3.加载 # {
 require_path() { # 目录 repos
-    for name in "$@"; do
-        [ -e $name ] && echo $name && continue
+    for name in "$@"; do [ -f $name ] && echo $name && continue
         for p in $PWD/.ish/pluged $ISH_CONF_PATH $ISH_CONF_HOME; do
-            [ -e $p/$name ] && echo $p/$name && break
-            [ -e ${p%/*}/$name ] && echo ${p%/*}/$name && break
+            [ -f $p/$name ] && echo $p/$name && break
+            [ -f ${p%/*}/$name ] && echo ${p%/*}/$name && break
         done
     done
 }
@@ -63,37 +60,32 @@ require_pull() { # 更新 repos
     local back=$PWD; cd "$(require_fork $1)" && ish_log_notice pwd $PWD && git pull; cd $back; echo
 }
 require_temp() { # 下载 file
-    for name in "$@"; do local temp=$(mktemp); ish_log_request "$temp <= $ctx_dev/$name"
-    	echo $name| grep "^src/" &>/dev/null && name="require/$name"
-		if curl -h &>/dev/null; then
-    	    curl --create-dirs -fsSL -o $temp $ctx_dev/$name && echo $temp
-  	    else
-			wget -O $temp -q $ctx_dev/$name && echo $temp
-   	    fi
-    done
+	for file in "$@"; do
+		local temp=$(mktemp); if curl -h &>/dev/null; then
+			curl -o $temp --create-dirs -fssl $file
+		else
+			wget -O $temp -q $file
+		fi && echo $temp
+	done 2>/dev/null 
 }
 require() { # require [mod] file arg...
-    local mod=$1 && shift
-    local file=$(require_path $mod)
-    [ -f "$file" ] || if echo $mod| grep "^git" &>/dev/null; then
+    local mod=$1 && shift; local file=$(require_path $mod)
+    [ -f "$file" ] || if echo $mod| grep ".git$" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
-    elif echo $mod| grep "shylinux.com/x/" &>/dev/null; then
+    elif echo $mod| grep "^shylinux.com/x/" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
-    else
+    elif echo $mod| grep "^git" &>/dev/null; then
+        file=$(require_fork "$mod")/$1 && shift
+	elif echo $mod| grep "^http" &>/dev/null; then
         file=$(require_temp $mod)
-    fi; [ -f "$file" ] || return 0
-
-    local back=$PWD && [ -d "${file%/*}" ] && cd ${file%/*}
-    ISH_CTX_MODULE=$(_name ish_${name}) ISH_CTX_SCRIPT=$1 _load $file "$@"
-    cd $back; return 0
-}
-_load() {
-    local file=$1 && shift
-    ish_log_source "$file "$@""
-    source ./${file##*/} "$@"
-}
-_name() {
-    local name="$*" && echo ${name//[^a-zA-Z0-9_]/_}
+    elif echo $mod| grep "^/" &>/dev/null; then
+        file=$(require_temp $ctx_dev$mod)
+    elif echo $mod| grep "^src/" &>/dev/null; then
+        file=$(require_temp $ctx_dev/require/$mod)
+    else
+        file=$(require_temp $ctx_dev/$mod); [ -z "$file" ] && file=$(require_temp $ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod)
+    fi; [ -f "$file" ] || return 0; ish_log_require "$file <= $mod"; eval "url=$(echo "$mod"|grep -o "?.*"|tr "?&" "   ")"
+    ISH_CTX_MODULE=$mod ISH_CTX_SCRIPT=$file source $file "$@"
 }
 _fileline() {
     local index1=$((${1}-1))
