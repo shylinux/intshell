@@ -39,22 +39,16 @@ ish_log_alias() { ish_log "alias" "$@"; }
 # }
 ## 3.加载 # {
 require_path() { # 目录 repos
-    for name in "$@"; do [ -f $name ] && echo $name && continue
+    for name in "$@"; do [ -e $name ] && echo $name && continue
         for p in $PWD/.ish/pluged $ISH_CONF_PATH $ISH_CONF_HOME; do
-            [ -f $p/$name ] && echo $p/$name && break
-            [ -f ${p%/*}/$name ] && echo ${p%/*}/$name && break
+            [ -e $p/$name ] && echo $p/$name && break
+            [ -e ${p%/*}/$name ] && echo ${p%/*}/$name && break
         done
     done
 }
-require_fork() {  # 仓库 repos [tag]
-    local name=$1 mod=$1 tag=$2 && shift 2; [ "$tag" = "" ] || name=$mod@$tag
-    local p=$(require_path $name); [ "$p" != "" ] && echo $p && return
-
-    ish_log_notice -g "clone $mod => $ISH_CONF_PATH/$name"
-    git clone https://$mod $ISH_CONF_PATH/$name &>/dev/null
-    echo $ISH_CONF_PATH/$name; [ "$tag" = "" ] && return
-
-    cd "$ISH_CONF_PATH/$name"; git checkout $tag &>/dev/null && rm -rf .git; cd - &>/dev/null
+require_fork() {  # 仓库 repos
+	local repos=$1 && shift 1; local p=$(require_path $repos); [ "$p" != "" ] && echo $p && return
+	ish_log_notice -g "clone $ISH_CONF_PATH/$repos"; git clone https://$repos $ISH_CONF_PATH/$repos &>/dev/null && echo $ISH_CONF_PATH/$repos
 }
 require_pull() { # 更新 repos
     local back=$PWD; cd "$(require_fork $1)" && ish_log_notice pwd $PWD && git pull; cd $back; echo

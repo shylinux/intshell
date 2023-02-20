@@ -101,14 +101,8 @@ END
 }
 
 ish_miss_prepare() {
-	local name=${1##*/} repos=${1#https://}
-	[ "$name" = "$repos" ] && repos=shylinux.com/x/$name
-
-	local back=$PWD
-	ISH_CONF_PATH=$PWD/.ish/pluged require $repos
-	ish_sys_link_create usr/$name $(require_path $repos)
-	require_pull usr/$name
-	cd $back
+	local name=${1##*/} repos=${1#*://}; [ "$name" = "$repos" ] && repos=shylinux.com/x/$name
+	ISH_CONF_PATH=$PWD/.ish/pluged require $repos; ish_sys_link_create usr/$name $(require_path $repos); require_pull usr/$name
 }
 ish_miss_prepare_intshell() {
 	ish_log_require -g shylinux.com/x/intshell
