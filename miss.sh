@@ -1,8 +1,8 @@
 #!/bin/sh
 
 export ctx_bin=${ctx_bin:=ice.bin}
-export ctx_log=${ctx_log:=bin/boot.log}
-export ctx_pid=${ctx_pid:=var/run/ice.pid}
+export ctx_pid=${ctx_pid:=var/log/ice.pid}
+export ctx_log=${ctx_log:=var/log/boot.log}
 
 ish_miss_download_pkg() {
 	for url in "$@"; do local pkg=${url##*/}; [ `ish_sys_file_size $pkg` -gt 0 ] && break
