@@ -60,6 +60,7 @@ main() {
 			shift && cd contexts && source etc/miss.sh "$@"
 			;;
 		binary)
+			export ctx_dev="https://contexts.com.cn"
 			shift && prepare_ice && bin/ice.bin forever start dev "" "$@"
 			;;
 		*)
