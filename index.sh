@@ -22,7 +22,7 @@ prepare_system() {
 			if cat /etc/os-release|grep alpine &>/dev/null; then
 				sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update
 				TZ=Asia/Shanghai; apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
-				apk add make git vim tmux; return
+				apk add make git go vim tmux; return
 			fi
 			if [ `whoami` == root ]; then
 				yum install -y make git vim tmux
