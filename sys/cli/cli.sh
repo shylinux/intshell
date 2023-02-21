@@ -1,7 +1,6 @@
 #!/bin/sh
 
 ish_sys_cli_shell() {
-	local shell=${SHELL##*/}; [ -n "$shell" ] && echo $shell && return
     ps |grep "^\ *$$"|grep -v grep|grep -o "[a-z]*$"
 }
 ish_sys_cli_prompt() {
@@ -13,6 +12,9 @@ ish_sys_cli_prompt() {
         zsh)
             export PS1="\!@$name[\t]\W\$ "
             ;;
+        *)
+            export PS1="\!@$name[\w]\$ "
+        	;;
     esac
 }
 ish_sys_cli_alias() {
