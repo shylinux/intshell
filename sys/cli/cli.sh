@@ -7,16 +7,17 @@ ish_sys_cli_alias() {
     alias $1="$2"
 }
 ish_sys_cli_shell() {
+	local shell=${SHELL##*/}; [ -n "$shell" ] && echo $shell && return
     ps |grep "^\ *$$"|grep -v grep|grep -o "[a-z]*$"
 }
 ish_sys_cli_prompt() {
     local name=$(hostname) && name=${name##*-} && name=${name%%\.*}
     case "$(ish_sys_cli_shell)" in
         bash)
-            export PS1="\\!@$name[\\t]\\W\\$ "
+            export PS1="\!@$name[\t]\W\$ "
             ;;
         zsh)
-            export PS1="\\!@$name[\t]\W\$ "
+            export PS1="\!@$name[\t]\W\$ "
             ;;
     esac
 }
@@ -30,10 +31,8 @@ ish_sys_cli_prepare() {
     [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
     grep "source ~/.bash_local" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
-    require conf.sh
-    require miss.sh
+    require conf.sh; require miss.sh
 fi
-
 [ -f ~/.bash_local ] && source ~/.bash_local
 END
 }
