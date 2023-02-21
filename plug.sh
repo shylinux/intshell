@@ -29,7 +29,7 @@ ish_show() {
 ish_log() {
     for l in $(echo ${ISH_CONF_LEVEL:=$1}); do [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG; done; return 0
 }
-ish_log_debug() { ish_log "debug" "$@" `_fileline 2 2`; }
+ish_log_debug() { ish_log "debug" "$@"; }
 ish_log_require() { ish_log "require" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
 ish_log_notice() { ish_log "notice" "$@"; }
@@ -74,8 +74,4 @@ require() {
         file=$(require_temp $ctx_dev/$mod); [ -z "$file" ] && file=$(require_temp $ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod)
     fi; [ -f "$file" ] || return 0; ish_log_require "$file <= $mod"; eval "url=$(echo "$mod"|grep -o "?.*"|tr "?&" "   ")"
     ISH_CTX_MODULE=$mod ISH_CTX_SCRIPT=$file source $file "$@"
-}
-_fileline() {
-    local index1=$((${1}-1))
-    echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index1]}:${FUNCNAME[$index1]}"
 }
