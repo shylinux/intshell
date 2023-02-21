@@ -26,10 +26,10 @@ ish_sys_cli_prepare() {
     esac
 	[ -f ~/.bash_profile ] || echo "source ~/.bashrc" > ~/.bash_profile
     [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
-    grep "source ~/.bash_local" ~/$rc &>/dev/null || cat >> ~/$rc <<END
+    grep "require conf.sh" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
     require conf.sh; require miss.sh
 fi
-[ -f ~/.bash_local ] && source ~/.bash_local
+[ -f ~/.bash_local.sh ] && source ~/.bash_local.sh
 END
 }

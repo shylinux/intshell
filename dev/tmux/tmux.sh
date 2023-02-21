@@ -3,9 +3,9 @@
 ish_dev_tmux_prepare() {
     local from=$PWD/usr/intshell/dev/tmux
 	if [ "`tmux -V`" = "tmux 1.8" ]; then
-		ish_sys_link_create ~/.tmux_local $from/tmux-1.8.conf
+		ish_sys_link_create ~/.tmux_local.conf $from/tmux-1.8.conf
 	else
-		ish_sys_link_create ~/.tmux_local $from/tmux_local.conf
+		ish_sys_link_create ~/.tmux_local.conf $from/tmux_local.conf
 	fi
     ish_sys_link_create ~/.tmux.conf $from/tmux.conf
 }
