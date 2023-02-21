@@ -27,9 +27,7 @@ ish_show() {
     esac; [ "$#" -gt "0" ] && shift && echo -n "$space"; done; echo
 }
 ish_log() {
-    for l in $(echo ${ISH_CONF_LEVEL:=$1}); do
-        [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG 
-    done; return 0
+    for l in $(echo ${ISH_CONF_LEVEL:=$1}); do [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG; done; return 0
 }
 ish_log_debug() { ish_log "debug" "$@" `_fileline 2 2`; }
 ish_log_require() { ish_log "require" "$@"; }
@@ -37,8 +35,8 @@ ish_log_request() { ish_log "request" "$@"; }
 ish_log_notice() { ish_log "notice" "$@"; }
 ish_log_alias() { ish_log "alias" "$@"; }
 # }
-## 3.加载 # {
-require_path() { # 目录 repos
+## 3.模块 # {
+require_path() {
     for name in "$@"; do [ -e $name ] && echo $name && continue
         for p in $PWD/.ish/pluged $ISH_CONF_PATH $ISH_CONF_HOME; do
             [ -e $p/$name ] && echo $p/$name && break
@@ -46,23 +44,19 @@ require_path() { # 目录 repos
         done
     done
 }
-require_fork() {  # 仓库 repos
-	local repos=$1 && shift 1; local p=$(require_path $repos); [ "$p" != "" ] && echo $p && return
+require_fork() {
+	local repos=$1 && shift; local p=$(require_path $repos); [ "$p" != "" ] && echo $p && return
 	ish_log_notice -g "clone $ISH_CONF_PATH/$repos"; git clone https://$repos $ISH_CONF_PATH/$repos &>/dev/null && echo $ISH_CONF_PATH/$repos
 }
-require_pull() { # 更新 repos
-    local back=$PWD; cd "$(require_fork $1)" && ish_log_notice pwd $PWD && git pull; cd $back; echo
+require_pull() {
+    local back=$PWD; cd "$(require_fork $1)" && ish_log_notice repos $PWD && git pull; cd $back; echo
 }
-require_temp() { # 下载 file
+require_temp() {
 	for file in "$@"; do
-		local temp=$(mktemp); if curl -h &>/dev/null; then
-			curl -o $temp --create-dirs -fssl $file
-		else
-			wget -O $temp -q $file
-		fi && echo $temp
+		local temp=$(mktemp); if curl -h &>/dev/null; then curl -o $temp -fsSL $file; else wget -O $temp -q $file; fi && echo $temp
 	done 2>/dev/null 
 }
-require() { # require [mod] file arg...
+require() {
     local mod=$1 && shift; local file=$(require_path $mod)
     [ -f "$file" ] || if echo $mod| grep ".git$" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
@@ -85,4 +79,3 @@ _fileline() {
     local index1=$((${1}-1))
     echo "${BASH_SOURCE[$1]}:${BASH_LINENO[$index1]}:${FUNCNAME[$index1]}"
 }
-

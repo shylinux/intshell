@@ -5,13 +5,8 @@ export ctx_log=${ctx_log:=bin/boot.log}
 export ctx_pid=${ctx_pid:=var/run/ice.pid}
 
 ish_miss_download_pkg() {
-	for url in "$@"; do local pkg=${url##*/}
-		[ `ish_sys_file_size $pkg` -gt 0 ] && break
-		ish_log_require $url; if curl -h &>/dev/null; then
-			curl -o $pkg -fSL $url && tar xf $pkg 
-		else
-			wget -O $pkg $url && tar xf $pkg 
-		fi
+	for url in "$@"; do local pkg=${url##*/}; [ `ish_sys_file_size $pkg` -gt 0 ] && break
+		ish_log_require $url; if curl -h &>/dev/null; then curl -o $pkg -fSL $url else wget -O $pkg $url; fi && tar xf $pkg 
 	done
 }
 ish_miss_prepare_compile() {
@@ -19,9 +14,8 @@ ish_miss_prepare_compile() {
 	export GOPRIVATE=${GOPRIVATE:=shylinux.com}
 	export GOPROXY=${GOPROXY:=https://goproxy.cn}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
-	export ISH_CONF_PATH=$PWD/.ish/pluged
+	export GODOWN=${GODOWN:=https://golang.google.cn/dl/}
 	go version &>/dev/null && return
-
 	local goarch=amd64; case "$(uname -m)" in
 		x86_64) goarch=amd64;;
 		arm64) goarch=arm64;;
@@ -33,17 +27,16 @@ ish_miss_prepare_compile() {
 		Linux) goos=linux;;
 		*) goos=windows;;
 	esac
-
 	local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz; ish_log_notice "download: $pkg"
-	local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg https://dl.google.com/go/$pkg; cd $back
+	local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg $GODOWN$pkg; cd $back
 }
 ish_miss_prepare_develop() {
+	export ISH_CONF_PATH=$PWD/.ish/pluged
 	require dev/git/git.sh
 	ish_dev_git_prepare
 
 	# .gitignore
 	ish_sys_file_create ".gitignore" <<END
-src/node_modules/
 src/binpack.go
 src/version.go
 etc/
@@ -79,10 +72,9 @@ all: def
 def:
 	@ [ -f src/version.go ] || echo "package main" > src/version.go
 	@ [ -f src/binpack.go ] || echo "package main" > src/binpack.go
-
 END
 }
-ish_miss_prepare_operate() {
+ish_miss_prepare_project() {
 	# etc/init.shy
 	ish_sys_file_create "etc/init.shy" <<END
 ~aaa
@@ -91,7 +83,6 @@ ish_miss_prepare_operate() {
 
 ~ssh
 	source local.shy
-
 END
 
 	# src/main.shy
@@ -105,19 +96,17 @@ ish_miss_prepare() {
 	ISH_CONF_PATH=$PWD/.ish/pluged require $repos; ish_sys_link_create usr/$name $(require_path $repos); require_pull usr/$name
 }
 ish_miss_prepare_intshell() {
+	require sys/cli/cli.sh
 	ish_log_require -g shylinux.com/x/intshell
 	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone https://shylinux.com/x/intshell $PWD/.ish
 	[ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
 	[ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
 	require_pull usr/intshell
-
-	require sys/cli/cli.sh
 	ish_sys_cli_prepare
 }
 ish_miss_prepare_contexts() {
 	ish_log_require -g shylinux.com/x/contexts
-	[ -d .git ] || git init
-	[ "`git remote`" = "" ] || require_pull ./
+	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_icebergs() {
 	ish_miss_prepare icebergs
@@ -135,23 +124,16 @@ ish_miss_prepare_session() {
 	local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
 	local win=$2 && [ "$win" = "" ] && win=${name%%-*}
 	ish_log_notice "session: $name:$win"
-
 	if ! tmux has-session -t $name &>/dev/null; then
-		TMUX="" tmux new-session -d -s $name -n $win
-		tmux split-window -d -p 40 -t $name
-
+		TMUX="" tmux new-session -d -s $name -n $win; tmux split-window -d -p 40 -t $name
 		if [ "$name" = "miss" ]; then
 			tmux send-key -t ${name}:$win.2 "ish_miss_serve_log" Enter
 		else
-			tmux send-key -t ${name}:$win.2 "ish_miss_space dev dev" Enter
+			tmux send-key -t ${name}:$win.2 "ish_miss_space dev ops" Enter
 		fi
-		sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
-
-		case `uname -s` in
-			Darwin) sleep 3 && open http://localhost:9020 ;;
-		esac
+		sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter &
+		[ `uname -s` = Darwin ] && sleep 3 && open http://localhost:9020 &
 	fi
-
 	[ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
 
@@ -180,7 +162,7 @@ ish_miss_serve() {
 	ish_miss_stop && ish_miss_start "$@"
 }
 ish_miss_space() {
-	ish_miss_stop && $ctx_bin forever start space "$@"
+	ish_miss_stop && ish_miss_start space "$@"
 }
 ish_miss_space_log() {
 	ctx_log=/dev/stdout ish_miss_space "$@"
