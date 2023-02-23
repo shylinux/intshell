@@ -65,13 +65,13 @@ require() {
     elif echo $mod| grep "^git" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
 	elif echo $mod| grep "^http" &>/dev/null; then
-        file=$(require_temp $mod)
+        file=$(require_temp "$mod")
     elif echo $mod| grep "^/" &>/dev/null; then
-        file=$(require_temp $ctx_dev$mod)
+        file=$(require_temp "$ctx_dev$mod")
     elif echo $mod| grep "^src/" &>/dev/null; then
-        file=$(require_temp $ctx_dev/require/$mod)
+        file=$(require_temp "$ctx_dev/require/$mod?pod=$ctx_pod")
     else
-        file=$(require_temp $ctx_dev/$mod); [ -z "$file" ] && file=$(require_temp $ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod)
+        file=$(require_temp $ctx_dev/$mod); [ -z "$file" ] && file=$(require_temp "$ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod?pod=$ctx_pod")
     fi; [ -f "$file" ] || return 0; ish_log_require "$file <= $mod"; eval "url=$(echo "$mod"|grep -o "?.*"|tr "?&" "   ")"
     ISH_CTX_MODULE=$mod ISH_CTX_SCRIPT=$file source $file "$@"
 }
