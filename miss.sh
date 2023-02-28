@@ -33,9 +33,9 @@ ish_miss_prepare_compile() {
 		*) goos=windows;;
 	esac
 	if echo $goos|grep windows; then
-		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
-	else
 		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.zip
+	else
+		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
 	fi; ish_log_notice "download: $pkg"
 	local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg $GODOWN$pkg; cd $back
 }
