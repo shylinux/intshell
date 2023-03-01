@@ -152,7 +152,9 @@ ish_miss_make() {
 	CGO_ENABLED=0 go build -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart &>/dev/null
 }
 ish_miss_start() {
-	$ctx_bin forever start "$@"
+	while echo; do
+		bin/ice.bin serve start "$@" && break
+	done
 }
 ish_miss_restart() {
 	$ctx_bin forever restart
