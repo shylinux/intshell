@@ -51,19 +51,18 @@ prepare_ice() {
 }
 main() {
 	case "$1" in
-		intshell)
-			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
-			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
-			prepare_system && git clone https://shylinux.com/x/intshell $PWD/.ish
-			source $PWD/.ish/plug.sh; require conf.sh; require miss.sh
+		binary)
+			shift && prepare_ice && bin/ice.bin forever start dev "" "$@"
 			;;
 		source)
 			prepare_system && git clone https://shylinux.com/x/contexts
 			shift && cd contexts && source etc/miss.sh "$@"
 			;;
-		binary)
-			export ctx_dev="https://contexts.com.cn"
-			shift && prepare_ice && bin/ice.bin forever start dev "" "$@"
+		intshell)
+			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
+			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
+			prepare_system && git clone https://shylinux.com/x/intshell $PWD/.ish
+			source $PWD/.ish/plug.sh; require conf.sh; require miss.sh
 			;;
 		*)
 			prepare_script; if echo $1|grep ".sh$" &>/dev/null; then require "$@"; else require src/main.sh "$@"; fi
