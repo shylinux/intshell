@@ -7,12 +7,9 @@ export ctx_log=${ctx_log:=var/log/boot.log}
 ish_miss_download_pkg() {
 	for url in "$@"; do local pkg=${url##*/}; [ `ish_sys_file_size $pkg` -gt 0 ] && break
 		ish_log_require $url; if curl -h &>/dev/null; then curl -o $pkg -fSL $url else wget -O $pkg $url; fi
-		if echo $pkg|grep ".zip"; then
-			unzip $pkg
-		else
-			tar xf $pkg 
-		fi
+		if echo $pkg|grep ".zip$"; then unzip $pkg; else tar xf $pkg; fi
 	done
+	[ -f "$1" ]
 }
 ish_miss_prepare_compile() {
 	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
@@ -37,7 +34,9 @@ ish_miss_prepare_compile() {
 	else
 		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
 	fi; ish_log_notice "download: $pkg"
-	local back=$PWD; mkdir -p usr/local; cd usr/local; ish_miss_download_pkg $GODOWN$pkg; cd $back
+	local back=$PWD; mkdir -p usr/local; cd usr/local
+	ish_miss_download_pkg $ctx_dev/publish/$pkg || ish_miss_download_pkg $GODOWN$pkg
+	cd $back
 }
 ish_miss_prepare_develop() {
 	export ISH_CONF_PATH=$PWD/.ish/pluged
