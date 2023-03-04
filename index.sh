@@ -51,6 +51,9 @@ prepare_ice() {
 	local file=bin/ice.bin; [ -e bin ] || mkdir bin
 	_down_big_file $file publish/$bin && chmod u+x $file; [ -f $file ]
 }
+prepare_reload() {
+	local temp=$(mktemp); if curl -V &>/dev/null; then curl -o $temp -fsSL $ctx_dev; else wget -O $temp -q $ctx_dev; fi && source $temp $ctx_mod 
+}
 main() {
 	case "$1" in
 		binary)

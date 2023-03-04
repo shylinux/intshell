@@ -14,17 +14,17 @@ ISH_SHOW_COLOR_b="\e[34m"
 ISH_SHOW_COLOR_end="\e[0m"
 ish_show() {
     local space=" " count=""; while [ "$#" -gt "0" ]; do space=" "; case $1 in
-        -username) echo -n "$(whoami)";;
-        -hostname) echo -n "$(hostname)";;
-        -date) echo -n "$(date +"%Y-%m-%d")";;
-        -time) echo -n "$(date +"%Y-%m-%d %H:%M:%S")";;
+        -username) printf "$(whoami)";;
+        -hostname) printf "$(hostname)";;
+        -date) printf "$(date +"%Y-%m-%d")";;
+        -time) printf "$(date +"%Y-%m-%d %H:%M:%S")";;
         *) if local k=$1 && [ "${k:0:1}" = "-" ] ; then space=""
             local color=$(eval "printf \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
             [ "$ISH_CONF_COLOR" = "true" ] && printf "$color" && count="need"
         else
             printf "$1"; [ -n $count ] && printf "$ISH_SHOW_COLOR_end" && count=
         fi;;
-    esac; [ "$#" -gt "0" ] && shift && echo -n "$space"; done; echo
+    esac; [ "$#" -gt "0" ] && shift && printf "$space"; done; echo
 }
 ish_log() {
     for l in $(echo ${ISH_CONF_LEVEL:=$1}); do [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG; done; return 0
@@ -57,21 +57,34 @@ require_temp() {
 	done 2>/dev/null 
 }
 require() {
-    local mod=$1 && shift; local file=$(require_path $mod)
+    local mod=$1 && shift; local file=$(require_path $mod) host=$ctx_dev
     [ -f "$file" ] || if echo $mod| grep ".git$" &>/dev/null; then
-        file=$(require_fork "$mod")/$1 && shift
-    elif echo $mod| grep "^shylinux.com/x/" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
     elif echo $mod| grep "^git" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
+    # elif echo $mod| grep "^shylinux.com/x/" &>/dev/null; then
+    #     file=$(require_fork "$mod")/$1 && shift
 	elif echo $mod| grep "^http" &>/dev/null; then
         file=$(require_temp "$mod")
     elif echo $mod| grep "^/" &>/dev/null; then
         file=$(require_temp "$ctx_dev$mod")
     elif echo $mod| grep "^src/" &>/dev/null; then
         file=$(require_temp "$ctx_dev/require/$mod?pod=$ctx_pod")
+		host=$host/require
     else
-        file=$(require_temp $ctx_dev/$mod); [ -z "$file" ] && file=$(require_temp "$ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod?pod=$ctx_pod")
-    fi; [ -f "$file" ] || return 0; ish_log_require "$file <= $mod"; eval "url=$(echo "$mod"|grep -o "?.*"|tr "?&" "   ")"
+        [ -z "$file" ] && file=$(require_temp $ctx_dev/$mod)
+		[ -z "$file" ] && file=$(require_temp "$ctx_dev/require/$mod?pod=$ctx_pod")
+		[ -z "$file" ] && file=$(require_temp "$ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod?pod=$ctx_pod")
+		host=$host/require
+    fi; [ -f "$file" ] || return 0;
+	if echo "$file"| grep "/tmp." &>/dev/null; then ish_log_require "$file <= $host/$mod"; else ish_log_require "$file"; fi
+   	eval "url=$(echo "$mod"|grep -o "?.*"|tr "?&" "   ")"
     ISH_CTX_MODULE=$mod ISH_CTX_SCRIPT=$file source $file "$@"
+}
+request() {
+	local url="$ctx_dev/chat/cmd/$1" sep="?" arg=; shift
+   	for arg in "$@"; do arg=$(ish_sys_web_word "$arg")
+		if echo $arg|grep "=" &>/dev/null; then url=$url${sep}$arg; else url=$url${sep}arg=$arg; fi; sep="&"
+	done; local temp=$(mktemp); ish_log_request "$temp <= $url"
+   	if curl -h &>/dev/null; then curl -o $temp -fsSL $url; else wget -O $temp -q $url; fi && cat $temp
 }

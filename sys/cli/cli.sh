@@ -3,6 +3,9 @@
 ish_sys_cli_shell() {
     ps |grep "^\ *$$"|grep -v grep|grep -o "[a-z]*$"
 }
+ish_sys_cli_title() {
+	printf "\e]1;%s\a" "$*"
+}
 ish_sys_cli_prompt() {
     local name=$(hostname) && name=${name##*-} && name=${name%%\.*}
     case "$(ish_sys_cli_shell)" in
@@ -26,6 +29,7 @@ ish_sys_cli_prepare() {
         bash) rc=".bashrc";;
         zsh) rc=".zshrc";;
     esac
+	[ -f ~/.profile ] || echo "source ~/.bashrc" > ~/.profile
 	[ -f ~/.bash_profile ] || echo "source ~/.bashrc" > ~/.bash_profile
     [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
     grep "require conf.sh" ~/$rc &>/dev/null || cat >> ~/$rc <<END

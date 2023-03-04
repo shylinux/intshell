@@ -11,6 +11,9 @@ ish_sys_path_load() {
 		done
 	done
 }
+ish_sys_path_list() {
+	echo $PATH| tr ":" "\n"
+}
 ish_sys_path_create() {
     local target=$1 && [ -d ${target%/*} ] && return
     [ ${target%/*} != ${target} ] && mkdir -p ${target%/*}; return 0
