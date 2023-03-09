@@ -4,10 +4,11 @@ ish_sys_path_insert() {
     for p in "$@"; do echo $PATH| grep "$p" &>/dev/null || export PATH=$p:$PATH; done
 }
 ish_sys_path_load() {
-	for path in ${CTX_ROOT:=$PWD} $PWD; do
- 		for line in `cat ${path}/etc/path 2>/dev/null`; do
-			if echo $line| grep -v "^/" &>/dev/null; then line=$path/$line; fi
-			ish_sys_path_insert $line
+	local _path= _line=
+	for _path in ${CTX_ROOT:=$PWD} $PWD; do
+ 		for _line in `cat ${_path}/etc/path 2>/dev/null`; do
+			if echo $_line| grep -v "^/" &>/dev/null; then _line=$_path/$_line; fi
+			ish_sys_path_insert $_line
 		done
 	done
 }

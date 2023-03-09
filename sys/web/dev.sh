@@ -103,8 +103,3 @@ ish_sys_dev_run() {
 }
 alias ice=ish_sys_dev_run
 alias cmd=ish_sys_dev_run_command
-zshaddhistory() {
-	local index=`history|tail -n1|grep -o "[0-9]\+\ "`
-	[ -n "$index" ] && [ "$ish_sys_dev_sync_last" != "$index" ] && ((index = index + 1)) && ish_sys_dev_request sync/action/history arg "$index $(date +"%Y-%m-%d %H:%M:%S") $1" >/dev/null
-	ish_sys_dev_sync_last=$index
-}
