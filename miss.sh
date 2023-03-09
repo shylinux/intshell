@@ -101,7 +101,7 @@ END
 
 ish_miss_prepare() {
 	local name=${1##*/} repos=${1#*://}; [ "$name" = "$repos" ] && repos=shylinux.com/x/$name
-	ISH_CONF_PATH=$PWD/.ish/pluged require $repos; ish_sys_link_create usr/$name $(require_path $repos); require_pull usr/$name
+	ISH_CONF_PATH=$PWD/.ish/pluged require_fork $repos; ish_sys_link_create usr/$name $(require_path $repos); require_pull usr/$name
 }
 ish_miss_prepare_intshell() {
 	require sys/cli/cli.sh
