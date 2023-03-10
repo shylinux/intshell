@@ -13,7 +13,7 @@ ish_sys_cli_prompt() {
             export PS1="\!@$name[\t]\W\$ "
             ;;
         zsh)
-            export PS1="${name}[%*]%~$ "
+			export PS1="%n@${name}[%*]%1~$ "
             ;;
         *)
             export PS1="\!@$name[\w]\$ "
