@@ -17,7 +17,7 @@ ish_miss_prepare_compile() {
 	export GOPROXY=${GOPROXY:=https://goproxy.cn}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	export GODOWN=${GODOWN:=https://golang.google.cn/dl/}
-	# go version &>/dev/null && return
+	go version &>/dev/null && return
 	[ -e $PWD/usr/local/go/bin ] && return
 	local goarch=amd64; case "$(uname -m)" in
 		x86_64) goarch=amd64;;
