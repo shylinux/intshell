@@ -154,7 +154,7 @@ ish_miss_make() {
 }
 ish_miss_start() {
 	while echo; do
-		bin/ice.bin serve start "$@" && break
+		./bin/ice.bin serve start "$@" && break
 	done
 }
 ish_miss_restart() {
