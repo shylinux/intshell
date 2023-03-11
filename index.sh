@@ -66,7 +66,7 @@ main() {
 		intshell)
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
 			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
-			prepare_system && git clone https://shylinux.com/x/intshell $PWD/.ish
+			prepare_system; git clone https://shylinux.com/x/intshell $PWD/.ish
 			source $PWD/.ish/plug.sh; require conf.sh; require miss.sh
 			;;
 		*)
