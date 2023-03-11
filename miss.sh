@@ -36,13 +36,10 @@ ish_miss_prepare_compile() {
 	else
 		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
 	fi; local back=$PWD; mkdir -p usr/local; cd usr/local
-	ish_miss_download_pkg $ctx_dev/publish/$pkg $GODOWN$pkg
-	cd $back
+	ish_miss_download_pkg $ctx_dev/publish/$pkg $GODOWN$pkg; cd $back
 }
 ish_miss_prepare_develop() {
 	export ISH_CONF_PATH=$PWD/.ish/pluged
-	require dev/git/git.sh
-	ish_dev_git_prepare
 
 	# .gitignore
 	ish_sys_file_create ".gitignore" <<END
@@ -111,7 +108,6 @@ ish_miss_prepare_intshell() {
 	[ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
 	[ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
 	require_pull usr/intshell
-	ish_sys_cli_prepare
 }
 ish_miss_prepare_contexts() {
 	ish_log_require -g shylinux.com/x/contexts
