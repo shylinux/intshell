@@ -153,6 +153,7 @@ ish_miss_make() {
 	CGO_ENABLED=0 go build -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart
 }
 ish_miss_start() {
+	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
 	while true; do
 		./bin/ice.bin serve start "$@" && break
 	done 2>${ctx_log:="/dev/stdout"}
