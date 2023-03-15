@@ -10,13 +10,14 @@ ish_sys_cli_prompt() {
     local name=$(hostname) && name=${name##*-} && name=${name%%\.*}
     case "$(ish_sys_cli_shell)" in
         bash)
-            export PS1="\!@$name[\t]\W\$ "
+            PS1="\!@$name[\t]\W\$ "
             ;;
         zsh)
-			export PS1="%n@${name}[%*]%1~$ "
+			PS1="%n@${name}[%*]%1~$ "
+			echo
             ;;
         *)
-            export PS1="\!@$name[\w]\$ "
+            PS1="\!@$name[\w]\$ "
         	;;
     esac
 }
