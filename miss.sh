@@ -136,8 +136,7 @@ ish_miss_prepare_session() {
 		else
 			tmux send-key -t ${name}:$win.2 "ish_miss_space dev ops" Enter
 		fi
-		sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter &
-		[ `uname -s` = Darwin ] && sleep 3 && open http://localhost:9020 &
+		sleep 1 && tmux send-key -t ${name}:$win.1 "vim -O src/main.go src/main.shy" Enter
 	fi
 	[ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
@@ -150,9 +149,7 @@ ish_miss_make() {
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
-	while true; do
-		./bin/ice.bin serve start "$@" && break
-	done 2>${ctx_log:="/dev/stdout"}
+	while true; do ./bin/ice.bin serve start "$@" && break; done 2>${ctx_log:="/dev/stdout"}
 }
 ish_miss_restart() {
 	$ctx_bin forever restart
