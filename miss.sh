@@ -160,6 +160,11 @@ ish_miss_stop() {
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
 }
+ish_miss_serve_log_clear() {
+	clear; tmux clear-history
+	tmux set history-limit 20000
+	ctx_log=/dev/stdout ish_miss_serve "$@"
+}
 ish_miss_serve_log() {
 	ctx_log=/dev/stdout ish_miss_serve "$@"
 }
