@@ -68,6 +68,7 @@ ish_sys_dev_exit() {
 	ish_sys_dev_logout
 }
 ish_sys_dev_init() {
+	return
 	ish_sys_dev_login
 	if bind &>/dev/null; then # bash
 		complete -F ish_sys_dev_complete ish_sys_dev_run
