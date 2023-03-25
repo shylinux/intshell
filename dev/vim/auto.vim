@@ -135,7 +135,7 @@ endfunc
 " autocmd! CmdlineLeave * call DevSync("exec")
 "}}}
 " 按键映射{{{
-" nnoremap <C-G><C-G> :call DevGrep(expand("<cword>"))<CR>
+nnoremap <C-G><C-G> :call DevGrep(expand("<cword>"))<CR>
 " nnoremap <C-G><C-F> :call DevFavor()<CR>
 " nnoremap <C-G>f :call DevFavors()<CR>
 " inoremap <C-K> <C-X><C-U>
