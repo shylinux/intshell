@@ -149,7 +149,8 @@ ish_miss_make() {
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
-	while true; do ./bin/ice.bin serve start "$@" && break; done 2>${ctx_log:="/dev/stdout"}
+	ish_sys_path_load
+	while true; do ice.bin "$@" && break; done 2>${ctx_log:="/dev/stdout"}
 }
 ish_miss_restart() {
 	$ctx_bin forever restart
@@ -169,10 +170,10 @@ ish_miss_serve_log() {
 	ctx_log=/dev/stdout ish_miss_serve "$@"
 }
 ish_miss_serve() {
-	ish_miss_stop && ish_miss_start "$@"
+	ish_miss_stop && ish_miss_start serve start dev "" "$@"
 }
 ish_miss_space() {
-	ish_miss_stop && ish_miss_start space "$@"
+	ish_miss_stop && ish_miss_start space start dev ops "$@"
 }
 ish_miss_space_log() {
 	ctx_log=/dev/stdout ish_miss_space "$@"
