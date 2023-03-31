@@ -18,6 +18,11 @@ highlight shyCommand    ctermfg=green
 syntax match shyCommand "^    [a-zA-Z0-9:._]\+"
 syntax match shyCommand "^\t[a-zA-Z0-9:._]\+"
 syntax match shyCommand "^[a-zA-Z0-9:._]\+"
+syntax match shyCommand "let"
+syntax match shyCommand "if"
+syntax match shyCommand "let"
+syntax match shyCommand "let"
+syntax match shyCommand "let"
 
 highlight shyConfig    ctermfg=yellow
 syntax match shyConfig "^    config"
