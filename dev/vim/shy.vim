@@ -44,6 +44,7 @@ syntax match shyKeyword "switch"
 syntax match shyKeyword "case"
 syntax match shyKeyword "default"
 syntax match shyKeyword "func"
+syntax match shyKeyword "defer"
 syntax match shyKeyword "return"
 syntax match shyKeyword "source"
 
