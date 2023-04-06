@@ -34,19 +34,12 @@ syntax match shyTitle "^chapter"
 syntax match shySection "^section"
 
 highlight shyKeyword   ctermfg=yellow
-syntax match shyKeyword "let"
-syntax match shyKeyword "if"
-syntax match shyKeyword "else"
-syntax match shyKeyword "for"
-syntax match shyKeyword "break"
-syntax match shyKeyword "continue"
-syntax match shyKeyword "switch"
-syntax match shyKeyword "case"
-syntax match shyKeyword "default"
-syntax match shyKeyword "func"
-syntax match shyKeyword "defer"
-syntax match shyKeyword "return"
-syntax match shyKeyword "source"
+syntax keyword shyKeyword package import const type var
+syntax keyword shyKeyword if else
+syntax keyword shyKeyword for break continue
+syntax keyword shyKeyword switch case default
+syntax keyword shyKeyword func defer return
+syntax keyword shyKeyword source
 
 highlight shyFunction   ctermfg=green
 syntax match shyFunction "info"
