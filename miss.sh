@@ -32,9 +32,9 @@ ish_miss_prepare_compile() {
 		*) goos=windows;;
 	esac
 	if echo $goos|grep windows; then
-		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.zip
+		local pkg=go${GOVERSION:=1.13.5}.${goos}-${goarch}.zip
 	else
-		local pkg=go${GOVERSION:=1.15.5}.${goos}-${goarch}.tar.gz
+		local pkg=go${GOVERSION:=1.13.5}.${goos}-${goarch}.tar.gz
 	fi; local back=$PWD; mkdir -p usr/local; cd usr/local
 	ish_miss_download_pkg ${ctx_dev:="http://localhost:9020"}/publish/$pkg $GODOWN$pkg; cd $back
 	ish_sys_path_insert usr/local/go
