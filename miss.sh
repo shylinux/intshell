@@ -37,6 +37,7 @@ ish_miss_prepare_compile() {
 		local pkg=go${GOVERSION}.${goos}-${goarch}.tar.gz
 	fi; local back=$PWD; mkdir -p usr/local; cd usr/local
 	ish_miss_download_pkg ${ctx_dev:="http://localhost:9020"}/publish/$pkg $GODOWN$pkg; cd $back
+	ish_sys_path_insert usr/local/go
 }
 ish_miss_prepare_develop() {
 	export ISH_CONF_PATH=$PWD/.ish/pluged
