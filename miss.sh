@@ -17,10 +17,9 @@ ish_miss_prepare_compile() {
 	export GOVERSION=${GOVERSION:=1.13.5}
 	export GOPRIVATE=${GOPRIVATE:=shylinux.com}
 	export GOPROXY=${GOPROXY:=https://goproxy.cn}
-	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	export GODOWN=${GODOWN:=https://golang.google.cn/dl/}
+	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	go version |grep ${GOVERSION} &>/dev/null && return
-	[ -e $PWD/usr/local/go/bin ] && return
 	local goarch=amd64; case "$(uname -m)" in
 		x86_64) goarch=amd64;;
 		arm64) goarch=arm64;;
