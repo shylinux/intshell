@@ -68,9 +68,6 @@ func! Configs()
    	if ext == "json"
 		set foldmethod=syntax
 
-	elseif ext == "shy"
-		set filetype=go
-
 	elseif ext == "js"
 		set filetype=javascript
 		source ~/.vim/syntax/javascript.vim
