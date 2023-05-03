@@ -114,9 +114,9 @@ endfor | autocmd BufReadPost * normal `"
 "主题色系"{{{
 syntax on
 set t_Co=256
-" colorscheme torte
-colorscheme default
 colorscheme morning
+colorscheme default
+colorscheme torte
 highlight Comment ctermfg=cyan ctermbg=darkblue
 highlight PmenuSel ctermfg=darkblue ctermbg=cyan
 highlight Pmenu ctermfg=cyan ctermbg=darkblue
