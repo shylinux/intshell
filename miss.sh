@@ -150,8 +150,10 @@ ish_miss_make() {
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
-	ish_sys_path_load
-	while true; do ice.bin "$@" && break; done 2>${ctx_log:="/dev/stdout"}
+	ish_sys_path_load; while true; do
+		[ -f "var/log/boot.log" ] && grep "concurrent map read and map write" "var/log/boot.log" &>/dev/null && mv "var/log/boot.log" "var/log/$(ish_sys_date_filename)_boot.log"
+   		ice.bin "$@" 2>${ctx_log:="/dev/stdout"} && break
+	done
 }
 ish_miss_restart() {
 	$ctx_bin forever restart
