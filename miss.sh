@@ -20,6 +20,7 @@ ish_miss_prepare_compile() {
 	export GODOWN=${GODOWN:=https://golang.google.cn/dl/}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	go version |grep ${GOVERSION} &>/dev/null && return
+	go version &>/dev/null && return
 	local goarch=amd64; case "$(uname -m)" in
 		x86_64) goarch=amd64;;
 		arm64) goarch=arm64;;
