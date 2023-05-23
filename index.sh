@@ -20,8 +20,8 @@ prepare_system() {
 		Darwin) xcode-select --install 2>/dev/null ;;
 		Linux) 
 			if cat /etc/os-release|grep alpine &>/dev/null; then
-				# sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update
-				# TZ=Asia/Shanghai; apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
+				sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update
+				TZ=Asia/Shanghai; apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 				git version &>/dev/null || apk add git
 				go version &>/dev/null || apk add go
 				return

@@ -185,3 +185,6 @@ ish_miss_space_log() {
 ish_miss_app() {
 	ish_miss_stop && $ctx_bin forever ./usr/publish/contexts.app/Contents/MacOS/contexts
 }
+ish_miss_killall() {
+	ps aux|grep ice.bin|awk '{print $2}'|xargs kill
+}
