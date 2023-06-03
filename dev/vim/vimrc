@@ -88,6 +88,11 @@ func! Configs()
 	elseif ext == "zml"
 		set commentstring=#%s
 
+	elseif ext == "vue"
+		set expandtab
+		set tabstop=2
+    set shiftwidth=2
+
 	elseif ext == "sql"
 		set expandtab
 		set foldmarker=(,)
