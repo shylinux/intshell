@@ -99,6 +99,8 @@ func! Configs()
 
 	elseif ext == "proto"
 		set expandtab
+		set tabstop=2
+    set shiftwidth=2
 		set foldmarker={,}
 
 	elseif ext == "groovy"
