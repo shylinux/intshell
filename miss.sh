@@ -14,7 +14,7 @@ ish_miss_download_pkg() {
 }
 ish_miss_prepare_compile() {
 	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
-	export GOVERSION=${GOVERSION:=1.13.5}
+	export GOVERSION=${GOVERSION:=1.20.3}
 	export GOPRIVATE=${GOPRIVATE:=shylinux.com}
 	export GOPROXY=${GOPROXY:=https://goproxy.cn}
 	export GODOWN=${GODOWN:=https://golang.google.cn/dl/}
@@ -126,6 +126,12 @@ ish_miss_prepare_volcanos() {
 }
 ish_miss_prepare_learning() {
 	ish_miss_prepare learning
+}
+ish_miss_prepare_bash() {
+	ish_sys_cli_prepare; ish_dev_tmux_prepare; ish_dev_git_prepare; ish_dev_vim_prepare # ish_dev_vim_plug_prepare
+	ish_sys_link_create ~/.bash_local.sh $PWD/etc/conf/bash_local.sh
+	ish_sys_link_create ~/.vim_local.vim $PWD/etc/conf/vim_local.vim
+	if tmux -V; then ish_miss_prepare_session miss miss; else ish_miss_serve_log; fi
 }
 ish_miss_prepare_session() {
 	local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
