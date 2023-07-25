@@ -19,9 +19,7 @@ highlight shyContext    ctermfg=red
 syntax match shyContext "\~[a-z\.]\+"
 
 highlight shyCommand    ctermfg=green
-syntax match shyCommand "^    [a-zA-Z0-9:._]\+"
-syntax match shyCommand "^\t[a-zA-Z0-9:._]\+"
-syntax match shyCommand "^[a-zA-Z0-9:._]\+"
+syntax match shyCommand "^\t*[a-zA-Z0-9:._]\+"
 
 highlight shyConfig    ctermfg=yellow
 syntax match shyConfig "^    config"
@@ -32,16 +30,3 @@ highlight shySection    ctermbg=darkgreen ctermfg=white
 syntax match shyTitle "^title"
 syntax match shyTitle "^chapter"
 syntax match shySection "^section"
-
-highlight shyKeyword   ctermfg=yellow
-syntax keyword shyKeyword package import const type var
-syntax keyword shyKeyword if else
-syntax keyword shyKeyword for break continue
-syntax keyword shyKeyword switch case default
-syntax keyword shyKeyword func defer return
-syntax keyword shyKeyword source
-
-highlight shyFunction   ctermfg=green
-syntax match shyFunction "info"
-syntax match shyFunction "pwd"
-
