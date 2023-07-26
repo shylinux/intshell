@@ -152,6 +152,44 @@ ish_miss_prepare_session() {
 	[ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
 
+ish_miss_pull() {
+	local repos back=$PWD
+	ish_log_notice "repos $PWD"
+	git pull; echo
+	for repos in `ls usr/`; do
+		if [ -e "usr/$repos/.git" ]; then
+			cd "usr/$repos/"; ish_log_notice "repos $PWD"
+			git pull; echo
+			cd $back
+		fi
+	done
+	for repos in `ls usr/local/work/`; do
+		if [ -e "usr/local/work/$repos/.git" ]; then
+			cd "usr/local/work/$repos/"; ish_log_notice "repos $PWD"
+			git pull; echo
+			cd $back
+		fi
+	done
+}
+ish_miss_push() {
+	local repos back=$PWD
+	ish_log_notice "repos $PWD"
+	git push; git push --tags; echo
+	for repos in `ls usr/`; do
+		if [ -e "usr/$repos/.git" ]; then
+			cd "usr/$repos/"; ish_log_notice "repos $PWD"
+			git push; git push --tags; echo
+			cd $back
+		fi
+	done
+	for repos in `ls usr/local/work/`; do
+		if [ -e "usr/local/work/$repos/.git" ]; then
+			cd "usr/local/work/$repos/"; ish_log_notice "repos $PWD"
+			git push; git push --tags; echo
+			cd $back
+		fi
+	done
+}
 ish_miss_make() {
  	local binarys=bin/ice.bin; echo && date
 	[ -f src/version.go ] || echo "package main" > src/version.go
@@ -170,18 +208,6 @@ ish_miss_restart() {
 }
 ish_miss_stop() {
 	$ctx_bin forever stop
-}
-ish_miss_push() {
-	local repos back=$PWD
-	ish_log_notice "repos $PWD"
-	git push; git push --tags; echo
-	for repos in `ls usr/`; do
-		if [ -e "usr/$repos/.git" ]; then
-			cd "usr/$repos/"; ish_log_notice "repos $PWD"
-			git push; git push --tags; echo
-			cd $back
-		fi
-	done
 }
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
