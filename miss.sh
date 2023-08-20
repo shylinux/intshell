@@ -213,6 +213,9 @@ ish_miss_restart() {
 ish_miss_stop() {
 	$ctx_bin forever stop
 }
+ish_miss_list() {
+	ps aux|grep ice.bin
+}
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
 }
