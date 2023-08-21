@@ -236,6 +236,9 @@ ish_miss_space() {
 ish_miss_space_log() {
 	ctx_log=/dev/stdout ish_miss_space "$@"
 }
+ish_miss_admin() {
+	./bin/ice.bin web.admin 
+}
 ish_miss_app() {
 	ish_miss_stop && $ctx_bin forever ./usr/publish/contexts.app/Contents/MacOS/contexts
 }
