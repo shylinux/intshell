@@ -18,6 +18,7 @@ let g:go_highlight_trailing_whitespace_error = 1
 syntax match Comment "#.*$"
 syntax match Comment "\<Name: \"[^\"]*\""
 syntax match Comment "\<Help: \"[^\"]*\""
+syntax match Comment "\<Icon: \"[^\"]*\""
 
 highlight kitType    ctermfg=lightgreen
 syntax match kitType "\<Any\>"
