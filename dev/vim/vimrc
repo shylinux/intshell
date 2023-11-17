@@ -7,7 +7,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	" Plug 'mbbill/echofunc'
 	Plug 'kien/ctrlp.vim'
 	let g:ctrlp_cmd='CtrlPBuffer'
-	Plug 'majutsushi/tagbar'
+	" Plug 'majutsushi/tagbar'
 	Plug 'scrooloose/nerdtree'
 	let g:NERDTreeWinPos="left"
 	let g:NERDTreeWinSize=20
@@ -20,7 +20,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	Plug 'chr4/nginx.vim'
 	" Plug 'othree/html5.vim'
 	" Plug 'vim-scripts/python.vim'
-	Plug 'plasticboy/vim-markdown'
+	" Plug 'plasticboy/vim-markdown'
 	" Plug 'vim-scripts/matrix.vim--Yang'
 	call plug#end()
 endif
@@ -65,16 +65,32 @@ nnoremap <C-L> <C-W>l
 set keywordprg=man\ -a
 func! Configs()
 	let ext = expand("%:e") | if &ft == "" && ext != "" | exec "set" "filetype=" . ext | endif
-   	if ext == "json"
+  if ext == "json"
 		set foldmethod=syntax
+		set shiftwidth=2
+		set tabstop=2
+		" set expandtab
 
 	elseif ext == "js"
 		set filetype=javascript
 		source ~/.vim/syntax/javascript.vim
+		set shiftwidth=2
+		set tabstop=2
+		" set expandtab
 
 	elseif ext == "css"
 		set foldmethod=marker
 		set foldmarker={,}
+
+	elseif ext == "wxss"
+		set filetype=css
+		set shiftwidth=2
+		set tabstop=2
+
+	elseif ext == "wxml"
+		set filetype=xml
+		set shiftwidth=2
+		set tabstop=2
 
 	elseif ext == "vimrc"
 		set filetype=vim
@@ -91,7 +107,7 @@ func! Configs()
 	elseif ext == "vue"
 		set expandtab
 		set tabstop=2
-    set shiftwidth=2
+		set shiftwidth=2
 
 	elseif ext == "sql"
 		set expandtab

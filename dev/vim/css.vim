@@ -1,4 +1,4 @@
 highlight cssKey    ctermfg=yellow
 
-syntax match ishKey "page"
-syntax match ishKey "view"
+syntax match cssKey "page"
+syntax match cssKey "view"
