@@ -138,7 +138,7 @@ ish_miss_prepare_bash() {
 	ish_dev_vim_prepare
 	ish_dev_vim_plug_prepare
 	ish_dev_tmux_prepare
-	if tmux -V; then ish_miss_prepare_session miss miss; else ish_miss_serve_log; fi
+	# if tmux -V; then ish_miss_prepare_session miss miss; else ish_miss_serve_log; fi
 }
 ish_miss_prepare_session() {
 	local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
