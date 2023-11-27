@@ -24,6 +24,7 @@ prepare_system() {
 				TZ=Asia/Shanghai; apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 				git version &>/dev/null || apk add git
 				go version &>/dev/null || apk add go
+				npm version &>/dev/null || apk add npm
 				return
 			fi
 			if cat /etc/os-release|grep "CentOS-8"&>/dev/null; then
