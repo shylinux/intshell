@@ -140,6 +140,9 @@ ish_miss_prepare_bash() {
 	ish_dev_tmux_prepare
 	# if tmux -V; then ish_miss_prepare_session miss miss; else ish_miss_serve_log; fi
 }
+ish_miss_prepare_file() {
+	[ -f $1 ] || cat > $1
+}
 ish_miss_prepare_session() {
 	local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
 	local win=$2 && [ "$win" = "" ] && win=${name%%-*}
