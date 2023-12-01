@@ -46,7 +46,7 @@ require_path() {
 }
 require_fork() {
 	local repos=$1 && shift; local p=$(require_path $repos); [ "$p" != "" ] && echo $p && return
-	ish_log_notice -g "clone $ISH_CONF_PATH/$repos"; git clone https://$repos $ISH_CONF_PATH/$repos $ish_git_args &>/dev/null && echo $ISH_CONF_PATH/$repos
+	ish_log_notice -g "clone $ISH_CONF_PATH/$repos"; git clone https://$repos $ISH_CONF_PATH/$repos &>/dev/null && echo $ISH_CONF_PATH/$repos
 }
 require_pull() {
     local back=$PWD; cd "$(require_fork $1)" && ish_log_notice repos $PWD && git pull; cd $back; echo

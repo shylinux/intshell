@@ -122,16 +122,13 @@ ish_miss_prepare_icebergs() {
 	ish_miss_prepare icebergs
 }
 ish_miss_prepare_release() {
-	ish_git_args="--depth 1" ish_miss_prepare release
+	ish_miss_prepare release
 }
 ish_miss_prepare_volcanos() {
 	ish_miss_prepare volcanos
 }
 ish_miss_prepare_learning() {
 	ish_miss_prepare learning
-}
-ish_miss_prepare_icons() {
-	ish_git_args="--depth 1" ish_miss_prepare icons
 }
 ish_miss_prepare_bash() {
 	ish_sys_cli_prepare
