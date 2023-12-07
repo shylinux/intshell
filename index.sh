@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
+export ctx_name=${ctx_name:="contexts"}
 
 _down_big_file() {
 	[ -f "$1" ] && return; echo "download $ctx_dev/$2"
@@ -26,6 +27,7 @@ prepare_system() {
 				git version &>/dev/null || apk add git
 				go version &>/dev/null || apk add go
 				npm version &>/dev/null || apk add npm
+				git config --global credential.helper store
 				return
 			fi
 			if cat /etc/os-release|grep "CentOS-8"&>/dev/null; then
@@ -62,17 +64,18 @@ prepare_reload() {
 }
 main() {
 	case "$1" in
-		binary)
-			shift && prepare_ice && bin/ice.bin forever start dev "" "$@"
+		binary) shift
+			[ -e $ctx_name ] || mkdir $ctx_name; cd $ctx_name 
+			prepare_ice && ./bin/ice.bin forever start dev "" "$@"
 			;;
-		source)
-			prepare_system && git clone https://shylinux.com/x/contexts
-			shift && cd contexts && source etc/miss.sh "$@"
+		source) shift
+			prepare_system; [ -e $ctx_name ] || git clone $ctx_dev/x/$ctx_name
+			cd $ctx_name && source etc/miss.sh dev "" "$@"
 			;;
 		intshell)
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
 			[ -f $HOME/.ish/plug.sh ] && source $HOME/.ish/plug.sh && return
-			prepare_system; git clone https://shylinux.com/x/intshell $PWD/.ish
+			prepare_system; git clone $ctx_dev/x/intshell $PWD/.ish
 			source $PWD/.ish/plug.sh; require conf.sh; require miss.sh
 			;;
 		*)

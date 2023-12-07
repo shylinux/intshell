@@ -29,11 +29,11 @@ ish_show() {
 ish_log() {
     for l in $(echo ${ISH_CONF_LEVEL:=$1}); do [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG; done; return 0
 }
-ish_log_debug() { ish_log "debug" "$@"; }
 ish_log_require() { ish_log "require" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
 ish_log_notice() { ish_log "notice" "$@"; }
 ish_log_alias() { ish_log "alias" "$@"; }
+ish_log_debug() { ish_log "debug" "$@"; }
 # }
 ## 3.模块 # {
 require_path() {
@@ -62,8 +62,6 @@ require() {
         file=$(require_fork "$mod")/$1 && shift
     elif echo $mod| grep "^git" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
-    # elif echo $mod| grep "^shylinux.com/x/" &>/dev/null; then
-    #     file=$(require_fork "$mod")/$1 && shift
 	elif echo $mod| grep "^http" &>/dev/null; then
         file=$(require_temp "$mod")
     elif echo $mod| grep "^/" &>/dev/null; then
