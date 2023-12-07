@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
+export ctx_name=${ctx_name:="${ctx_pod}"}
 export ctx_name=${ctx_name:="contexts"}
 
 _down_big_file() {
@@ -69,7 +70,7 @@ main() {
 			prepare_ice && ./bin/ice.bin forever start dev "" "$@"
 			;;
 		source) shift
-			prepare_system; [ -e $ctx_name ] || git clone $ctx_dev/x/$ctx_name
+			prepare_system; [ -e $ctx_name ] || git clone ${ctx_repos:=$ctx_dev/x/$ctx_name} $ctx_name
 			cd $ctx_name && source etc/miss.sh dev "" "$@"
 			;;
 		intshell)
