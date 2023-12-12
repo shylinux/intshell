@@ -71,7 +71,7 @@ END
 	ish_sys_file_create Makefile << END
 export CGO_ENABLED=0
 
-binarys = bin/ice.bin
+binarys = bin/$ctx_bin
 
 all: def
 	@echo && date
@@ -196,7 +196,7 @@ ish_miss_push() {
 	done
 }
 ish_miss_make() {
- 	local binarys=bin/ice.bin; echo && date
+ 	local binarys=bin/$ctx_bin; echo && date
 	[ -f src/version.go ] || echo "package main" > src/version.go
 	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
 	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart
@@ -205,7 +205,7 @@ ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
 	ish_sys_path_load; while true; do
 		[ -f "var/log/boot.log" ] && grep "concurrent map read and map write" "var/log/boot.log" &>/dev/null && mv "var/log/boot.log" "var/log/$(ish_sys_date_filename)_boot.log"
-   		ice.bin "$@" 2>${ctx_log:="/dev/stdout"} && break
+   		$ctx_bin "$@" 2>${ctx_log:="/dev/stdout"} && break
 	done
 }
 ish_miss_restart() {
@@ -215,7 +215,7 @@ ish_miss_stop() {
 	$ctx_bin forever stop
 }
 ish_miss_list() {
-	ps aux|grep ice.bin
+	ps aux|grep $ctx_bin
 }
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
@@ -238,7 +238,7 @@ ish_miss_space_log() {
 	ctx_log=/dev/stdout ish_miss_space "$@"
 }
 ish_miss_admin() {
-	./bin/ice.bin web.admin 
+	$ctx_bin web.admin 
 }
 ish_miss_app() {
 	ish_miss_stop && $ctx_bin forever ./usr/publish/contexts.app/Contents/MacOS/contexts
@@ -247,5 +247,5 @@ ish_miss_app_log() {
 	ctx_log=/dev/stdout ish_miss_app "$@"
 }
 ish_miss_killall() {
-	ps aux|grep ice.bin|grep -v grep|awk '{print $2}'|xargs kill
+	ps aux|grep $ctx_bin|grep -v grep|awk '{print $2}'|xargs kill
 }
