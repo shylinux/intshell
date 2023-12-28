@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export ctx_bin=${ctx_bin:=ice.bin}
+export ctx_bin=${ctx_bin:=bin/ice.bin}
 export ctx_pid=${ctx_pid:=var/log/ice.pid}
 export ctx_log=${ctx_log:=var/log/boot.log}
 
@@ -71,7 +71,7 @@ END
 	ish_sys_file_create Makefile << END
 export CGO_ENABLED=0
 
-binarys = bin/$ctx_bin
+binarys = $ctx_bin
 
 all: def
 	@echo && date
@@ -196,7 +196,7 @@ ish_miss_push() {
 	done
 }
 ish_miss_make() {
- 	local binarys=bin/$ctx_bin; echo && date
+ 	local binarys=$ctx_bin; echo && date
 	[ -f src/version.go ] || echo "package main" > src/version.go
 	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
 	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart
