@@ -1,12 +1,13 @@
 #!/bin/sh
 
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
+export ctx_dev_ip=${ctx_dev_ip:="$ctx_dev"}
 export ctx_name=${ctx_name:="${ctx_pod}"}
 export ctx_name=${ctx_name:="contexts"}
 
 _down_big_file() {
 	[ -f "$1" ] && return; echo "download $ctx_dev/$2"
-	if curl -h &>/dev/null; then curl -o $1 -fL "$ctx_dev/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev/$2?pod=$ctx_pod"; fi
+	if curl -h &>/dev/null; then curl -o $1 -fL "$ctx_dev_ip/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev_ip/$2?pod=$ctx_pod"; fi
 }
 _down_file() {
 	if curl -h &>/dev/null; then curl -o $1 -fsSL "$ctx_dev/$2"; else wget -O $1 -q "$ctx_dev/$2"; fi
