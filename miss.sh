@@ -3,23 +3,22 @@
 export ctx_bin=${ctx_bin:=bin/ice.bin}
 export ctx_pid=${ctx_pid:=var/log/ice.pid}
 export ctx_log=${ctx_log:=var/log/boot.log}
+export ctx_shy=${ctx_shy:=https://shylinux.com}
+export ctx_dev=${ctx_dev:=https://2021.shylinux.com}
 
 ish_miss_download_pkg() {
 	for url in "$@"; do local pkg=${url##*/}; [ `ish_sys_file_size $pkg` -gt 0 ] && break
 		ish_log_notice "download: $pkg <= $url"; if curl -h &>/dev/null; then curl -o $pkg -fSL $url; else wget -O $pkg $url; fi
-		! [ -e "$pkg" ] && continue
-		if echo $pkg|grep ".zip"; then unzip $pkg; else tar xf $pkg; fi
-	done
-	[ -f "$1" ]
+		[ -e "$pkg" ] && if echo $pkg|grep ".zip"; then unzip $pkg; else tar xf $pkg; fi
+	done; [ -f "$1" ]
 }
 ish_miss_prepare_compile() {
-	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
 	export GOVERSION=${GOVERSION:=1.21.4}
 	export GOPRIVATE=${GOPRIVATE:=shylinux.com}
 	export GOPROXY=${GOPROXY:=https://goproxy.cn}
 	export GODOWN=${GODOWN:=https://golang.google.cn/dl/}
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
-	go version |grep ${GOVERSION} &>/dev/null && return
+	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
 	go version &>/dev/null && return
 	local goarch=amd64; case "$(uname -m)" in
 		x86_64) goarch=amd64;;
@@ -37,17 +36,17 @@ ish_miss_prepare_compile() {
 	else
 		local pkg=go${GOVERSION}.${goos}-${goarch}.tar.gz
 	fi; local back=$PWD; mkdir -p usr/local; cd usr/local
-	ish_miss_download_pkg ${ctx_dev:="http://localhost:9020"}/publish/$pkg $GODOWN$pkg; cd $back
-	ish_sys_path_insert usr/local/go
+	ish_miss_download_pkg $ctx_dev/publish/$pkg $GODOWN$pkg; cd $back
 }
 ish_miss_prepare_develop() {
 	export ISH_CONF_PATH=$PWD/.ish/pluged
 
 	# .gitignore
 	ish_sys_file_create ".gitignore" <<END
+src/binpack_usr.go
 src/binpack.go
 src/version.go
-etc/
+etc/local.shy
 bin/
 var/
 usr/
@@ -69,17 +68,18 @@ END
 
 	# Makefile
 	ish_sys_file_create Makefile << END
-export CGO_ENABLED=0
-
-binarys = $ctx_bin
+binarys = bin/ice.bin
+version = src/version.go
+binpack = src/binpack.go
+flags = -ldflags "-w -s" -v
 
 all: def
-	@echo && date
-	go build -v -o \${binarys} src/main.go src/version.go src/binpack.go && ./\${binarys} forever restart &>/dev/null
+	@date +"%Y-%m-%d %H:%M:%S"
+	go build \${flags} -o \${binarys} src/main.go \${version} \${binpack} && ./\${binarys} forever restart &>/dev/null
 
 def:
-	@ [ -f src/version.go ] || echo "package main" > src/version.go
-	@ [ -f src/binpack.go ] || echo "package main" > src/binpack.go
+	@[ -f \${version} ] || echo "package main">\${version}
+	@[ -f \${binpack} ] || echo "package main">\${binpack}
 END
 }
 ish_miss_prepare_project() {
@@ -93,6 +93,11 @@ ish_miss_prepare_project() {
 	source local.shy
 END
 
+	# etc/exit.shy
+	ish_sys_file_create "etc/exit.shy" <<END
+~aaa
+END
+
 	# src/main.shy
 	ish_sys_file_create "src/main.shy" <<END
 title "${PWD##*/}"
@@ -103,17 +108,22 @@ ish_miss_prepare() {
 	local name=${1##*/} repos=${1#*://}; [ "$name" = "$repos" ] && repos=shylinux.com/x/$name
 	ISH_CONF_PATH=$PWD/.ish/pluged require_fork $repos; ish_sys_link_create usr/$name $(require_path $repos); require_pull usr/$name
 }
+ish_miss_prepare_contexts() {
+	ish_log_require -g shylinux.com/x/contexts
+	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
+}
 ish_miss_prepare_intshell() {
-	require sys/cli/cli.sh
 	ish_log_require -g shylinux.com/x/intshell
-	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone https://shylinux.com/x/intshell $PWD/.ish
+	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone $ctx_shy/x/intshell $PWD/.ish
 	[ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
 	[ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
 	require_pull usr/intshell
 }
-ish_miss_prepare_contexts() {
-	ish_log_require -g shylinux.com/x/contexts
-	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
+ish_miss_prepare_learning() {
+	ish_miss_prepare learning
+}
+ish_miss_prepare_volcanos() {
+	ish_miss_prepare volcanos
 }
 ish_miss_prepare_toolkits() {
 	ish_miss_prepare toolkits
@@ -124,22 +134,20 @@ ish_miss_prepare_icebergs() {
 ish_miss_prepare_release() {
 	ish_miss_prepare release
 }
-ish_miss_prepare_volcanos() {
-	ish_miss_prepare volcanos
+ish_miss_prepare_modules() {
+	ish_miss_prepare node_modules
 }
-ish_miss_prepare_learning() {
-	ish_miss_prepare learning
+ish_miss_prepare_icons() {
+	ish_miss_prepare icons
+}
+ish_miss_prepare_file() {
+	[ -f $1 ] || cat > $1
 }
 ish_miss_prepare_bash() {
 	ish_sys_cli_prepare
 	ish_sys_link_create ~/.bash_local.sh $PWD/etc/conf/bash_local.sh; source ~/.bash_local.sh
 	ish_sys_link_create ~/.vim_local.vim $PWD/etc/conf/vim_local.vim
 	ish_dev_git_prepare; ish_dev_vim_prepare; ish_dev_vim_plug_prepare
-	# ish_dev_tmux_prepare
-	# if tmux -V; then ish_miss_prepare_session miss miss; else ish_miss_serve_log; fi
-}
-ish_miss_prepare_file() {
-	[ -f $1 ] || cat > $1
 }
 ish_miss_prepare_session() {
 	local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
@@ -158,48 +166,42 @@ ish_miss_prepare_session() {
 }
 
 ish_miss_pull() {
-	local repos back=$PWD
-	ish_log_notice "repos $PWD"
+	local repos back=$PWD; ish_log_notice "repos $PWD"
 	git pull; echo
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
 			cd "usr/$repos/"; ish_log_notice "repos $PWD"
-			git pull; echo
-			cd $back
+			git pull; echo; cd $back
 		fi
 	done
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
 			cd "usr/local/work/$repos/"; ish_log_notice "repos $PWD"
-			git pull; echo
-			cd $back
+			git pull; echo; cd $back
 		fi
 	done
 }
 ish_miss_push() {
-	local repos back=$PWD
-	ish_log_notice "repos $PWD"
+	local repos back=$PWD; ish_log_notice "repos $PWD"
 	git push; git push --tags; echo
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
 			cd "usr/$repos/"; ish_log_notice "repos $PWD"
-			git push; git push --tags; echo
-			cd $back
+			git push; git push --tags; echo; cd $back
 		fi
 	done
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
 			cd "usr/local/work/$repos/"; ish_log_notice "repos $PWD"
-			git push; git push --tags; echo
-			cd $back
+			git push; git push --tags; echo; cd $back
 		fi
 	done
 }
 ish_miss_make() {
- 	local binarys=$ctx_bin; echo && date
+ 	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S"
 	[ -f src/version.go ] || echo "package main" > src/version.go
 	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
-	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart
+	go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart &>/dev/null
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
@@ -217,13 +219,11 @@ ish_miss_stop() {
 ish_miss_list() {
 	ps aux|grep $ctx_bin
 }
+ish_miss_killall() {
+	ps aux|grep $ctx_bin|grep -v grep|awk '{print $2}'|xargs kill
+}
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
-}
-ish_miss_serve_log_clear() {
-	clear; tmux clear-history
-	tmux set history-limit 20000
-	ctx_log=/dev/stdout ish_miss_serve "$@"
 }
 ish_miss_serve_log() {
 	ctx_log=/dev/stdout ish_miss_serve "$@"
@@ -238,14 +238,11 @@ ish_miss_space_log() {
 	ctx_log=/dev/stdout ish_miss_space "$@"
 }
 ish_miss_admin() {
-	$ctx_bin web.admin 
+	$ctx_bin web.admin "$@"
 }
 ish_miss_app() {
 	ish_miss_stop && $ctx_bin forever ./usr/publish/contexts.app/Contents/MacOS/contexts
 }
 ish_miss_app_log() {
 	ctx_log=/dev/stdout ish_miss_app "$@"
-}
-ish_miss_killall() {
-	ps aux|grep $ctx_bin|grep -v grep|awk '{print $2}'|xargs kill
 }
