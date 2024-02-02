@@ -13,7 +13,8 @@ ISH_SHOW_COLOR_g="\e[32m"
 ISH_SHOW_COLOR_b="\e[34m"
 ISH_SHOW_COLOR_end="\e[0m"
 ish_show() {
-    local space=" " count=""; while [ "$#" -gt "0" ]; do space=" "; case $1 in
+    local space=" " count=""; while [ "$#" -gt "0" ]; do space=" "
+    case $1 in
         -username) printf "$(whoami)";;
         -hostname) printf "$(hostname)";;
         -date) printf "$(date +"%Y-%m-%d")";;
@@ -24,7 +25,8 @@ ish_show() {
         else
             printf "$1"; [ -n $count ] && printf "$ISH_SHOW_COLOR_end" && count=
         fi;;
-    esac; [ "$#" -gt "0" ] && shift && printf "$space"; done; echo
+    esac
+    [ "$#" -gt "0" ] && shift && printf "$space"; done; echo
 }
 ish_log() {
     for l in $(echo ${ISH_CONF_LEVEL:=$1}); do [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG; done; return 0

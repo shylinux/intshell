@@ -20,16 +20,18 @@ ish_miss_prepare_compile() {
 	export GOBIN=${GOBIN:=$PWD/usr/local/bin}
 	ish_sys_path_insert "$PWD/usr/local/go/bin" "$PWD/usr/local/bin" "$PWD/bin" "$PWD/usr/publish"
 	go version &>/dev/null && return
-	local goarch=amd64; case "$(uname -m)" in
-		x86_64) goarch=amd64;;
-		arm64) goarch=arm64;;
-		i686) goarch=386;;
-		*) goos=arm;;
+	local goarch=amd64
+	case "$(uname -m)" in
+		x86_64) goarch=amd64 ;;
+		arm64) goarch=arm64 ;;
+		i686) goarch=386 ;;
+		*) goos=arm ;;
 	esac
-	local goos=linux; case "$(uname -s)" in
-		Darwin) goos=darwin;;
-		Linux) goos=linux;;
-		*) goos=windows;;
+	local goos=linux
+	case "$(uname -s)" in
+		Darwin) goos=darwin ;;
+		Linux) goos=linux ;;
+		*) goos=windows ;;
 	esac
 	if echo $goos|grep windows; then
 		local pkg=go${GOVERSION}.${goos}-${goarch}.zip
@@ -201,7 +203,7 @@ ish_miss_make() {
  	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S"
 	[ -f src/version.go ] || echo "package main" > src/version.go
 	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
-	go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart &>/dev/null
+	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart &>/dev/null
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}

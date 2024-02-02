@@ -26,12 +26,13 @@ ish_sys_cli_alias() {
     ish_log_alias "-g" "$1 <= $2"; alias $1="$2"
 }
 ish_sys_cli_prepare() {
-    local rc=".bashrc"; case "$(ish_sys_cli_shell)" in
-        bash) rc=".bashrc";;
-        zsh) rc=".zshrc";;
+    local rc=".bashrc"
+    case "$(ish_sys_cli_shell)" in
+        bash) rc=".bashrc" ;;
+        zsh) rc=".zshrc" ;;
     esac
-	[ -f ~/.profile ] || echo "source ~/.bashrc" > ~/.profile
-	[ -f ~/.bash_profile ] || echo "source ~/.bashrc" > ~/.bash_profile
+    [ -f ~/.profile ] || echo "source ~/.bashrc" > ~/.profile
+    [ -f ~/.bash_profile ] || echo "source ~/.bashrc" > ~/.bash_profile
     [ -d ~/.ish ] || [ "$PWD" = "$HOME" ] || ln -s $PWD/.ish $HOME/.ish
     grep "require conf.sh" ~/$rc &>/dev/null || cat >> ~/$rc <<END
 if [ -f ~/.ish/plug.sh ] && source ~/.ish/plug.sh; then
