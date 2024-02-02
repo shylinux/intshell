@@ -13,23 +13,32 @@ ISH_SHOW_COLOR_g="\e[32m"
 ISH_SHOW_COLOR_b="\e[34m"
 ISH_SHOW_COLOR_end="\e[0m"
 ish_show() {
-    local space=" " count=""; while [ "$#" -gt "0" ]; do space=" "
-    case $1 in
-        -username) printf "$(whoami)";;
-        -hostname) printf "$(hostname)";;
-        -date) printf "$(date +"%Y-%m-%d")";;
-        -time) printf "$(date +"%Y-%m-%d %H:%M:%S")";;
-        *) if local k=$1 && [ "${k:0:1}" = "-" ] ; then space=""
-            local color=$(eval "printf \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
-            [ "$ISH_CONF_COLOR" = "true" ] && printf "$color" && count="need"
-        else
-            printf "$1"; [ -n $count ] && printf "$ISH_SHOW_COLOR_end" && count=
-        fi;;
-    esac
-    [ "$#" -gt "0" ] && shift && printf "$space"; done; echo
+	local space=" " count=""
+	while [ "$#" -gt "0" ]; do
+		space=" "
+		case $1 in
+			-username) printf "$(whoami)" ;;
+			-hostname) printf "$(hostname)" ;;
+			-date) printf "$(date +"%Y-%m-%d")" ;;
+			-time) printf "$(date +"%Y-%m-%d %H:%M:%S")" ;;
+			*)
+				if local k=$1 && [ "${k:0:1}" = "-" ] ; then space=""
+					local color=$(eval "printf \${ISH_SHOW_COLOR_${k:1}}" 2>/dev/null)
+					[ "$ISH_CONF_COLOR" = "true" ] && printf "$color" && count="need"
+				else
+					printf "$1"; [ -n $count ] && printf "$ISH_SHOW_COLOR_end" && count=
+				fi
+				;;
+		esac
+		[ "$#" -gt "0" ] && shift && printf "$space"
+	done
+	echo
 }
 ish_log() {
-    for l in $(echo ${ISH_CONF_LEVEL:=$1}); do [ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG; done; return 0
+	for l in $(echo ${ISH_CONF_LEVEL:=$1}); do
+		[ "$l" = "$1" ] && ish_show -time "$@" >$ISH_CONF_LOG
+	done
+	return 0
 }
 ish_log_require() { ish_log "require" "$@"; }
 ish_log_request() { ish_log "request" "$@"; }
@@ -59,7 +68,8 @@ require_temp() {
 	done 2>/dev/null 
 }
 require() {
-    local mod=$1 && shift; local file=$(require_path $mod) host=$ctx_dev
+    local mod=$1 && shift
+	local file=$(require_path $mod) host=$ctx_dev
     [ -f "$file" ] || if echo $mod| grep ".git$" &>/dev/null; then
         file=$(require_fork "$mod")/$1 && shift
     elif echo $mod| grep "^git" &>/dev/null; then

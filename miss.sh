@@ -37,7 +37,8 @@ ish_miss_prepare_compile() {
 		local pkg=go${GOVERSION}.${goos}-${goarch}.zip
 	else
 		local pkg=go${GOVERSION}.${goos}-${goarch}.tar.gz
-	fi; local back=$PWD; mkdir -p usr/local; cd usr/local
+	fi
+	local back=$PWD; mkdir -p usr/local; cd usr/local
 	ish_miss_download_pkg $ctx_dev/publish/$pkg $GODOWN$pkg; cd $back
 }
 ish_miss_prepare_develop() {
@@ -200,16 +201,17 @@ ish_miss_push() {
 	done
 }
 ish_miss_make() {
- 	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S"
+	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S"
 	[ -f src/version.go ] || echo "package main" > src/version.go
 	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
 	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart &>/dev/null
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
-	ish_sys_path_load; while true; do
+	ish_sys_path_load
+	while true; do
 		[ -f "var/log/boot.log" ] && grep "concurrent map read and map write" "var/log/boot.log" &>/dev/null && mv "var/log/boot.log" "var/log/$(ish_sys_date_filename)_boot.log"
-   		$ctx_bin "$@" 2>${ctx_log:="/dev/stdout"} && break
+		$ctx_bin "$@" 2>${ctx_log:="/dev/stdout"} && break
 	done
 }
 ish_miss_restart() {
