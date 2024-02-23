@@ -135,6 +135,7 @@ ish_miss_prepare_icebergs() {
 	ish_miss_prepare icebergs
 }
 ish_miss_prepare_release() {
+	local back=$PWD; cd usr/release; git stash &>/dev/null; git checkout . &>/dev/null; cd $back
 	ish_miss_prepare release
 }
 ish_miss_prepare_modules() {
