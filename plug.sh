@@ -45,6 +45,8 @@ ish_log_request() { ish_log "request" "$@"; }
 ish_log_notice() { ish_log "notice" "$@"; }
 ish_log_alias() { ish_log "alias" "$@"; }
 ish_log_debug() { ish_log "debug" "$@"; }
+ish_log_pull() { pwd; ish_log_debug -g "pull `git config --get remote.origin.url`"; }
+ish_log_push() { pwd; ish_log_debug -g "push `git config --get remote.origin.url`"; }
 # }
 ## 3.模块 # {
 require_path() {
@@ -57,10 +59,10 @@ require_path() {
 }
 require_fork() {
 	local repos=$1 && shift; local p=$(require_path $repos); [ "$p" != "" ] && echo $p && return
-	ish_log_notice -g "clone $ISH_CONF_PATH/$repos"; git clone https://$repos $ISH_CONF_PATH/$repos &>/dev/null && echo $ISH_CONF_PATH/$repos
+	ish_log_debug -g "clone $ISH_CONF_PATH/$repos"; git clone https://$repos $ISH_CONF_PATH/$repos &>/dev/null && echo $ISH_CONF_PATH/$repos
 }
 require_pull() {
-    local back=$PWD; cd "$(require_fork $1)" && ish_log_notice repos $PWD && git pull; cd $back; echo
+    local back=$PWD; cd "$(require_fork $1)" &>/dev/null && ish_log_pull && git pull; cd $back; echo
 }
 require_temp() {
 	for file in "$@"; do

@@ -110,14 +110,16 @@ END
 
 ish_miss_prepare() {
 	local name=${1##*/} repos=${1#*://}; [ "$name" = "$repos" ] && repos=shylinux.com/x/$name
-	ISH_CONF_PATH=$PWD/.ish/pluged require_fork $repos; ish_sys_link_create usr/$name $(require_path $repos); require_pull usr/$name
+	if [ -e usr/$name ]; then
+		require_pull usr/$name
+	else
+		ISH_CONF_PATH=$PWD/.ish/pluged require_fork $repos; ish_sys_link_create usr/$name $(require_path $repos)
+	fi
 }
 ish_miss_prepare_contexts() {
-	ish_log_require -g shylinux.com/x/contexts
 	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_intshell() {
-	ish_log_require -g shylinux.com/x/intshell
 	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone $ctx_shy/x/intshell $PWD/.ish
 	[ -d $PWD/.ish ] && ish_sys_link_create usr/intshell $PWD/.ish
 	[ -d $HOME/.ish ] && ish_sys_link_create usr/intshell $HOME/.ish
@@ -146,13 +148,26 @@ ish_miss_prepare_icons() {
 	ish_miss_prepare icons
 }
 ish_miss_prepare_file() {
-	[ -f $1 ] || cat > $1
+	[ -f $1 ] && return; ish_log_debug -g "create file $1"
+	cat > $1
 }
 ish_miss_prepare_bash() {
 	ish_sys_cli_prepare
 	ish_sys_link_create ~/.bash_local.sh $PWD/etc/conf/bash_local.sh; source ~/.bash_local.sh
 	ish_sys_link_create ~/.vim_local.vim $PWD/etc/conf/vim_local.vim
 	ish_dev_git_prepare; ish_dev_vim_prepare; ish_dev_vim_plug_prepare
+}
+ish_miss_prepare_local() {
+	ish_log_debug -g "local file $1"
+	ish_miss_prepare_file ../$1/etc/local.shy <<END
+source ../${PWD##*/}/etc/private/$1.shy
+END
+}
+ish_miss_prepare_local_contexts() {
+	ish_log_debug -g "local file contexts"
+	ish_miss_prepare_file ~/contexts/etc/local.shy <<END
+source ../usr/local/work/${PWD##*/}/etc/private/local.shy
+END
 }
 ish_miss_prepare_session() {
 	local name=$1 && [ "$name" = "" ] && name=${PWD##*/}
@@ -171,33 +186,33 @@ ish_miss_prepare_session() {
 }
 
 ish_miss_pull() {
-	local repos back=$PWD; ish_log_notice "repos $PWD"
+	local repos back=$PWD; ish_log_pull
 	git pull; echo
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
-			cd "usr/$repos/"; ish_log_notice "repos $PWD"
+			cd "usr/$repos/"; ish_log_pull
 			git pull; echo; cd $back
 		fi
 	done
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
-			cd "usr/local/work/$repos/"; ish_log_notice "repos $PWD"
+			cd "usr/local/work/$repos/"; ish_log_pull
 			git pull; echo; cd $back
 		fi
 	done
 }
 ish_miss_push() {
-	local repos back=$PWD; ish_log_notice "repos $PWD"
+	local repos back=$PWD; ish_log_push
 	git push; git push --tags; echo
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
-			cd "usr/$repos/"; ish_log_notice "repos $PWD"
+			cd "usr/$repos/"; ish_log_push
 			git push; git push --tags; echo; cd $back
 		fi
 	done
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
-			cd "usr/local/work/$repos/"; ish_log_notice "repos $PWD"
+			cd "usr/local/work/$repos/"; ish_log_push
 			git push; git push --tags; echo; cd $back
 		fi
 	done
