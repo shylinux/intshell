@@ -218,7 +218,7 @@ ish_miss_push() {
 	done
 }
 ish_miss_make() {
-	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S"
+	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S make $PWD"
 	[ -f src/version.go ] || echo "package main" > src/version.go
 	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
 	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} src/main.go src/version.go src/binpack.go && ./${binarys} forever restart &>/dev/null
