@@ -1,8 +1,10 @@
 #!/bin/sh
 
+export ctx_log=${ctx_log:=/dev/null}
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
 export ctx_dev_ip=${ctx_dev_ip:="$ctx_dev"}
-export ctx_name=${ctx_name:="${ctx_pod}"}
+export ctx_repos=${ctx_repos:="https://shylinux.com/x/contexts"}
+export ctx_name=${ctx_name:="$ctx_pod"}
 export ctx_name=${ctx_name:="${ctx_repos##*/}"}
 export ctx_name=${ctx_name:="contexts"}
 
@@ -64,11 +66,11 @@ main() {
 	case "$1" in
 		binary) shift
 			[ -e $ctx_name ] || mkdir $ctx_name; cd $ctx_name 
-			prepare_ice && ./bin/ice.bin forever start dev "" "$@"
+			prepare_ice && $PWD/bin/ice.bin forever start "$@"
 			;;
 		source) shift
-			prepare_system; [ -e $ctx_name ] || git clone ${ctx_repos:=$ctx_dev/x/$ctx_name} $ctx_name
-			cd $ctx_name && source etc/miss.sh dev "" "$@"
+			prepare_system; [ -e $ctx_name ] || git clone $ctx_repos $ctx_name; cd $ctx_name
+			source etc/miss.sh && $pwd/bin/ice.bin forever start "$@"
 			;;
 		intshell)
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
