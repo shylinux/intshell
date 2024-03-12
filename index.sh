@@ -33,10 +33,7 @@ prepare_system() {
 				git version &>/dev/null || apk add git
 				go version &>/dev/null || apk add go
 				npm version &>/dev/null || apk add npm
-				git config --global credential.helper store
-				return
-			fi
-			if cat /etc/os-release|grep "rhel"&>/dev/null; then
+			elif cat /etc/os-release|grep "rhel"&>/dev/null; then
 				git version &>/dev/null || yum install -y git
 				go version &>/dev/null || yum install -y go
 				npm version &>/dev/null || yum install -y npm
