@@ -24,16 +24,11 @@ prepare_system() {
 		Linux) 
 			if [ `whoami` != "root" ]; then return; fi
 			if cat /etc/os-release|grep alpine &>/dev/null; then
-				sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update
-				TZ=Asia/Shanghai; apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 				git version &>/dev/null || apk add git
 				go version &>/dev/null || apk add go
 				npm version &>/dev/null || apk add npm
 				git config --global credential.helper store
 				return
-			fi
-			if cat /etc/os-release|grep "CentOS-8"&>/dev/null; then
-				minorver=8.5.2111; sed -e "s|^mirrorlist=|#mirrorlist=|g" -e "s|^#baseurl=http://mirror.centos.org/\$contentdir/\$releasever|baseurl=https://mirrors.aliyun.com/centos-vault/$minorver|g" -i.bak /etc/yum.repos.d/CentOS-*.repo && yum update -y
 			fi
 			if cat /etc/os-release|grep "rhel"&>/dev/null; then
 				git version &>/dev/null || yum install -y git
