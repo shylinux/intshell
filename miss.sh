@@ -88,10 +88,6 @@ END
 ish_miss_prepare_project() {
 	# etc/init.shy
 	ish_sys_file_create "etc/init.shy" <<END
-~web.code
-	binpack insert usr/icons/
-~web.code.git
-	config service cmd git
 ~ssh
 	source local.shy
 END
