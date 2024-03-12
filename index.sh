@@ -70,7 +70,7 @@ main() {
 			;;
 		source) shift
 			prepare_system; [ -e $ctx_name ] || git clone $ctx_repos $ctx_name; cd $ctx_name
-			source etc/miss.sh && $pwd/bin/ice.bin forever start "$@"
+			source etc/miss.sh && $PWD/bin/ice.bin forever start "$@"
 			;;
 		intshell)
 			[ -f $PWD/.ish/plug.sh ] && source $PWD/.ish/plug.sh && return
