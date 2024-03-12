@@ -3,6 +3,7 @@
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
 export ctx_dev_ip=${ctx_dev_ip:="$ctx_dev"}
 export ctx_name=${ctx_name:="${ctx_pod}"}
+export ctx_name=${ctx_name:="${ctx_repos##*/}"}
 export ctx_name=${ctx_name:="contexts"}
 
 _down_big_file() {
