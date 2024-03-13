@@ -10,7 +10,7 @@ export ctx_name=${ctx_name:="contexts"}
 
 _down_big_file() {
 	[ -f "$1" ] && return; echo "download $ctx_dev_ip/$2"
-	if curl -h &>/dev/null; then curl -o $1 -fL "$ctx_dev_ip/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev_ip/$2?pod=$ctx_pod"; fi
+	if curl -h &>/dev/null; then curl -o $1 --connect-timeout 3 -fL "$ctx_dev_ip/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev_ip/$2?pod=$ctx_pod"; fi
 	[ -f "$1" ] && return; echo "download $ctx_dev/$2"
 	export ctx_dev_ip=
 	if curl -h &>/dev/null; then curl -o $1 -fL "$ctx_dev/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev/$2?pod=$ctx_pod"; fi
