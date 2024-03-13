@@ -134,7 +134,9 @@ ish_miss_prepare_icebergs() {
 	ish_miss_prepare icebergs
 }
 ish_miss_prepare_release() {
-	local back=$PWD; cd usr/release; git stash &>/dev/null; git checkout . &>/dev/null; cd $back
+	if [ -e usr/release ]; then
+		local back=$PWD; cd usr/release; git stash &>/dev/null; git checkout . &>/dev/null; cd $back
+	fi
 	ish_miss_prepare release
 }
 ish_miss_prepare_modules() {
@@ -190,6 +192,7 @@ ish_miss_pull() {
 			git pull; echo; cd $back
 		fi
 	done
+	if ! [ -e usr/local/work ]; then return; fi
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
 			cd "usr/local/work/$repos/"; ish_log_pull
@@ -206,6 +209,7 @@ ish_miss_push() {
 			git push; git push --tags; echo; cd $back
 		fi
 	done
+	if ! [ -e usr/local/work ]; then return; fi
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
 			cd "usr/local/work/$repos/"; ish_log_push
