@@ -101,7 +101,7 @@ END
 	ish_sys_file_create "src/main.shy" <<END
 title "${PWD##*/}"
 END
-	ish_sys_link_create usr/local/daemon $HOME/contexts/usr/local/daemon
+	[ $PWD = $HOME/contexts ] || ish_sys_link_create usr/local/daemon $HOME/contexts/usr/local/daemon
 }
 
 ish_miss_prepare() {
