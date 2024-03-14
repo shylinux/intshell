@@ -247,7 +247,7 @@ ish_miss_stop() {
 	$ctx_bin forever stop
 }
 ish_miss_list() {
-	ps aux|grep $ctx_bin
+	ps aux| grep -v grep| grep $ctx_bin
 }
 ish_miss_killall() {
 	ps aux|grep $ctx_bin|grep -v grep|awk '{print $2}'|xargs kill
