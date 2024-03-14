@@ -247,10 +247,11 @@ ish_miss_stop() {
 	$ctx_bin forever stop
 }
 ish_miss_list() {
-	ps aux| grep -v grep| grep $ctx_bin
+	# ps aux| grep -v grep| grep $ctx_bin
+	ps aux| grep -v grep| grep $ctx_bin | grep "$PWD/usr/local/work/"
 }
 ish_miss_killall() {
-	ps aux|grep $ctx_bin|grep -v grep|awk '{print $2}'|xargs kill
+	ish_miss_list | awk '{print $2}' | xargs kill
 }
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
