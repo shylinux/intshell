@@ -217,6 +217,15 @@ ish_miss_push() {
 		fi
 	done
 }
+ish_miss_make_all() {
+	if ! [ -e usr/local/work ]; then return; fi
+	local back=$PWD;
+	for repos in `ls usr/local/work/`; do
+		if [ -e "usr/local/work/$repos/.git" ]; then
+			cd "usr/local/work/$repos/"; ish_miss_make; echo; cd $back
+		fi
+	done
+}
 ish_miss_make() {
 	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S make $PWD"
 	[ -f src/version.go ] || echo "package main" > src/version.go
