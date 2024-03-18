@@ -12,6 +12,21 @@ ish_miss_download_pkg() {
 		[ -e "$pkg" ] && if echo $pkg|grep ".zip"; then unzip $pkg; else tar xf $pkg; fi
 	done; [ -f "$1" ]
 }
+ish_miss_prepare_package() {
+	case "$(uname)" in
+		Darwin) xcode-select --install 2>/dev/null ;;
+		Linux) if [ `whoami` != "root" ]; then return; fi
+			if cat /etc/os-release|grep alpine &>/dev/null; then
+				sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update
+				TZ=Asia/Shanghai; apk add tzdata && cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
+				return
+			fi
+			if cat /etc/os-release|grep "CentOS-8"&>/dev/null; then
+				minorver=8.5.2111; sed -e "s|^mirrorlist=|#mirrorlist=|g" -e "s|^#baseurl=http://mirror.centos.org/\$contentdir/\$releasever|baseurl=https://mirrors.aliyun.com/centos-vault/$minorver|g" -i.bak /etc/yum.repos.d/CentOS-*.repo && yum update -y
+			fi
+			;;
+	esac
+}
 ish_miss_prepare_compile() {
 	export GOVERSION=${GOVERSION:=1.21.4}
 	export GOPRIVATE=${GOPRIVATE:=shylinux.com}
@@ -50,6 +65,7 @@ src/binpack_usr.go
 src/binpack.go
 src/version.go
 etc/local.shy
+etc/local.sh
 bin/
 var/
 usr/
@@ -114,6 +130,13 @@ ish_miss_prepare() {
 }
 ish_miss_prepare_contexts() {
 	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
+}
+ish_miss_prepare_resource() {
+	ish_miss_prepare_intshell
+	ish_miss_prepare_learning
+	ish_miss_prepare_volcanos
+	ish_miss_prepare_modules
+	ish_miss_prepare_icons
 }
 ish_miss_prepare_intshell() {
 	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone $ctx_shy/x/intshell $PWD/.ish
