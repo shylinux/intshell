@@ -14,7 +14,7 @@ syntax match shyString	    "false"
 syntax match shyString	    "true"
 
 highlight shyContext    ctermfg=red
-syntax match shyContext "\~[a-z\.]\+"
+syntax match shyContext "\~[a-z0-9\.]\+"
 
 highlight shyCommand    ctermfg=green
 syntax match shyCommand "^\t*[a-zA-Z0-9:._]\+"
