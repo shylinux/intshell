@@ -183,6 +183,7 @@ ish_miss_prepare_local() {
 	ish_miss_prepare_file ../$1/etc/local.shy <<END
 source ../${PWD##*/}/etc/private/$1.shy
 END
+	ish_sys_link_create ../$1/usr/local/export $PWD/etc/export/$1
 }
 ish_miss_prepare_local_contexts() {
 	ish_log_debug -g "local file contexts"
