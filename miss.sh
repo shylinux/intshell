@@ -224,6 +224,17 @@ ish_miss_pull() {
 		fi
 	done
 }
+ish_miss_each() {
+	local repos back=$PWD; ish_log_pull
+	"$@"; cat go.mod
+	if ! [ -e usr/local/work ]; then return; fi
+	for repos in `ls usr/local/work/`; do
+		if [ -e "usr/local/work/$repos/.git" ]; then
+			cd "usr/local/work/$repos/"; ish_log_pull
+			"$@"; cat go.mod; cd $back
+		fi
+	done
+}
 ish_miss_push() {
 	local repos back=$PWD; ish_log_push
 	git push; git push --tags; echo
