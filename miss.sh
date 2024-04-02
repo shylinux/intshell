@@ -261,7 +261,7 @@ ish_miss_start() {
 	ish_sys_path_load
 	while true; do
 		[ -f "var/log/boot.log" ] && grep "concurrent map read and map write" "var/log/boot.log" &>/dev/null && mv "var/log/boot.log" "var/log/$(ish_sys_date_filename)_boot.log"
-		$ctx_bin "$@" 2>${ctx_log:="/dev/stdout"} && break
+		$PWD/$ctx_bin "$@" 2>${ctx_log:="/dev/stdout"} && break
 	done
 }
 ish_miss_restart() {
