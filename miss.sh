@@ -132,6 +132,7 @@ ish_miss_prepare_contexts() {
 	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_resource() {
+	echo $PWD|grep "usr/local/work/" &>/dev/null && return
 	ish_miss_prepare_intshell
 	ish_miss_prepare_learning
 	ish_miss_prepare_volcanos
