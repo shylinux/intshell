@@ -26,6 +26,7 @@ syntax match shyCommand "\<tmap\>"
 
 highlight shyAction    ctermfg=cyan
 syntax match shyAction "\<default\>"
+syntax match shyAction "\<action\>"
 syntax match shyAction "\<config\>"
 syntax match shyAction "\<create\>"
 syntax match shyAction "\<insert\>"
