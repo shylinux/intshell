@@ -110,16 +110,22 @@ END
 
 	# etc/exit.shy
 	ish_sys_file_create "etc/exit.shy" <<END
-~aaa
+~ssh
 END
 
 	# src/main.shy
 	ish_sys_file_create "src/main.shy" <<END
 title "${PWD##*/}"
 END
-	[ $PWD = $HOME/contexts ] || ish_sys_link_create usr/local/daemon $HOME/contexts/usr/local/daemon
+	if ish_miss_isworker && [ -e $HOME/contexts ]; then
+		ish_sys_link_create usr/local/daemon $HOME/contexts/usr/local/daemon
+		ish_sys_link_create usr/install $HOME/contexts/usr/install
+	fi
 }
 
+ish_miss_isworker() {
+	echo $PWD | grep "usr/local/work/" &>/dev/null
+}
 ish_miss_prepare() {
 	local name=${1##*/} repos=${1#*://}; [ "$name" = "$repos" ] && repos=shylinux.com/x/$name
 	if [ -e usr/$name ]; then
