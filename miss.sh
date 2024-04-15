@@ -138,12 +138,12 @@ ish_miss_prepare_contexts() {
 	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_resource() {
+	[ -e usr/icons/ ] || ish_miss_prepare_icons
 	echo $PWD|grep "usr/local/work/" &>/dev/null && return
 	ish_miss_prepare_intshell
 	ish_miss_prepare_learning
 	ish_miss_prepare_volcanos
 	ish_miss_prepare_modules
-	ish_miss_prepare_icons
 }
 ish_miss_prepare_intshell() {
 	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone $ctx_shy/x/intshell $PWD/.ish
