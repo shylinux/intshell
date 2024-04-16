@@ -14,7 +14,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	" set sessionoptions+=tabpages,globals
 	" Plug 'vim-syntastic/syntastic'
 
-	Plug 'fatih/vim-go'
+	" Plug 'fatih/vim-go'
 	Plug 'chr4/nginx.vim'
 	Plug 'vim-scripts/tComment'
 	" Plug 'mbbill/echofunc'
