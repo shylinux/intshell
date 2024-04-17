@@ -14,7 +14,7 @@ if filereadable(expand("~/.vim/autoload/plug.vim"))
 	" set sessionoptions+=tabpages,globals
 	" Plug 'vim-syntastic/syntastic'
 
-	" Plug 'fatih/vim-go'
+	Plug 'fatih/vim-go'
 	Plug 'chr4/nginx.vim'
 	Plug 'vim-scripts/tComment'
 	" Plug 'mbbill/echofunc'
@@ -125,6 +125,15 @@ endfunc | autocmd BufNewFile,BufReadPost * call Configs()
 for file in ["~/.vim/autoload/auto.vim", "~/.vim_local.vim", "etc/vimrc"]
 	if filereadable(expand(file)) | exec "source" file | endif
 endfor | autocmd BufReadPost * normal `"
+
+" au BufWritePost *.go call s:HandleBufWrite()
+" function! s:HandleBufWrite() abort
+" 	silent exec "!gofmt -w %"
+" 	silent exec "!goimports -w %"
+" 	silent e
+" endfunction
+
+
 "}}}
 "主题色系"{{{
 syntax on
