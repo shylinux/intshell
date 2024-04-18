@@ -139,11 +139,10 @@ ish_miss_prepare_contexts() {
 }
 ish_miss_prepare_resource() {
 	[ -e usr/icons/ ] || ish_miss_prepare_icons
-	echo $PWD|grep "usr/local/work/" &>/dev/null && return
-	ish_miss_prepare_intshell
-	ish_miss_prepare_learning
-	ish_miss_prepare_volcanos
-	ish_miss_prepare_modules
+	[ -e usr/intshell/ ] || ish_miss_prepare_intshell
+	[ -e usr/learning/ ] || ish_miss_prepare_learning
+	[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
+	[ -e usr/node_modules/ ] || ish_miss_prepare_modules
 }
 ish_miss_prepare_intshell() {
 	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone $ctx_shy/x/intshell $PWD/.ish
