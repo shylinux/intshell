@@ -24,7 +24,7 @@ ish_sys_file_create() {
 	ish_sys_path_create $1 && cat > $1
 }
 ish_sys_link_create() {
-	[ -z "$2" ] && return; [ -e "$1" ] && return; ish_log_debug -g "create link $1 <= $2"
+	[ -z "$2" ] && return; [ -e "$1" ] && return; [ -e "$2" ] || return; ish_log_debug -g "create link $1 <= $2"
 	ish_sys_path_create $1 && ln -s $2 $1
 }
 ish_sys_file_size() {
