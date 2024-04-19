@@ -138,11 +138,19 @@ ish_miss_prepare_contexts() {
 	[ -d .git ] || git init; [ "`git remote`" = "" ] || require_pull ./
 }
 ish_miss_prepare_resource() {
-	[ -e usr/icons/ ] || ish_miss_prepare_icons
-	[ -e usr/intshell/ ] || ish_miss_prepare_intshell
-	[ -e usr/learning/ ] || ish_miss_prepare_learning
-	[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
-	[ -e usr/node_modules/ ] || ish_miss_prepare_modules
+	if echo $PWD | grep "usr/local/work/" &>/dev/null; then
+		[ -e usr/icons/ ] || ish_miss_prepare_icons
+		[ -e usr/intshell/ ] || ish_miss_prepare_intshell
+		[ -e usr/learning/ ] || ish_miss_prepare_learning
+		[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
+		[ -e usr/node_modules/ ] || ish_miss_prepare_modules
+	else
+		ish_miss_prepare_icons
+		ish_miss_prepare_intshell
+		ish_miss_prepare_learning
+		ish_miss_prepare_volcanos
+		ish_miss_prepare_modules
+	fi
 }
 ish_miss_prepare_intshell() {
 	[ -f $PWD/.ish/plug.sh ] || [ -f $HOME/.ish/plug.sh ] || git clone $ctx_shy/x/intshell $PWD/.ish
