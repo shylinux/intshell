@@ -4,7 +4,11 @@ ish_sys_cli_shell() {
 	ps |grep "^\ *$$"|grep -v grep|grep -o "[a-z]*$"
 }
 ish_sys_cli_title() {
-	printf "\e]1;%s\a" "$*"
+	if [ -z "$*" ]; then
+		echo -ne "\033]0;${PWD##*/}\007"
+	else
+		echo -ne "\033]0;$*\007"
+	fi
 }
 ish_sys_cli_prompt() {
 	local name=$(hostname) && name=${name##*-} && name=${name%%\.*}
