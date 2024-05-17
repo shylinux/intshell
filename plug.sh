@@ -81,12 +81,12 @@ require() {
     elif echo $mod| grep "^/" &>/dev/null; then
         file=$(require_temp "$ctx_dev$mod")
     elif echo $mod| grep "^src/" &>/dev/null; then
-        file=$(require_temp "$ctx_dev/require/$mod?pod=$ctx_pod")
+        file=$(require_temp "$ctx_dev/p/$mod?pod=$ctx_pod")
 		host=$host/require
     else
         [ -z "$file" ] && file=$(require_temp $ctx_dev/$mod)
-		[ -z "$file" ] && file=$(require_temp "$ctx_dev/require/$mod?pod=$ctx_pod")
-		[ -z "$file" ] && file=$(require_temp "$ctx_dev/require/${ISH_CTX_MODULE%/*}/$mod?pod=$ctx_pod")
+		[ -z "$file" ] && file=$(require_temp "$ctx_dev/p/$mod?pod=$ctx_pod")
+		[ -z "$file" ] && file=$(require_temp "$ctx_dev/p/${ISH_CTX_MODULE%/*}/$mod?pod=$ctx_pod")
 		host=$host/require
     fi; [ -f "$file" ] || return 0;
 	if echo "$file"| grep "/tmp." &>/dev/null; then ish_log_require "$file <= $host/$mod"; else ish_log_require "$file"; fi
