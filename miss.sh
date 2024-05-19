@@ -146,11 +146,11 @@ ish_miss_prepare_resource() {
 		[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
 		[ -e usr/node_modules/ ] || ish_miss_prepare_modules
 	else
-		ish_miss_prepare_icons
 		ish_miss_prepare_intshell
-		ish_miss_prepare_learning
 		ish_miss_prepare_volcanos
+		ish_miss_prepare_learning
 		ish_miss_prepare_modules
+		ish_miss_prepare_icons
 	fi
 }
 ish_miss_prepare_intshell() {
