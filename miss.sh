@@ -144,10 +144,12 @@ ish_miss_prepare_resource() {
 		[ -e usr/intshell/ ] || ish_miss_prepare_intshell
 		[ -e usr/learning/ ] || ish_miss_prepare_learning
 		[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
+		[ -e usr/icebergs/ ] || ish_miss_prepare_icebergs
 		[ -e usr/node_modules/ ] || ish_miss_prepare_modules
 	else
 		ish_miss_prepare_intshell
 		ish_miss_prepare_volcanos
+		ish_miss_prepare_icebergs
 		ish_miss_prepare_learning
 		ish_miss_prepare_modules
 		ish_miss_prepare_icons
