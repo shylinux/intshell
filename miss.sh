@@ -140,16 +140,18 @@ ish_miss_prepare_contexts() {
 }
 ish_miss_prepare_resource() {
 	if echo $PWD | grep "usr/local/work/" &>/dev/null; then
-		[ -e usr/icons/ ] || ish_miss_prepare_icons
 		[ -e usr/intshell/ ] || ish_miss_prepare_intshell
-		[ -e usr/learning/ ] || ish_miss_prepare_learning
-		[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
+		[ -e usr/release/ ] || ish_miss_prepare_release
 		[ -e usr/icebergs/ ] || ish_miss_prepare_icebergs
+		[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
+		[ -e usr/learning/ ] || ish_miss_prepare_learning
 		[ -e usr/node_modules/ ] || ish_miss_prepare_modules
+		[ -e usr/icons/ ] || ish_miss_prepare_icons
 	else
 		ish_miss_prepare_intshell
-		ish_miss_prepare_volcanos
+		ish_miss_prepare_release
 		ish_miss_prepare_icebergs
+		ish_miss_prepare_volcanos
 		ish_miss_prepare_learning
 		ish_miss_prepare_modules
 		ish_miss_prepare_icons
