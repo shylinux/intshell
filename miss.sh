@@ -227,18 +227,20 @@ ish_miss_prepare_session() {
 	[ "$TMUX" = "" ] && tmux attach -t $name || tmux select-window -t $name:$win
 }
 
-ish_miss_pull() {
-	local repos back=$PWD
+ish_miss_pull_do() {
 	ish_log_pull; git pull 2>&1 | grep -v /bin/sh; echo
+}
+ish_miss_pull() {
+	local repos back=$PWD; ish_miss_pull_do
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
-			cd "usr/$repos/"; ish_log_pull; git pull; echo; cd $back
+			cd "usr/$repos/"; ish_miss_pull_do; cd $back
 		fi
 	done
 	if ! [ -e usr/local/work ]; then return; fi
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
-			cd "usr/local/work/$repos/"; ish_log_pull; git pull; echo; cd $back
+			cd "usr/local/work/$repos/"; ish_miss_pull_do; cd $back
 		fi
 	done
 }
@@ -257,8 +259,7 @@ ish_miss_push_do() {
 	ish_log_push; git push 2>&1 | grep -v /bin/sh; git push --tags 2>&1 | grep -v /bin/sh; echo
 }
 ish_miss_push() {
-	local repos back=$PWD
-	ish_miss_push_do
+	local repos back=$PWD; ish_miss_push_do
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
 			cd "usr/$repos/"; ish_miss_push_do; cd $back
