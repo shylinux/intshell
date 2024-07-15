@@ -228,19 +228,17 @@ ish_miss_prepare_session() {
 }
 
 ish_miss_pull() {
-	local repos back=$PWD; ish_log_pull
-	git pull; echo
+	local repos back=$PWD
+	ish_log_pull; git pull 2>&1 | grep -v /bin/sh; echo
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
-			cd "usr/$repos/"; ish_log_pull
-			git pull; echo; cd $back
+			cd "usr/$repos/"; ish_log_pull; git pull; echo; cd $back
 		fi
 	done
 	if ! [ -e usr/local/work ]; then return; fi
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
-			cd "usr/local/work/$repos/"; ish_log_pull
-			git pull; echo; cd $back
+			cd "usr/local/work/$repos/"; ish_log_pull; git pull; echo; cd $back
 		fi
 	done
 }
@@ -255,20 +253,21 @@ ish_miss_each() {
 		fi
 	done
 }
+ish_miss_push_do() {
+	ish_log_push; git push 2>&1 | grep -v /bin/sh; git push --tags 2>&1 | grep -v /bin/sh; echo
+}
 ish_miss_push() {
-	local repos back=$PWD; ish_log_push
-	git push; git push --tags; echo
+	local repos back=$PWD
+	ish_miss_push_do
 	for repos in `ls usr/`; do
 		if [ -e "usr/$repos/.git" ]; then
-			cd "usr/$repos/"; ish_log_push
-			git push; git push --tags; echo; cd $back
+			cd "usr/$repos/"; ish_miss_push_do; cd $back
 		fi
 	done
 	if ! [ -e usr/local/work ]; then return; fi
 	for repos in `ls usr/local/work/`; do
 		if [ -e "usr/local/work/$repos/.git" ]; then
-			cd "usr/local/work/$repos/"; ish_log_push
-			git push; git push --tags; echo; cd $back
+			cd "usr/local/work/$repos/"; ish_miss_push_do; cd $back
 		fi
 	done
 }
