@@ -45,8 +45,12 @@ ish_log_request() { ish_log "request" "$@"; }
 ish_log_notice() { ish_log "notice" "$@"; }
 ish_log_alias() { ish_log "alias" "$@"; }
 ish_log_debug() { ish_log "debug" "$@"; }
-ish_log_pull() { pwd; ish_log_debug -g "pull `git config --get remote.origin.url`"; }
-ish_log_push() { pwd; ish_log_debug -g "push `git config --get remote.origin.url`"; }
+ish_log_pull() {
+	ish_log_debug -g "pull `git config --get remote.origin.url`"; pwd; 
+}
+ish_log_push() {
+   	ish_log_debug -g "push `git config --get remote.origin.url`"; pwd;
+}
 # }
 ## 3.模块 # {
 require_path() {
