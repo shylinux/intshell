@@ -4,7 +4,6 @@ export ctx_bin=${ctx_bin:=bin/ice.bin}
 export ctx_pid=${ctx_pid:=var/log/ice.pid}
 export ctx_log=${ctx_log:=var/log/boot.log}
 export ctx_shy=${ctx_shy:=https://shylinux.com}
-export ctx_dev=${ctx_dev:=https://2021.shylinux.com}
 
 ish_miss_download_pkg() {
 	for url in "$@"; do local pkg=${url##*/}; [ `ish_sys_file_size $pkg` -gt 0 ] && break
@@ -55,7 +54,6 @@ ish_miss_prepare_compile() {
 	fi
 	local back=$PWD; mkdir -p usr/local; cd usr/local
 	ish_miss_download_pkg $GODOWN$pkg; cd $back
-	# ish_miss_download_pkg $ctx_dev/publish/$pkg $GODOWN$pkg; cd $back
 }
 ish_miss_prepare_develop() {
 	export ISH_CONF_PATH=$PWD/.ish/pluged
