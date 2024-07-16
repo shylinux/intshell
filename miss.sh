@@ -202,6 +202,7 @@ ish_miss_prepare_local() {
 	ish_miss_prepare_file ../$1/etc/local.shy <<END
 source ../${PWD##*/}/etc/private/$1.shy
 END
+	mkdir $PWD/etc/export/$1 &>/dev/null
 	ish_sys_link_create ../$1/usr/local/export $PWD/etc/export/$1
 }
 ish_miss_prepare_local_contexts() {
