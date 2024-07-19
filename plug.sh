@@ -66,7 +66,7 @@ require_fork() {
 	echo && ish_log_debug -g "clone https://$repos"; git clone https://$repos $ISH_CONF_PATH/$repos &>/dev/null && echo $ISH_CONF_PATH/$repos
 }
 require_pull() {
-    local back=$PWD; cd "$(require_fork $1)" &>/dev/null && ish_log_pull && git pull; cd $back; echo
+    local back=$PWD; cd "$(require_fork $1)" &>/dev/null && ish_log_pull && git pull 2>&1 | grep -v /bin/sh; echo; cd $back;
 }
 require_temp() {
 	for file in "$@"; do
