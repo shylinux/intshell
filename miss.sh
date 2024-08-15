@@ -280,13 +280,19 @@ ish_miss_make_all() {
 		fi
 	done
 }
-ish_miss_make() {
+ish_miss_build() {
 	local binarys=$ctx_bin; echo && date +"%Y-%m-%d %H:%M:%S make $PWD"
-	local file="src/main.go"
-	[ -f src/option.go ] && file="$file src/option.go"
-	[ -f src/version.go ] && file="$file src/version.go"
-	[ -f src/binpack.go ] && file="$file src/binpack.go"
-	CGO_ENABLED=0 go build -ldflags "-w -s" -v -o ${binarys} $file && ./${binarys} forever restart &>/dev/null
+	CGO_ENABLED=0 go build -ldflags '-w -s' -v -o ${binarys} "$@" && ./${binarys} forever restart &>/dev/null
+}
+ish_miss_make() {
+	local cmds="src/main.go"
+	[ -f src/version.go ] || echo "package main" > src/version.go
+	[ -f src/binpack.go ] || echo "package main" > src/binpack.go
+	if [ -f src/option.go ]; then
+		ish_miss_build src/main.go src/version.go src/binpack.go src/option.go
+	else
+		ish_miss_build src/main.go src/version.go src/binpack.go
+	fi
 }
 ish_miss_start() {
 	[ -n "${ctx_log}" ] && echo $ctx_log|grep "/" &>/dev/null && mkdir -p ${ctx_log%/*}
