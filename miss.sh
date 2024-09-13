@@ -141,6 +141,7 @@ ish_miss_prepare_resource() {
 		[ -e usr/intshell/ ] || ish_miss_prepare_intshell
 		[ -e usr/release/ ] || ish_miss_prepare_release
 		[ -e usr/icebergs/ ] || ish_miss_prepare_icebergs
+		[ -e usr/toolkits/ ] || ish_miss_prepare_toolkits
 		[ -e usr/volcanos/ ] || ish_miss_prepare_volcanos
 		[ -e usr/learning/ ] || ish_miss_prepare_learning
 		[ -e usr/node_modules/ ] || ish_miss_prepare_modules
@@ -149,6 +150,7 @@ ish_miss_prepare_resource() {
 		ish_miss_prepare_intshell
 		ish_miss_prepare_release
 		ish_miss_prepare_icebergs
+		ish_miss_prepare_toolkits
 		ish_miss_prepare_volcanos
 		ish_miss_prepare_learning
 		ish_miss_prepare_modules
