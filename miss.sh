@@ -316,6 +316,7 @@ ish_miss_list() {
 }
 ish_miss_killall() {
 	ish_miss_list | awk '{print $2}' | xargs kill
+	rm usr/local/work/*/log/ice.pid
 }
 ish_miss_log() {
 	touch $ctx_log && tail -f $ctx_log
