@@ -206,7 +206,7 @@ END
 	ish_sys_link_create ../$1/usr/local/export $PWD/etc/export/$1
 }
 ish_miss_prepare_local_contexts() {
-	ish_log_debug -g "local file contexts"
+	ish_log_debug -g "local file ContextOS"
 	ish_sys_link_create ~/ContextOS/usr/local/export $PWD/etc/export/ContextOS
 	ish_miss_prepare_file ~/ContextOS/etc/local.shy <<END
 source ../usr/local/work/${PWD##*/}/etc/private/local.shy
