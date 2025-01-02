@@ -116,9 +116,9 @@ END
 	ish_sys_file_create "src/main.shy" <<END
 title "${PWD##*/}"
 END
-	if ish_miss_isworker && [ -e $HOME/contexts ]; then
-		ish_sys_link_create usr/local/daemon $HOME/contexts/usr/local/daemon
-		ish_sys_link_create usr/install $HOME/contexts/usr/install
+	if ish_miss_isworker && [ -e $HOME/ContextOS ]; then
+		ish_sys_link_create usr/local/daemon $HOME/ContextOS/usr/local/daemon
+		ish_sys_link_create usr/install $HOME/ContextOS/usr/install
 	fi
 }
 
@@ -207,8 +207,8 @@ END
 }
 ish_miss_prepare_local_contexts() {
 	ish_log_debug -g "local file contexts"
-	ish_sys_link_create ~/contexts/usr/local/export $PWD/etc/export/contexts
-	ish_miss_prepare_file ~/contexts/etc/local.shy <<END
+	ish_sys_link_create ~/ContextOS/usr/local/export $PWD/etc/export/ContextOS
+	ish_miss_prepare_file ~/ContextOS/etc/local.shy <<END
 source ../usr/local/work/${PWD##*/}/etc/private/local.shy
 END
 }
