@@ -3,10 +3,10 @@
 export ctx_log=${ctx_log:=/dev/null}
 export ctx_dev=${ctx_dev:="https://shylinux.com"}
 export ctx_dev_ip=${ctx_dev_ip:="$ctx_dev"}
-export ctx_repos=${ctx_repos:="https://shylinux.com/x/contexts"}
+export ctx_repos=${ctx_repos:="https://shylinux.com/x/ContextOS"}
 export ctx_name=${ctx_name:="$ctx_pod"}
 export ctx_name=${ctx_name:="${ctx_repos##*/}"}
-export ctx_name=${ctx_name:="contexts"}
+export ctx_name=${ctx_name:="ContextOS"}
 
 _down_big_file() {
 	[ -f "$1" ] && return; echo "download $ctx_dev_ip/$2"
@@ -27,7 +27,7 @@ prepare_script() {
 prepare_system() {
 	case "$(uname)" in
 		Darwin) xcode-select --install 2>/dev/null ;;
-		Linux) 
+		Linux)
 			if [ `whoami` != "root" ]; then return; fi
 			if cat /etc/os-release|grep alpine &>/dev/null; then
 				git version &>/dev/null || apk add git
@@ -60,12 +60,12 @@ prepare_ice() {
 	_down_big_file $file publish/$bin && chmod u+x $file; [ -f $file ]
 }
 prepare_reload() {
-	local temp=$(mktemp); if curl -V &>/dev/null; then curl -o $temp -fsSL $ctx_dev; else wget -O $temp -q $ctx_dev; fi && source $temp $ctx_mod 
+	local temp=$(mktemp); if curl -V &>/dev/null; then curl -o $temp -fsSL $ctx_dev; else wget -O $temp -q $ctx_dev; fi && source $temp $ctx_mod
 }
 main() {
 	case "$1" in
 		binary) shift
-			[ -e $ctx_name ] || mkdir $ctx_name; cd $ctx_name 
+			[ -e $ctx_name ] || mkdir $ctx_name; cd $ctx_name
 			prepare_ice && $PWD/bin/ice.bin forever start "$@"
 			;;
 		source) shift
