@@ -11,8 +11,7 @@ export ctx_name=${ctx_name:="ContextOS"}
 _down_big_file() {
 	[ -f "$1" ] && return; echo "download $ctx_dev_ip/$2"
 	if curl -h &>/dev/null; then curl -o $1 --connect-timeout 3 -fL "$ctx_dev_ip/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev_ip/$2?pod=$ctx_pod"; fi
-	[ -f "$1" ] && return; echo "download $ctx_dev/$2"
-	export ctx_dev_ip=
+	[ -f "$1" ] && return; echo "download $ctx_dev/$2"; export ctx_dev_ip=
 	if curl -h &>/dev/null; then curl -o $1 -fL "$ctx_dev/$2?pod=$ctx_pod"; else wget -O $1 "$ctx_dev/$2?pod=$ctx_pod"; fi
 }
 _down_file() {
@@ -66,6 +65,7 @@ main() {
 	case "$1" in
 		binary) shift
 			[ -e $ctx_name ] || mkdir $ctx_name; cd $ctx_name
+			[ -e /opt/daemon/ ] && mkdir -p usr/local/ && ln -s /opt/daemon/ usr/local/daemon
 			prepare_ice && $PWD/bin/ice.bin forever start "$@"
 			;;
 		source) shift
