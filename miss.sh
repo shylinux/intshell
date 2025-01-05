@@ -101,6 +101,7 @@ def:
 END
 }
 ish_miss_prepare_project() {
+	ish_sys_link_create usr/local/daemon /opt/daemon/
 	# etc/init.shy
 	ish_sys_file_create "etc/init.shy" <<END
 ~ssh
