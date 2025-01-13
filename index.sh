@@ -51,7 +51,7 @@ prepare_ice() {
 	case `uname -m` in
 		mips) bin=${bin}.mipsle ;;
 		x86_64) bin=${bin}.amd64 ;;
-		arm64) bin=${bin}.amd64 ;;
+		arm64) bin=${bin}.arm64 ;;
 		arm*|aarch64) bin=${bin}.arm ;;
 		*) bin=${bin}.386 ;;
 	esac
